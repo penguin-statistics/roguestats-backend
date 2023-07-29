@@ -1,6 +1,6 @@
 create table
     public.users (
-        user_id serial not null constraint users_pk primary key,
+        user_id text not null constraint users_pk primary key,
         name text not null,
         email text not null,
         credential text not null,
