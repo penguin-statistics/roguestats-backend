@@ -6,6 +6,9 @@ import (
 
 // ConfigSpec is the configuration specification.
 type ConfigSpec struct {
+	// DatabaseURL is the URL to the PostgreSQL database.
+	DatabaseURL string `split_words:"true" required:"true"`
+
 	// ServiceListenAddress is the address that the Fiber HTTP server will listen on.
 	ServiceListenAddress string `split_words:"true" required:"true" default:":3000"`
 

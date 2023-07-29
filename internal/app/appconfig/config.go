@@ -9,7 +9,7 @@ import (
 
 func Parse(ctx appcontext.Ctx) (*Config, error) {
 	var conf ConfigSpec
-	if err := envconfig.Process("app", &conf); err != nil {
+	if err := envconfig.Process("roguestats", &conf); err != nil {
 		return nil, err
 	}
 

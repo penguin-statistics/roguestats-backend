@@ -2,15 +2,15 @@ package db
 
 import (
 	"database/sql"
-	"os"
 
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
 )
 
-func New() *bun.DB {
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(os.Getenv("DATABASE_URL"))))
+func New(conf *appconfig.Config) *bun.DB {
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(conf.DatabaseURL)))
 	db := bun.NewDB(sqldb, pgdialect.New())
 	return db
 }
