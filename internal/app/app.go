@@ -4,9 +4,10 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appcontext"
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
 	"github.com/penguin-statistics/roguestats-backend/internal/controller"
 	"github.com/penguin-statistics/roguestats-backend/internal/infra"
+	"github.com/penguin-statistics/roguestats-backend/internal/middleware"
 	"github.com/penguin-statistics/roguestats-backend/internal/repo"
 	"github.com/penguin-statistics/roguestats-backend/internal/server"
 	"github.com/penguin-statistics/roguestats-backend/internal/service"
@@ -14,7 +15,7 @@ import (
 	"github.com/penguin-statistics/roguestats-backend/internal/x/logger/fxlogger"
 )
 
-func New(ctx appcontext.Ctx, additionalOpts ...fx.Option) *fx.App {
+func New(ctx appenv.Ctx, additionalOpts ...fx.Option) *fx.App {
 	conf, err := appconfig.Parse(ctx)
 	if err != nil {
 		panic(err)
@@ -27,6 +28,7 @@ func New(ctx appcontext.Ctx, additionalOpts ...fx.Option) *fx.App {
 	baseOpts := []fx.Option{
 		fx.WithLogger(fxlogger.Logger),
 		fx.Supply(conf),
+		middleware.Module(),
 		controller.Module(),
 		infra.Module(),
 		repo.Module(),

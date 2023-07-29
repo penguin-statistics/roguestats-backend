@@ -8,13 +8,13 @@ import (
 type RouteGroups struct {
 	fx.Out
 
-	APIV1    fiber.Router `name:"api-v1"`
+	Root     fiber.Router `name:"root"`
 	Internal fiber.Router `name:"internal"`
 }
 
 func CreateGroups(app *fiber.App) RouteGroups {
 	return RouteGroups{
-		APIV1:    app.Group("/api/v1"),
-		Internal: app.Group("/internal"),
+		Root:     app.Group("/"),
+		Internal: app.Group("/_"),
 	}
 }

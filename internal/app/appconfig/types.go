@@ -1,6 +1,8 @@
 package appconfig
 
 import (
+	"encoding/base64"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 )
@@ -18,4 +20,14 @@ func (c *ConfigLogLevel) Decode(value string) error {
 
 	*c = ConfigLogLevel(level)
 	return nil
+}
+
+type Base64EncodedJWTSecret []byte
+
+// ensure Base64EncodedJWTSecret implements envconfig.Decoder
+var _ envconfig.Decoder = (*Base64EncodedJWTSecret)(nil)
+
+func (c *Base64EncodedJWTSecret) Decode(value string) (err error) {
+	*c, err = base64.StdEncoding.DecodeString(value)
+	return err
 }

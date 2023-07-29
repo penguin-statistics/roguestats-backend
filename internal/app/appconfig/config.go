@@ -4,10 +4,10 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appcontext"
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
 )
 
-func Parse(ctx appcontext.Ctx) (*Config, error) {
+func Parse(ctx appenv.Ctx) (*Config, error) {
 	var conf ConfigSpec
 	if err := envconfig.Process("roguestats", &conf); err != nil {
 		return nil, err
@@ -15,6 +15,6 @@ func Parse(ctx appcontext.Ctx) (*Config, error) {
 
 	return &Config{
 		ConfigSpec: conf,
-		AppContext: ctx,
+		AppEnv:     ctx,
 	}, nil
 }

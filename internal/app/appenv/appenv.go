@@ -1,4 +1,4 @@
-package appcontext
+package appenv
 
 const (
 	EnvServer Env = iota

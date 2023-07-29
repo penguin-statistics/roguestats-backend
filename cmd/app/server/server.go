@@ -10,11 +10,11 @@ import (
 
 	"github.com/penguin-statistics/roguestats-backend/internal/app"
 	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appcontext"
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
 )
 
 func Run() {
-	app.New(appcontext.Declare(appcontext.EnvServer), fx.Invoke(run)).Run()
+	app.New(appenv.Declare(appenv.EnvServer), fx.Invoke(run)).Run()
 }
 
 func run(lc fx.Lifecycle, app *fiber.App, conf *appconfig.Config) {
@@ -24,6 +24,7 @@ func run(lc fx.Lifecycle, app *fiber.App, conf *appconfig.Config) {
 			if err != nil {
 				return err
 			}
+			log.Info().Str("address", conf.ServiceListenAddress).Msg("server started")
 
 			go func() {
 				if err := app.Listener(ln); err != nil {
