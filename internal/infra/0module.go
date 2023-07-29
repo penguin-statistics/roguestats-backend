@@ -3,7 +3,7 @@ package infra
 import (
 	"go.uber.org/fx"
 
-	"github.com/GalvinGao/gofiber-template/internal/infra/db"
+	"github.com/penguin-statistics/roguestats-backend/internal/infra/db"
 )
 
 func Module() fx.Option {

@@ -5,8 +5,8 @@ import (
 
 	"go.uber.org/fx"
 
-	"github.com/GalvinGao/gofiber-template/internal/app"
-	"github.com/GalvinGao/gofiber-template/internal/app/appcontext"
+	"github.com/penguin-statistics/roguestats-backend/internal/app"
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appcontext"
 )
 
 func Start(module fx.Option) {

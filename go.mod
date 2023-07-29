@@ -1,4 +1,4 @@
-module github.com/GalvinGao/gofiber-template
+module github.com/penguin-statistics/roguestats-backend
 
 go 1.19
 

@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
 
-	"github.com/GalvinGao/gofiber-template/internal/app/appconfig"
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
 )
 
 func Configure(conf *appconfig.Config) {

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/GalvinGao/gofiber-template/cmd/app"
+import "github.com/penguin-statistics/roguestats-backend/cmd/app"
 
 func main() {
 	app.Run()

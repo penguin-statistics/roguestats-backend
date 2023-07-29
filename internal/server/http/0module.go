@@ -3,7 +3,7 @@ package http
 import (
 	"go.uber.org/fx"
 
-	"github.com/GalvinGao/gofiber-template/internal/server/http/route"
+	"github.com/penguin-statistics/roguestats-backend/internal/server/http/route"
 )
 
 func Module() fx.Option {

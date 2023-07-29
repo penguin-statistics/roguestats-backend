@@ -5,7 +5,7 @@ import (
 
 	"github.com/uptrace/bun"
 
-	"github.com/GalvinGao/gofiber-template/internal/model"
+	"github.com/penguin-statistics/roguestats-backend/internal/model"
 )
 
 type Post struct {

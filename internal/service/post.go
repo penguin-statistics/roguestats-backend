@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/GalvinGao/gofiber-template/internal/model"
-	"github.com/GalvinGao/gofiber-template/internal/repo"
+	"github.com/penguin-statistics/roguestats-backend/internal/model"
+	"github.com/penguin-statistics/roguestats-backend/internal/repo"
 )
 
 type Post struct {

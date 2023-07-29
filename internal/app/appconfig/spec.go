@@ -1,7 +1,7 @@
 package appconfig
 
 import (
-	"github.com/GalvinGao/gofiber-template/internal/app/appcontext"
+	"github.com/penguin-statistics/roguestats-backend/internal/app/appcontext"
 )
 
 // ConfigSpec is the configuration specification.
