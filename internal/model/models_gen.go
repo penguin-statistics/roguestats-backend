@@ -10,7 +10,7 @@ type LoginInput struct {
 type User struct {
 	ID         string                 `json:"id" bun:"user_id"`
 	Name       string                 `json:"name"`
-	Email      string                 `json:"email"`
+	Email      *string                `json:"email,omitempty"`
 	Attributes map[string]interface{} `json:"attributes,omitempty"`
 	// User's encrypted credential
 	Credential string `json:"-"`

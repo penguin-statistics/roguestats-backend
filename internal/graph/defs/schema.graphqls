@@ -5,14 +5,14 @@ scalar Map
 ### Directives ###
 
 directive @public on FIELD_DEFINITION
-directive @private on FIELD_DEFINITION
+directive @private(userIdFieldName: String = "userId") on FIELD_DEFINITION
 
 ### Queries ###
 
 type User {
   id: ID! @goTag(key: "bun", value: "user_id")
   name: String!
-  email: String! @private
+  email: String @private(userIdFieldName: "id")
   attributes: Map
 }
 
