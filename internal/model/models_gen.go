@@ -2,9 +2,26 @@
 
 package model
 
+import (
+	"time"
+)
+
+type Event struct {
+	ID        string                 `json:"id" bun:"event_id"`
+	Content   map[string]interface{} `json:"content"`
+	UserID    string                 `json:"user_id" bun:"user_id"`
+	CreatedAt time.Time              `json:"created_at"`
+	UserAgent *string                `json:"user_agent,omitempty"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type NewEvent struct {
+	Content   map[string]interface{} `json:"content"`
+	UserAgent *string                `json:"user_agent,omitempty"`
 }
 
 type User struct {

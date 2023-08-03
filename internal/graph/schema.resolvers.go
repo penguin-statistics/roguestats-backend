@@ -6,6 +6,9 @@ package graph
 
 import (
 	"context"
+	"time"
+
+	"github.com/bwmarrin/snowflake"
 
 	"github.com/penguin-statistics/roguestats-backend/internal/model"
 )
@@ -13,6 +16,28 @@ import (
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.User, error) {
 	return r.AuthService.AuthByLoginInput(ctx, input)
+}
+
+// CreateEvent is the resolver for the createEvent field.
+func (r *mutationResolver) CreateEvent(ctx context.Context, input model.NewEvent) (*model.Event, error) {
+	// FIXME: should use a global snowflake node or something like an ID generator
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		return nil, err
+	}
+
+	event := &model.Event{
+		ID:        node.Generate().String(),
+		Content:   input.Content,
+		UserID:    "N/A", // FIXME: should use the real user ID from me
+		CreatedAt: time.Now(),
+		UserAgent: input.UserAgent,
+	}
+	err = r.EventService.CreateEvent(ctx, event)
+	if err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // Me is the resolver for the `me` field.

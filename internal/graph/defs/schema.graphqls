@@ -1,6 +1,7 @@
 ### Scalars ###
 
 scalar Map
+scalar Time
 
 ### Directives ###
 
@@ -16,6 +17,14 @@ type User {
   attributes: Map
 }
 
+type Event {
+  id: ID! @goTag(key: "bun", value: "event_id")
+  content: Map!
+  user_id: ID! @goTag(key: "bun", value: "user_id")
+  created_at: Time!
+  user_agent: String
+}
+
 type Query {
   me: User!
 }
@@ -27,8 +36,14 @@ input LoginInput {
   password: String!
 }
 
+input NewEvent {
+  content: Map!
+  user_agent: String
+}
+
 type Mutation {
   login(input: LoginInput!): User!
+  createEvent(input: NewEvent!): Event!
 }
 
 ### gqlgen Directives ###
