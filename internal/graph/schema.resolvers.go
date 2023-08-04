@@ -26,10 +26,15 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input model.NewEvent
 		return nil, err
 	}
 
+	user, err := r.AuthService.CurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	event := &model.Event{
 		ID:        node.Generate().String(),
 		Content:   input.Content,
-		UserID:    "N/A", // FIXME: should use the real user ID from me
+		UserID:    user.ID,
 		CreatedAt: time.Now(),
 		UserAgent: input.UserAgent,
 	}
