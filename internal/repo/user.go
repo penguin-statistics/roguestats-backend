@@ -6,7 +6,7 @@ import (
 	"github.com/uptrace/bun"
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 type User struct {

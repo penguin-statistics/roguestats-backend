@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 var (

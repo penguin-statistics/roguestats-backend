@@ -7,8 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appbundle"
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
+	"exusiai.dev/roguestats-backend/internal/app/appbundle"
+	"exusiai.dev/roguestats-backend/internal/app/appconfig"
 )
 
 var (

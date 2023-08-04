@@ -6,8 +6,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 
-	"github.com/penguin-statistics/roguestats-backend/cmd/app/cli/db"
-	"github.com/penguin-statistics/roguestats-backend/cmd/app/server"
+	"exusiai.dev/roguestats-backend/cmd/app/cli/db"
+	"exusiai.dev/roguestats-backend/cmd/app/server"
 )
 
 func Run() {

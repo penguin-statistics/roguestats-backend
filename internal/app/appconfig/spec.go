@@ -3,7 +3,7 @@ package appconfig
 import (
 	"time"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
+	"exusiai.dev/roguestats-backend/internal/app/appenv"
 )
 
 // ConfigSpec is the configuration specification.

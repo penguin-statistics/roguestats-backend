@@ -3,16 +3,16 @@ package app
 import (
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
-	"github.com/penguin-statistics/roguestats-backend/internal/controller"
-	"github.com/penguin-statistics/roguestats-backend/internal/infra"
-	"github.com/penguin-statistics/roguestats-backend/internal/middleware"
-	"github.com/penguin-statistics/roguestats-backend/internal/repo"
-	"github.com/penguin-statistics/roguestats-backend/internal/server"
-	"github.com/penguin-statistics/roguestats-backend/internal/service"
-	"github.com/penguin-statistics/roguestats-backend/internal/x/logger"
-	"github.com/penguin-statistics/roguestats-backend/internal/x/logger/fxlogger"
+	"exusiai.dev/roguestats-backend/internal/app/appconfig"
+	"exusiai.dev/roguestats-backend/internal/app/appenv"
+	"exusiai.dev/roguestats-backend/internal/controller"
+	"exusiai.dev/roguestats-backend/internal/infra"
+	"exusiai.dev/roguestats-backend/internal/middleware"
+	"exusiai.dev/roguestats-backend/internal/repo"
+	"exusiai.dev/roguestats-backend/internal/server"
+	"exusiai.dev/roguestats-backend/internal/service"
+	"exusiai.dev/roguestats-backend/internal/x/logger"
+	"exusiai.dev/roguestats-backend/internal/x/logger/fxlogger"
 )
 
 func New(ctx appenv.Ctx, additionalOpts ...fx.Option) *fx.App {

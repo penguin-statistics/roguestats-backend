@@ -8,8 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/fx"
 
-	cliapp "github.com/penguin-statistics/roguestats-backend/cmd/app/cli"
-	"github.com/penguin-statistics/roguestats-backend/internal/infra/db/migrations"
+	cliapp "exusiai.dev/roguestats-backend/cmd/app/cli"
+	"exusiai.dev/roguestats-backend/internal/infra/db/migrations"
 )
 
 type dbCommandDeps struct {

@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/appcontext"
+	"exusiai.dev/roguestats-backend/internal/appcontext"
 )
 
 type Directive struct {

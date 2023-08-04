@@ -5,8 +5,8 @@ import (
 
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/model"
-	"github.com/penguin-statistics/roguestats-backend/internal/repo"
+	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/repo"
 )
 
 type User struct {

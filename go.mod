@@ -1,4 +1,4 @@
-module github.com/penguin-statistics/roguestats-backend
+module exusiai.dev/roguestats-backend
 
 go 1.19
 

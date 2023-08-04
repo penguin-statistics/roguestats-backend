@@ -4,7 +4,7 @@ import (
 	"github.com/uptrace/bun"
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/service"
+	"exusiai.dev/roguestats-backend/internal/service"
 )
 
 //go:generate go run github.com/99designs/gqlgen generate

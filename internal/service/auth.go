@@ -9,10 +9,10 @@ import (
 	"go.uber.org/fx"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
-	"github.com/penguin-statistics/roguestats-backend/internal/appcontext"
-	"github.com/penguin-statistics/roguestats-backend/internal/model"
-	"github.com/penguin-statistics/roguestats-backend/internal/repo"
+	"exusiai.dev/roguestats-backend/internal/app/appconfig"
+	"exusiai.dev/roguestats-backend/internal/appcontext"
+	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/repo"
 )
 
 type Auth struct {
