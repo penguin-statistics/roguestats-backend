@@ -8,9 +8,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
-
 	"exusiai.dev/roguestats-backend/internal/model"
+	"github.com/bwmarrin/snowflake"
 )
 
 // Login is the resolver for the login field.
@@ -50,13 +49,21 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	return r.AuthService.CurrentUser(ctx)
 }
 
+// Research is the resolver for the research field.
+func (r *queryResolver) Research(ctx context.Context, id string) (*model.Research, error) {
+	return r.ResearchService.GetResearchByID(ctx, id)
+}
+
+// Researches is the resolver for the researches field.
+func (r *queryResolver) Researches(ctx context.Context) ([]*model.Research, error) {
+	return r.ResearchService.GetAllResearch(ctx)
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-type (
-	mutationResolver struct{ *Resolver }
-	queryResolver    struct{ *Resolver }
-)
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

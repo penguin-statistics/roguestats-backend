@@ -19,14 +19,23 @@ type User {
 
 type Event {
   id: ID! @goTag(key: "bun", value: "event_id")
+  research_id: ID! @goTag(key: "bun", value: "research_id")
   content: Map!
   user_id: ID! @goTag(key: "bun", value: "user_id")
   created_at: Time!
   user_agent: String
 }
 
+type Research {
+  id: ID! @goTag(key: "bun", value: "research_id")
+  name: String!
+  schema: Map!
+}
+
 type Query {
   me: User!
+  research(id: ID!): Research!
+  researches: [Research!]!
 }
 
 ### Mutations ###

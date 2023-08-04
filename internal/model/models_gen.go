@@ -7,11 +7,12 @@ import (
 )
 
 type Event struct {
-	ID        string                 `json:"id" bun:"event_id"`
-	Content   map[string]interface{} `json:"content"`
-	UserID    string                 `json:"user_id" bun:"user_id"`
-	CreatedAt time.Time              `json:"created_at"`
-	UserAgent *string                `json:"user_agent,omitempty"`
+	ID         string                 `json:"id" bun:"event_id"`
+	ResearchID string                 `json:"research_id" bun:"research_id"`
+	Content    map[string]interface{} `json:"content"`
+	UserID     string                 `json:"user_id" bun:"user_id"`
+	CreatedAt  time.Time              `json:"created_at"`
+	UserAgent  *string                `json:"user_agent,omitempty"`
 }
 
 type LoginInput struct {
@@ -22,6 +23,12 @@ type LoginInput struct {
 type NewEvent struct {
 	Content   map[string]interface{} `json:"content"`
 	UserAgent *string                `json:"user_agent,omitempty"`
+}
+
+type Research struct {
+	ID     string                 `json:"id" bun:"research_id"`
+	Name   string                 `json:"name"`
+	Schema map[string]interface{} `json:"schema"`
 }
 
 type User struct {
