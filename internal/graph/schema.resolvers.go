@@ -10,7 +10,7 @@ import (
 
 	"github.com/bwmarrin/snowflake"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 // Login is the resolver for the login field.
@@ -56,5 +56,7 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+type (
+	mutationResolver struct{ *Resolver }
+	queryResolver    struct{ *Resolver }
+)

@@ -5,8 +5,8 @@ import (
 
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app"
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
+	"exusiai.dev/roguestats-backend/internal/app"
+	"exusiai.dev/roguestats-backend/internal/app/appenv"
 )
 
 func Start(module fx.Option) {

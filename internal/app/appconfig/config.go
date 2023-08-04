@@ -4,7 +4,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appenv"
+	"exusiai.dev/roguestats-backend/internal/app/appenv"
 )
 
 func Parse(ctx appenv.Ctx) (*Config, error) {

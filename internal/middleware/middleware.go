@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/service"
+	"exusiai.dev/roguestats-backend/internal/service"
 )
 
 type Middleware struct {

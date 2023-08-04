@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/app/appconfig"
+	"exusiai.dev/roguestats-backend/internal/app/appconfig"
 )
 
 func Configure(conf *appconfig.Config) {

@@ -12,9 +12,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
-	"github.com/penguin-statistics/roguestats-backend/internal/graph"
-	"github.com/penguin-statistics/roguestats-backend/internal/middleware"
-	"github.com/penguin-statistics/roguestats-backend/internal/service"
+	"exusiai.dev/roguestats-backend/internal/graph"
+	"exusiai.dev/roguestats-backend/internal/middleware"
+	"exusiai.dev/roguestats-backend/internal/service"
 )
 
 type GraphQL struct {

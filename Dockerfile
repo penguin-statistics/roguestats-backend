@@ -19,7 +19,7 @@ RUN go mod download
 COPY . .
 
 # inject versioning information & build the binary
-RUN export BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ"); go build -o app -ldflags "-X github.com/penguin-statistics/roguestats-backend/internal/app/appbundle.Version=$VERSION -X github.com/penguin-statistics/roguestats-backend/internal/app/appbundle.BuildTimeString=$BUILD_TIME" .
+RUN export BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ"); go build -o app -ldflags "-X exusiai.dev/roguestats-backend/internal/app/appbundle.Version=$VERSION -X exusiai.dev/roguestats-backend/internal/app/appbundle.BuildTimeString=$BUILD_TIME" .
 
 # runner
 FROM base AS runner
