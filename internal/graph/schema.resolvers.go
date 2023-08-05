@@ -6,13 +6,6 @@ package graph
 
 import (
 	"context"
-	"database/sql"
-	"encoding/json"
-	"errors"
-	"time"
-
-	"github.com/bwmarrin/snowflake"
-	"github.com/santhosh-tekuri/jsonschema/v5"
 
 	"exusiai.dev/roguestats-backend/internal/model"
 )
@@ -24,52 +17,7 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 
 // CreateEvent is the resolver for the createEvent field.
 func (r *mutationResolver) CreateEvent(ctx context.Context, input model.NewEvent) (*model.Event, error) {
-	// FIXME: should use a global snowflake node or something like an ID generator
-	node, err := snowflake.NewNode(1)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := r.AuthService.CurrentUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// get schema from research
-	research, err := r.ResearchService.GetResearchByID(ctx, input.ResearchID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.New("research not found")
-		}
-		return nil, err
-	}
-
-	// validate event json
-	schema, err := json.Marshal(research.Schema)
-	if err != nil {
-		return nil, err
-	}
-	sch, err := jsonschema.CompileString("schema.json", string(schema))
-	if err != nil {
-		return nil, err
-	}
-	if err = sch.Validate(input.Content); err != nil {
-		return nil, err
-	}
-
-	event := &model.Event{
-		ID:         node.Generate().String(),
-		ResearchID: input.ResearchID,
-		Content:    input.Content,
-		UserID:     user.ID,
-		CreatedAt:  time.Now(),
-		UserAgent:  input.UserAgent,
-	}
-	err = r.EventService.CreateEvent(ctx, event)
-	if err != nil {
-		return nil, err
-	}
-	return event, nil
+	return r.EventService.CreateEventFromInput(ctx, &input)
 }
 
 // Me is the resolver for the `me` field.
