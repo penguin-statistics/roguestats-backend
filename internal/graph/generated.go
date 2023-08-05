@@ -3324,7 +3324,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"content", "user_agent"}
+	fieldsInOrder := [...]string{"content", "research_id", "user_agent"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3340,6 +3340,15 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 				return it, err
 			}
 			it.Content = data
+		case "research_id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("research_id"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ResearchID = data
 		case "user_agent":
 			var err error
 

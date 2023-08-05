@@ -47,6 +47,7 @@ input LoginInput {
 
 input NewEvent {
   content: Map!
+  research_id: String!
   user_agent: String
 }
 

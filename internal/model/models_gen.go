@@ -21,8 +21,9 @@ type LoginInput struct {
 }
 
 type NewEvent struct {
-	Content   map[string]interface{} `json:"content"`
-	UserAgent *string                `json:"user_agent,omitempty"`
+	Content    map[string]interface{} `json:"content"`
+	ResearchID string                 `json:"research_id"`
+	UserAgent  *string                `json:"user_agent,omitempty"`
 }
 
 type Research struct {

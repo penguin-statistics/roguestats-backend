@@ -6,10 +6,15 @@ package graph
 
 import (
 	"context"
+	"database/sql"
+	"encoding/json"
+	"errors"
 	"time"
 
-	"exusiai.dev/roguestats-backend/internal/model"
 	"github.com/bwmarrin/snowflake"
+	"github.com/santhosh-tekuri/jsonschema/v5"
+
+	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 // Login is the resolver for the login field.
@@ -30,12 +35,35 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input model.NewEvent
 		return nil, err
 	}
 
+	// get schema from research
+	research, err := r.ResearchService.GetResearchByID(ctx, input.ResearchID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("research not found")
+		}
+		return nil, err
+	}
+
+	// validate event json
+	schema, err := json.Marshal(research.Schema)
+	if err != nil {
+		return nil, err
+	}
+	sch, err := jsonschema.CompileString("schema.json", string(schema))
+	if err != nil {
+		return nil, err
+	}
+	if err = sch.Validate(input.Content); err != nil {
+		return nil, err
+	}
+
 	event := &model.Event{
-		ID:        node.Generate().String(),
-		Content:   input.Content,
-		UserID:    user.ID,
-		CreatedAt: time.Now(),
-		UserAgent: input.UserAgent,
+		ID:         node.Generate().String(),
+		ResearchID: input.ResearchID,
+		Content:    input.Content,
+		UserID:     user.ID,
+		CreatedAt:  time.Now(),
+		UserAgent:  input.UserAgent,
 	}
 	err = r.EventService.CreateEvent(ctx, event)
 	if err != nil {
