@@ -7,7 +7,7 @@ import (
 type ExprFunction struct {
 }
 
-// Public methods here will be available in the expression environment
+// Public methods here will be available in the expression environment. Return type must be interface{} and error.
 
 func (e ExprFunction) FlattenDropTickets(dropRecruitTickets interface{}) (interface{}, error) {
 	if dropRecruitTickets == nil {
@@ -41,6 +41,19 @@ func (e ExprFunction) MapTotemArrayToValues(totemArray interface{}) (interface{}
 			return nil, errors.New("invalid totem " + totem)
 		}
 		results = append(results, totemValueMap[totem])
+	}
+	return results, nil
+}
+
+func (e ExprFunction) MapTotemArrayToColors(totemArray interface{}) (interface{}, error) {
+	if totemArray == nil {
+		return nil, nil
+	}
+
+	results := make([]interface{}, 0)
+	for _, totemInterface := range totemArray.([]interface{}) {
+		totem := totemInterface.(string)
+		results = append(results, totem[len(totem)-4:len(totem)-3])
 	}
 	return results, nil
 }
