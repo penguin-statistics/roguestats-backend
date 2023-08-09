@@ -58,6 +58,30 @@ func (e ExprFunction) MapTotemArrayToColors(totemArray interface{}) (interface{}
 	return results, nil
 }
 
+func (e ExprFunction) MapRecruitTicketsToOperatorClasses(dropRecruitTickets interface{}) (interface{}, error) {
+	if dropRecruitTickets == nil {
+		return nil, nil
+	}
+
+	mapping := GetExprCommonData().GetRecruitTicketOperatorClassMap()
+	classes := make([]interface{}, 0)
+	slice, _ := dropRecruitTickets.([]interface{})
+	for _, ticketsForOneDropBox := range slice {
+		classSet := make(map[string]interface{})
+		innerSlice, _ := ticketsForOneDropBox.([]interface{})
+		for _, ticket := range innerSlice {
+			classNames := mapping[ticket.(string)]
+			for _, className := range classNames {
+				classSet[className] = nil
+			}
+		}
+		for class := range classSet {
+			classes = append(classes, class)
+		}
+	}
+	return classes, nil
+}
+
 func convertToSliceOfSliceString(input interface{}) ([][]string, error) {
 	result := [][]string{}
 	if slice, ok := input.([]interface{}); ok {
