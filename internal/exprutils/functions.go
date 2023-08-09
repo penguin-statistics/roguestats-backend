@@ -4,7 +4,12 @@ import (
 	"errors"
 )
 
-func FlattenDropTickets(dropRecruitTickets interface{}) (interface{}, error) {
+type ExprFunction struct {
+}
+
+// Public methods here will be available in the expression environment
+
+func (e ExprFunction) FlattenDropTickets(dropRecruitTickets interface{}) (interface{}, error) {
 	if dropRecruitTickets == nil {
 		return nil, nil
 	}

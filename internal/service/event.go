@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/antonmedv/expr"
 	"github.com/bwmarrin/snowflake"
 	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
@@ -109,15 +108,8 @@ func (s Event) getEventsWithFilter(ctx context.Context, filterInput string) ([]*
 }
 
 func (s Event) mapEventToResult(event *model.Event, resultMappingInput string) ([]interface{}, error) {
-	env := map[string]interface{}{
-		"content":            event.Content,
-		"flattenDropTickets": exprutils.FlattenDropTickets,
-	}
-	program, err := expr.Compile(resultMappingInput, expr.Env(env))
-	if err != nil {
-		return nil, err
-	}
-	output, err := expr.Run(program, env)
+	exprRunner := exprutils.GetExprRunner()
+	output, err := exprRunner.RunCode(resultMappingInput, exprRunner.PrepareEnv(event))
 	if err != nil {
 		return nil, err
 	}
