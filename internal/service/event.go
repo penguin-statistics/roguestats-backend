@@ -4,13 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"reflect"
 	"time"
 
+	"github.com/antonmedv/expr"
 	"github.com/bwmarrin/snowflake"
 	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/fx"
 
+	"exusiai.dev/roguestats-backend/internal/exprutils"
 	"exusiai.dev/roguestats-backend/internal/model"
 	"exusiai.dev/roguestats-backend/internal/repo"
 )
@@ -41,6 +45,100 @@ func (s Event) CreateEventFromInput(ctx context.Context, input *model.NewEvent) 
 		return nil, err
 	}
 	return event, nil
+}
+
+/**
+ * CalculateStats filters events by filterInput and maps every event to a result using resultMappingInput, then group by result and count
+ * @param {string} filterInput can be jsonLogic or expr expression, depends on the filter implementation
+ * @param {string} resultMappingInput must be an expr expression
+ */
+func (s Event) CalculateStats(ctx context.Context, filterInput string, resultMappingInput string) (*model.GroupCountResult, error) {
+	// filter events
+	filteredEvents, err := s.getEventsWithFilter(ctx, filterInput)
+	if err != nil {
+		return nil, err
+	}
+
+	categoryCountMap := make(map[interface{}]int)
+
+	totalCount := 0
+	for _, event := range filteredEvents {
+		// map event to result
+		results, err := s.mapEventToResult(event, resultMappingInput)
+		if err != nil {
+			return nil, err
+		}
+		if results == nil {
+			continue
+		}
+		totalCount++
+		// group by result and count
+		for _, result := range results {
+			categoryCountMap[result]++
+		}
+	}
+
+	// convert map into array
+	results := make([]*model.CategoryCount, 0)
+	for category, count := range categoryCountMap {
+		results = append(results, &model.CategoryCount{
+			Category: category,
+			Count:    count,
+		})
+	}
+
+	groupCountResult := &model.GroupCountResult{
+		Results: results,
+		Total:   totalCount,
+	}
+	return groupCountResult, nil
+}
+
+/**
+ * GetEventsWithFilter filters events by filterInput. For current implementation, we query the database for all events and filter them in memory.
+ * In the future, we should implement a filter that can be translated into a SQL query.
+ * @param {string} filterInput For current implementation, we use jsonLogic
+ */
+func (s Event) getEventsWithFilter(ctx context.Context, filterInput string) ([]*model.Event, error) {
+	events, err := s.GetEvents(ctx)
+	if err != nil {
+		return nil, err
+	}
+	// TODO: implement filter
+	return events, nil
+}
+
+func (s Event) mapEventToResult(event *model.Event, resultMappingInput string) ([]interface{}, error) {
+	env := map[string]interface{}{
+		"content":            event.Content,
+		"flattenDropTickets": exprutils.FlattenDropTickets,
+	}
+	program, err := expr.Compile(resultMappingInput, expr.Env(env))
+	if err != nil {
+		return nil, err
+	}
+	output, err := expr.Run(program, env)
+	if err != nil {
+		return nil, err
+	}
+	if output == nil {
+		return nil, nil
+	}
+
+	mappedResults := make([]interface{}, 0)
+	if isArray(output) {
+		mappedResults = output.([]interface{})
+	} else {
+		mappedResults = append(mappedResults, output)
+	}
+	// if result is not hashable, convert it to string
+	for i, result := range mappedResults {
+		if !isHashable(result) {
+			mappedResults[i] = fmt.Sprintf("%v", result)
+		}
+	}
+
+	return mappedResults, nil
 }
 
 func (s Event) convertFromEventInputToEvent(ctx context.Context, input *model.NewEvent) (*model.Event, error) {
@@ -86,4 +184,18 @@ func (s Event) convertFromEventInputToEvent(ctx context.Context, input *model.Ne
 		UserAgent:  input.UserAgent,
 	}
 	return event, nil
+}
+
+func isHashable(v interface{}) bool {
+	switch reflect.TypeOf(v).Kind() {
+	case reflect.Slice, reflect.Map, reflect.Func:
+		return false
+	default:
+		return true
+	}
+}
+
+func isArray(input interface{}) bool {
+	kind := reflect.TypeOf(input).Kind()
+	return kind == reflect.Array || kind == reflect.Slice
 }

@@ -2,6 +2,7 @@
 
 scalar Map
 scalar Time
+scalar Any
 
 ### Directives ###
 
@@ -32,10 +33,32 @@ type Research {
   schema: Map!
 }
 
+type Topic {
+  id: ID @goTag(key: "bun", value: "topic_id")
+  filterInput: String!
+  resultMappingInput: String!
+}
+
+type CategoryCount {
+  category: Any!
+  count: Int!
+}
+
+type GroupCountResult {
+  results: [CategoryCount!]!
+  total: Int!
+}
+
+input GroupCountInput {
+  filterInput: String!
+  resultMappingInput: String!
+}
+
 type Query {
   me: User!
   research(id: ID!): Research!
   researches: [Research!]!
+  groupCount(input: GroupCountInput!): GroupCountResult!
 }
 
 ### Mutations ###

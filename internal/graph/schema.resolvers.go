@@ -35,6 +35,15 @@ func (r *queryResolver) Researches(ctx context.Context) ([]*model.Research, erro
 	return r.ResearchService.GetAllResearch(ctx)
 }
 
+// GroupCount is the resolver for the groupCount field.
+func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
+	groupCountResult, err := r.EventService.CalculateStats(ctx, input.FilterInput, input.ResultMappingInput)
+	if err != nil {
+		return nil, err
+	}
+	return groupCountResult, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

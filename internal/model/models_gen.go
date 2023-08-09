@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type CategoryCount struct {
+	Category interface{} `json:"category"`
+	Count    int         `json:"count"`
+}
+
 type Event struct {
 	ID         string                 `json:"id" bun:"event_id"`
 	ResearchID string                 `json:"research_id" bun:"research_id"`
@@ -13,6 +18,16 @@ type Event struct {
 	UserID     string                 `json:"user_id" bun:"user_id"`
 	CreatedAt  time.Time              `json:"created_at"`
 	UserAgent  *string                `json:"user_agent,omitempty"`
+}
+
+type GroupCountInput struct {
+	FilterInput        string `json:"filterInput"`
+	ResultMappingInput string `json:"resultMappingInput"`
+}
+
+type GroupCountResult struct {
+	Results []*CategoryCount `json:"results"`
+	Total   int              `json:"total"`
 }
 
 type LoginInput struct {
@@ -30,6 +45,12 @@ type Research struct {
 	ID     string                 `json:"id" bun:"research_id"`
 	Name   string                 `json:"name"`
 	Schema map[string]interface{} `json:"schema"`
+}
+
+type Topic struct {
+	ID                 *string `json:"id,omitempty" bun:"topic_id"`
+	FilterInput        string  `json:"filterInput"`
+	ResultMappingInput string  `json:"resultMappingInput"`
 }
 
 type User struct {
