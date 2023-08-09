@@ -15,23 +15,23 @@ type ExprRunner struct {
 	v         vm.VM
 }
 
-var instance *ExprRunner
-var once sync.Once
+var exprRunnerInstance *ExprRunner
+var exprRunnerOnce sync.Once
 
 func GetExprRunner() *ExprRunner {
-	once.Do(func() {
+	exprRunnerOnce.Do(func() {
 		methods := getMethods(reflect.TypeOf(ExprFunction{}))
 		methodEnv := make(map[string]interface{})
 		exprFunction := ExprFunction{}
 		for _, method := range methods {
 			methodEnv[method] = reflect.ValueOf(exprFunction).MethodByName(method).Interface()
 		}
-		instance = &ExprRunner{
+		exprRunnerInstance = &ExprRunner{
 			methodEnv: methodEnv,
 			v:         vm.VM{},
 		}
 	})
-	return instance
+	return exprRunnerInstance
 }
 
 func (e ExprRunner) PrepareEnv(event *model.Event) map[string]interface{} {
@@ -60,7 +60,9 @@ func getMethods(t reflect.Type) []string {
 	var methods []string
 	for i := 0; i < t.NumMethod(); i++ {
 		method := t.Method(i)
-		methods = append(methods, method.Name)
+		if method.PkgPath == "" {
+			methods = append(methods, method.Name)
+		}
 	}
 	return methods
 }

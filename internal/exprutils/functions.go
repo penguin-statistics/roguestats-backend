@@ -28,6 +28,23 @@ func (e ExprFunction) FlattenDropTickets(dropRecruitTickets interface{}) (interf
 	return elements, nil
 }
 
+func (e ExprFunction) MapTotemArrayToValues(totemArray interface{}) (interface{}, error) {
+	if totemArray == nil {
+		return nil, nil
+	}
+
+	results := make([]interface{}, 0)
+	totemValueMap := GetExprCommonData().GetTotemValueMap()
+	for _, totemInterface := range totemArray.([]interface{}) {
+		totem := totemInterface.(string)
+		if _, ok := totemValueMap[totem]; !ok {
+			return nil, errors.New("invalid totem " + totem)
+		}
+		results = append(results, totemValueMap[totem])
+	}
+	return results, nil
+}
+
 func convertToSliceOfSliceString(input interface{}) ([][]string, error) {
 	result := [][]string{}
 	if slice, ok := input.([]interface{}); ok {
