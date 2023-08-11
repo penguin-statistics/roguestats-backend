@@ -31,6 +31,11 @@ func Command() *cli.Command {
 						if err != nil {
 							return err
 						}
+					} else if importType == "rest" {
+						err := NewRestCSVImport(path).Run()
+						if err != nil {
+							return err
+						}
 					} else {
 						return cli.Exit("Unknown import type", 1)
 					}

@@ -95,6 +95,18 @@ func (e ExprFunction) MapIncidentTypeToName(incidentType interface{}) (interface
 	return mapping[incidentType.(string)], nil
 }
 
+func (e ExprFunction) MapRestChoicesToNames(restChoices interface{}) (interface{}, error) {
+	if restChoices == nil {
+		return nil, nil
+	}
+	mapping := GetExprCommonData().GetRestChoicesNameMap()
+	results := make([]interface{}, 0)
+	for _, choice := range restChoices.([]interface{}) {
+		results = append(results, mapping[choice.(string)])
+	}
+	return results, nil
+}
+
 func convertToSliceOfSliceString(input interface{}) ([][]string, error) {
 	result := [][]string{}
 	if slice, ok := input.([]interface{}); ok {

@@ -7,6 +7,7 @@ import (
 type ExprCommonData struct {
 	recruitTicketOperatorClassMap map[string][]string
 	incidentTypeNameMap           map[string]string
+	restChoicesNameMap            map[string]string
 }
 
 var exprCommonDataInstance *ExprCommonData
@@ -17,6 +18,7 @@ func GetExprCommonData() *ExprCommonData {
 		exprCommonDataInstance = &ExprCommonData{
 			recruitTicketOperatorClassMap: initRecruitTicketOperatorClassMap(),
 			incidentTypeNameMap:           initIncidentTypeNameMap(),
+			restChoicesNameMap:            initRestChoicesNameMap(),
 		}
 	})
 	return exprCommonDataInstance
@@ -28,6 +30,10 @@ func (e ExprCommonData) GetRecruitTicketOperatorClassMap() map[string][]string {
 
 func (e ExprCommonData) GetIncidentTypeNameMap() map[string]string {
 	return e.incidentTypeNameMap
+}
+
+func (e ExprCommonData) GetRestChoicesNameMap() map[string]string {
+	return e.restChoicesNameMap
 }
 
 func initRecruitTicketOperatorClassMap() map[string][]string {
@@ -84,5 +90,16 @@ func initIncidentTypeNameMap() map[string]string {
 		"ro3_bat7":    "北风女巫",
 		"ro3_bat8":    "时刻警惕",
 		"ro3_bat9":    "猜疑链",
+	}
+}
+
+func initRestChoicesNameMap() map[string]string {
+	return map[string]string{
+		"ro3_rest_1": "稍事休息",
+		"ro3_rest_2": "强化训练",
+		"ro3_rest_3": "鼓舞士气",
+		"ro3_rest_4": "重整编制",
+		"ro3_rest_5": "维护设备",
+		"ro3_rest_6": "求得启示",
 	}
 }

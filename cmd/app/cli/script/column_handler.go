@@ -121,6 +121,23 @@ func (c ColumnHandler) HandleIncidentType(input string) string {
 	return val
 }
 
+func (c ColumnHandler) HandleRestChoices(input string) []string {
+	if input == "" {
+		return nil
+	}
+	choices := make([]string, 3)
+	strs := strings.Split(input, ",")
+	for i, str := range strs {
+		str = strings.TrimSpace(str)
+		val, ok := initRestChoicesMap()[str]
+		if !ok {
+			continue
+		}
+		choices[i] = val
+	}
+	return choices
+}
+
 func initBandMap() map[string]string {
 	return map[string]string{
 		"指挥":     "rogue_3_band_1",
@@ -246,5 +263,16 @@ func initIncidentTypeMap() map[string]string {
 		"北风女巫":          "ro3_bat7",
 		"时刻警惕":          "ro3_bat8",
 		"猜疑链":           "ro3_bat9",
+	}
+}
+
+func initRestChoicesMap() map[string]string {
+	return map[string]string{
+		"3生命上限":   "ro3_rest_1",
+		"高级物资配给券": "ro3_rest_2",
+		"3希望":     "ro3_rest_3",
+		"可携带干员+1": "ro3_rest_4",
+		"抗干扰+1":   "ro3_rest_5",
+		"获得密文板":   "ro3_rest_6",
 	}
 }
