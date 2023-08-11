@@ -26,6 +26,11 @@ func Command() *cli.Command {
 						if err != nil {
 							return err
 						}
+					} else if importType == "incident" {
+						err := NewIncidentCSVImport(path).Run()
+						if err != nil {
+							return err
+						}
 					} else {
 						return cli.Exit("Unknown import type", 1)
 					}
