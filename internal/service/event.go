@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"sort"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
@@ -89,6 +90,9 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
 			Count:    count,
 		})
 	}
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Count > results[j].Count
+	})
 
 	groupCountResult := &model.GroupCountResult{
 		Results: results,
