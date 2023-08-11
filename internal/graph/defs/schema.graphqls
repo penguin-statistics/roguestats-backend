@@ -50,6 +50,7 @@ type GroupCountResult {
 }
 
 input GroupCountInput {
+  research_id: ID!
   filterInput: String!
   resultMappingInput: String!
 }

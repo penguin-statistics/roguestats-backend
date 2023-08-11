@@ -21,6 +21,7 @@ type Event struct {
 }
 
 type GroupCountInput struct {
+	ResearchID         string `json:"research_id"`
 	FilterInput        string `json:"filterInput"`
 	ResultMappingInput string `json:"resultMappingInput"`
 }

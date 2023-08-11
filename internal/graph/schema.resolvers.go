@@ -37,7 +37,7 @@ func (r *queryResolver) Researches(ctx context.Context) ([]*model.Research, erro
 
 // GroupCount is the resolver for the groupCount field.
 func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
-	groupCountResult, err := r.EventService.CalculateStats(ctx, input.FilterInput, input.ResultMappingInput)
+	groupCountResult, err := r.EventService.CalculateStats(ctx, input.ResearchID, input.FilterInput, input.ResultMappingInput)
 	if err != nil {
 		return nil, err
 	}

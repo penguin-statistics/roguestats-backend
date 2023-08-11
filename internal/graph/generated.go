@@ -3753,13 +3753,22 @@ func (ec *executionContext) unmarshalInputGroupCountInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"filterInput", "resultMappingInput"}
+	fieldsInOrder := [...]string{"research_id", "filterInput", "resultMappingInput"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "research_id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("research_id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ResearchID = data
 		case "filterInput":
 			var err error
 

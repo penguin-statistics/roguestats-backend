@@ -29,3 +29,14 @@ func (r *Event) GetEvents(ctx context.Context) ([]*model.Event, error) {
 
 	return events, err
 }
+
+func (r *Event) GetEventsByResearchID(ctx context.Context, researchID string) ([]*model.Event, error) {
+	var events []*model.Event
+
+	err := r.DB.NewSelect().
+		Model(&events).
+		Where("research_id = ?", researchID).
+		Scan(ctx)
+
+	return events, err
+}

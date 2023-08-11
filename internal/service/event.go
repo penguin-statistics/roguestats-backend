@@ -34,6 +34,10 @@ func (s Event) GetEvents(ctx context.Context) ([]*model.Event, error) {
 	return s.EventRepo.GetEvents(ctx)
 }
 
+func (s Event) GetEventsByResearchID(ctx context.Context, researchID string) ([]*model.Event, error) {
+	return s.EventRepo.GetEventsByResearchID(ctx, researchID)
+}
+
 func (s Event) CreateEventFromInput(ctx context.Context, input *model.NewEvent) (*model.Event, error) {
 	event, err := s.convertFromEventInputToEvent(ctx, input)
 	if err != nil {
@@ -51,9 +55,9 @@ func (s Event) CreateEventFromInput(ctx context.Context, input *model.NewEvent) 
  * @param {string} filterInput can be jsonLogic or expr expression, depends on the filter implementation
  * @param {string} resultMappingInput must be an expr expression
  */
-func (s Event) CalculateStats(ctx context.Context, filterInput string, resultMappingInput string) (*model.GroupCountResult, error) {
+func (s Event) CalculateStats(ctx context.Context, researchID string, filterInput string, resultMappingInput string) (*model.GroupCountResult, error) {
 	// filter events
-	filteredEvents, err := s.getEventsWithFilter(ctx, filterInput)
+	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, filterInput)
 	if err != nil {
 		return nil, err
 	}
@@ -96,15 +100,31 @@ func (s Event) CalculateStats(ctx context.Context, filterInput string, resultMap
 /**
  * GetEventsWithFilter filters events by filterInput. For current implementation, we query the database for all events and filter them in memory.
  * In the future, we should implement a filter that can be translated into a SQL query.
- * @param {string} filterInput For current implementation, we use jsonLogic
+ * @param {string} filterInput For current implementation, we use expr
  */
-func (s Event) getEventsWithFilter(ctx context.Context, filterInput string) ([]*model.Event, error) {
-	events, err := s.GetEvents(ctx)
+func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filterInput string) ([]*model.Event, error) {
+	events, err := s.GetEventsByResearchID(ctx, researchID)
 	if err != nil {
 		return nil, err
 	}
-	// TODO: implement filter
-	return events, nil
+	if filterInput == "" {
+		return events, nil
+	}
+	exprRunner := exprutils.GetExprRunner()
+	filteredEvents := make([]*model.Event, 0)
+	for _, event := range events {
+		output, err := exprRunner.RunCode(filterInput, exprRunner.PrepareEnv(event))
+		if err != nil {
+			return nil, err
+		}
+		if output == nil {
+			continue
+		}
+		if output.(bool) {
+			filteredEvents = append(filteredEvents, event)
+		}
+	}
+	return filteredEvents, nil
 }
 
 func (s Event) mapEventToResult(event *model.Event, resultMappingInput string) ([]interface{}, error) {
