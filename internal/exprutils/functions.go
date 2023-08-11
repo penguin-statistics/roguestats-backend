@@ -87,6 +87,14 @@ func (e ExprFunction) MapRecruitTicketsToOperatorClasses(dropRecruitTickets inte
 	return classes, nil
 }
 
+func (e ExprFunction) MapIncidentTypeToName(incidentType interface{}) (interface{}, error) {
+	if incidentType == nil {
+		return nil, nil
+	}
+	mapping := GetExprCommonData().GetIncidentTypeNameMap()
+	return mapping[incidentType.(string)], nil
+}
+
 func convertToSliceOfSliceString(input interface{}) ([][]string, error) {
 	result := [][]string{}
 	if slice, ok := input.([]interface{}); ok {
