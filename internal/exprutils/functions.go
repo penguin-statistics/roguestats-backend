@@ -34,13 +34,18 @@ func (e ExprFunction) MapTotemArrayToValues(totemArray interface{}) (interface{}
 	}
 
 	results := make([]interface{}, 0)
-	totemValueMap := GetExprCommonData().GetTotemValueMap()
 	for _, totemInterface := range totemArray.([]interface{}) {
 		totem := totemInterface.(string)
-		if _, ok := totemValueMap[totem]; !ok {
-			return nil, errors.New("invalid totem " + totem)
+		lastChar := totem[len(totem)-1:]
+		var value int
+		if lastChar == "1" || lastChar == "2" || lastChar == "3" {
+			value = 8
+		} else if lastChar == "4" || lastChar == "5" {
+			value = 12
+		} else if lastChar == "6" {
+			value = 16
 		}
-		results = append(results, totemValueMap[totem])
+		results = append(results, value)
 	}
 	return results, nil
 }
