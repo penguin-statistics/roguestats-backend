@@ -14,6 +14,8 @@ type ColumnHandler struct {
 	recruitTicketMap map[string]string
 	totemMap         map[string]string
 	incidentTypeMap  map[string]string
+	variationMap     map[string]string
+	layoutMap        map[string]string
 }
 
 var columnHandlerInstance *ColumnHandler
@@ -27,6 +29,8 @@ func GetColumnHandler() *ColumnHandler {
 			recruitTicketMap: initRecruitTicketMap(),
 			totemMap:         initTotemMap(),
 			incidentTypeMap:  initIncidentTypeMap(),
+			variationMap:     initVariaionMap(),
+			layoutMap:        initLayoutMap(),
 		}
 	})
 	return columnHandlerInstance
@@ -136,6 +140,22 @@ func (c ColumnHandler) HandleRestChoices(input string) []string {
 		choices[i] = val
 	}
 	return choices
+}
+
+func (c ColumnHandler) HandleVariation(input string) string {
+	val, ok := c.variationMap[input]
+	if !ok {
+		return ""
+	}
+	return val
+}
+
+func (c ColumnHandler) HandleLayout(input string) string {
+	val, ok := c.layoutMap[input]
+	if !ok {
+		return ""
+	}
+	return val
 }
 
 func initBandMap() map[string]string {
@@ -274,5 +294,35 @@ func initRestChoicesMap() map[string]string {
 		"可携带干员+1": "ro3_rest_4",
 		"抗干扰+1":   "ro3_rest_5",
 		"获得密文板":   "ro3_rest_6",
+	}
+}
+
+func initVariaionMap() map[string]string {
+	return map[string]string{
+		"己方生命攻击提升，出现国度":   "variation_1",
+		"攻击下降，距离2伤害提升":    "variation_2",
+		"同时部署人数、再部署减少":    "variation_3",
+		"技力消耗降低，专注失调":     "variation_4",
+		"敌方移速下降，重量防御法抗提升": "variation_5",
+		"生命上限提升，会掉更多血":    "variation_6",
+		"立即获得一笔资金，暗藏低价商品": "variation_shop",
+		"每前进一步都能获得希望":     "variation_shelter",
+	}
+}
+
+func initLayoutMap() map[string]string {
+	return map[string]string{
+		"战斗c：3-2":            "battle_3-2",
+		"战斗d：2-3":            "battle_2-3",
+		"战斗e：3-3":            "battle_3-3",
+		"事件a：2-2-2":          "event_2-2-2",
+		"事件b：3-3（6商店）":       "event_3-3",
+		"事件c：2-2（不期而遇+失与得）":  "event_2-2",
+		"事件d: 2-3-2 （完全无战斗）": "event_2-3-2",
+		"混合a：2-2-1":          "mixed_2-2-1",
+		"混合b：2-3-1":          "mixed_2-3-1",
+		"混合c：2-3-2":          "mixed_2-3-2",
+		"混合d：2-2-2":          "mixed_2-2-2",
+		"混合e：3-1":            "mixed_3-1",
 	}
 }

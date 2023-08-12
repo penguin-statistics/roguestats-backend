@@ -8,6 +8,7 @@ type ExprCommonData struct {
 	recruitTicketOperatorClassMap map[string][]string
 	incidentTypeNameMap           map[string]string
 	restChoicesNameMap            map[string]string
+	variationNameMap              map[string]string
 }
 
 var exprCommonDataInstance *ExprCommonData
@@ -19,6 +20,7 @@ func GetExprCommonData() *ExprCommonData {
 			recruitTicketOperatorClassMap: initRecruitTicketOperatorClassMap(),
 			incidentTypeNameMap:           initIncidentTypeNameMap(),
 			restChoicesNameMap:            initRestChoicesNameMap(),
+			variationNameMap:              initVariationNameMap(),
 		}
 	})
 	return exprCommonDataInstance
@@ -34,6 +36,10 @@ func (e ExprCommonData) GetIncidentTypeNameMap() map[string]string {
 
 func (e ExprCommonData) GetRestChoicesNameMap() map[string]string {
 	return e.restChoicesNameMap
+}
+
+func (e ExprCommonData) GetVariationNameMap() map[string]string {
+	return e.variationNameMap
 }
 
 func initRecruitTicketOperatorClassMap() map[string][]string {
@@ -101,5 +107,18 @@ func initRestChoicesNameMap() map[string]string {
 		"ro3_rest_4": "重整编制",
 		"ro3_rest_5": "维护设备",
 		"ro3_rest_6": "求得启示",
+	}
+}
+
+func initVariationNameMap() map[string]string {
+	return map[string]string{
+		"variation_1":       "己方生命攻击提升，出现国度",
+		"variation_2":       "攻击下降，距离2伤害提升",
+		"variation_3":       "同时部署人数、再部署减少",
+		"variation_4":       "技力消耗降低，专注失调",
+		"variation_5":       "敌方移速下降，重量防御法抗提升",
+		"variation_6":       "生命上限提升，会掉更多血",
+		"variation_shop":    "立即获得一笔资金，暗藏低价商品",
+		"variation_shelter": "每前进一步都能获得希望",
 	}
 }

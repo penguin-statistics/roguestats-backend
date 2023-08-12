@@ -107,6 +107,14 @@ func (e ExprFunction) MapRestChoicesToNames(restChoices interface{}) (interface{
 	return results, nil
 }
 
+func (e ExprFunction) MapVariationToName(variation interface{}) (interface{}, error) {
+	if variation == nil {
+		return nil, nil
+	}
+	mapping := GetExprCommonData().GetVariationNameMap()
+	return mapping[variation.(string)], nil
+}
+
 func convertToSliceOfSliceString(input interface{}) ([][]string, error) {
 	result := [][]string{}
 	if slice, ok := input.([]interface{}); ok {
