@@ -146,7 +146,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Event.Content(childComplexity), true
 
-	case "Event.created_at":
+	case "Event.createdAt":
 		if e.complexity.Event.CreatedAt == nil {
 			break
 		}
@@ -160,21 +160,21 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Event.ID(childComplexity), true
 
-	case "Event.research_id":
+	case "Event.researchId":
 		if e.complexity.Event.ResearchID == nil {
 			break
 		}
 
 		return e.complexity.Event.ResearchID(childComplexity), true
 
-	case "Event.user_agent":
+	case "Event.userAgent":
 		if e.complexity.Event.UserAgent == nil {
 			break
 		}
 
 		return e.complexity.Event.UserAgent(childComplexity), true
 
-	case "Event.user_id":
+	case "Event.userId":
 		if e.complexity.Event.UserID == nil {
 			break
 		}
@@ -714,8 +714,8 @@ func (ec *executionContext) fieldContext_Event_id(ctx context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_research_id(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Event_research_id(ctx, field)
+func (ec *executionContext) _Event_researchId(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_researchId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -745,7 +745,7 @@ func (ec *executionContext) _Event_research_id(ctx context.Context, field graphq
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Event_research_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_researchId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -802,8 +802,8 @@ func (ec *executionContext) fieldContext_Event_content(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Event_user_id(ctx, field)
+func (ec *executionContext) _Event_userId(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_userId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -833,7 +833,7 @@ func (ec *executionContext) _Event_user_id(ctx context.Context, field graphql.Co
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Event_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -846,8 +846,8 @@ func (ec *executionContext) fieldContext_Event_user_id(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Event_created_at(ctx, field)
+func (ec *executionContext) _Event_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -877,7 +877,7 @@ func (ec *executionContext) _Event_created_at(ctx context.Context, field graphql
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Event_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -890,8 +890,8 @@ func (ec *executionContext) fieldContext_Event_created_at(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_user_agent(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Event_user_agent(ctx, field)
+func (ec *executionContext) _Event_userAgent(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_userAgent(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -918,7 +918,7 @@ func (ec *executionContext) _Event_user_agent(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Event_user_agent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_userAgent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -1131,16 +1131,16 @@ func (ec *executionContext) fieldContext_Mutation_createEvent(ctx context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Event_id(ctx, field)
-			case "research_id":
-				return ec.fieldContext_Event_research_id(ctx, field)
+			case "researchId":
+				return ec.fieldContext_Event_researchId(ctx, field)
 			case "content":
 				return ec.fieldContext_Event_content(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Event_user_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Event_created_at(ctx, field)
-			case "user_agent":
-				return ec.fieldContext_Event_user_agent(ctx, field)
+			case "userId":
+				return ec.fieldContext_Event_userId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Event_createdAt(ctx, field)
+			case "userAgent":
+				return ec.fieldContext_Event_userAgent(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
 		},
@@ -3753,17 +3753,17 @@ func (ec *executionContext) unmarshalInputGroupCountInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"research_id", "filterInput", "resultMappingInput"}
+	fieldsInOrder := [...]string{"researchId", "filterInput", "resultMappingInput"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "research_id":
+		case "researchId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("research_id"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("researchId"))
 			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -3838,7 +3838,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"content", "research_id", "user_agent"}
+	fieldsInOrder := [...]string{"content", "researchId", "userAgent"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3854,19 +3854,19 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 				return it, err
 			}
 			it.Content = data
-		case "research_id":
+		case "researchId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("research_id"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("researchId"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.ResearchID = data
-		case "user_agent":
+		case "userAgent":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user_agent"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userAgent"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
@@ -3946,8 +3946,8 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "research_id":
-			out.Values[i] = ec._Event_research_id(ctx, field, obj)
+		case "researchId":
+			out.Values[i] = ec._Event_researchId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3956,18 +3956,18 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._Event_user_id(ctx, field, obj)
+		case "userId":
+			out.Values[i] = ec._Event_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_at":
-			out.Values[i] = ec._Event_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Event_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_agent":
-			out.Values[i] = ec._Event_user_agent(ctx, field, obj)
+		case "userAgent":
+			out.Values[i] = ec._Event_userAgent(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

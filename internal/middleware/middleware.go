@@ -24,7 +24,7 @@ func (m Middleware) CurrentUser() func(ctx *fiber.Ctx) error {
 
 		user, err := m.Auth.AuthByToken(ctx.Context(), strings.TrimPrefix(token, "Bearer "))
 		if err != nil {
-			return err
+			return fiber.NewError(fiber.StatusUnauthorized, "invalid token")
 		}
 
 		ctx.Context().SetUserValue("currentUser", user)
