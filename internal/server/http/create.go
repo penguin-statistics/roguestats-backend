@@ -36,7 +36,9 @@ func Create() *fiber.App {
 
 	app.Use(recover.New())
 	app.Use(logger.New())
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		ExposeHeaders: "X-Penguin-RogueStats-Set-Token",
+	}))
 
 	return app
 }

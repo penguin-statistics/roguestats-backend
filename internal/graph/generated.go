@@ -3800,7 +3800,7 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "password"}
+	fieldsInOrder := [...]string{"email", "password", "turnstileResponse"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3825,6 +3825,15 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 				return it, err
 			}
 			it.Password = data
+		case "turnstileResponse":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("turnstileResponse"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TurnstileResponse = data
 		}
 	}
 

@@ -67,6 +67,7 @@ type Query {
 input LoginInput {
   email: String!
   password: String!
+  turnstileResponse: String!
 }
 
 input NewEvent {

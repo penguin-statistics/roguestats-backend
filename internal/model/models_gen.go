@@ -32,8 +32,9 @@ type GroupCountResult struct {
 }
 
 type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	TurnstileResponse string `json:"turnstileResponse"`
 }
 
 type NewEvent struct {
