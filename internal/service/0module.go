@@ -9,5 +9,6 @@ func Module() fx.Option {
 		fx.Populate(&Auth{}),
 		fx.Populate(&User{}),
 		fx.Provide(NewJWT),
+		fx.Provide(NewTurnstile),
 		fx.Populate(&Directive{}))
 }

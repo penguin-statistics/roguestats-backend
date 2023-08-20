@@ -33,6 +33,9 @@ type ConfigSpec struct {
 	// issued automatically to the client via the header that is the same as the
 	// one used to authenticate. (default: 1 week (7 days, 168 hours))
 	JWTAutoRenewalTime time.Duration `split_words:"true" required:"true" default:"168h"`
+
+	// TurnstileSecret is the secret used to verify the turnstile response.
+	TurnstileSecret string `split_words:"true" required:"true"`
 }
 
 type Config struct {

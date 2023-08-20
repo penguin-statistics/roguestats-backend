@@ -18,12 +18,18 @@ import (
 type Auth struct {
 	fx.In
 
-	Config   *appconfig.Config
-	UserRepo repo.User
-	JWT      JWT
+	Config    *appconfig.Config
+	UserRepo  repo.User
+	JWT       JWT
+	Turnstile Turnstile
 }
 
 func (s Auth) AuthByLoginInput(ctx context.Context, args model.LoginInput) (*model.User, error) {
+	err := s.Turnstile.Verify(ctx, args.TurnstileResponse, "login")
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "captcha verification failed: invalid turnstile response")
+	}
+
 	user, err := s.UserRepo.GetUserByEmail(ctx, args.Email)
 	if err != nil {
 		return nil, err

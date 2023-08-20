@@ -20,11 +20,11 @@ type User {
 
 type Event {
   id: ID! @goTag(key: "bun", value: "event_id")
-  research_id: ID! @goTag(key: "bun", value: "research_id")
+  researchId: ID! @goTag(key: "bun", value: "research_id")
   content: Map!
-  user_id: ID! @goTag(key: "bun", value: "user_id")
-  created_at: Time!
-  user_agent: String
+  userId: ID! @goTag(key: "bun", value: "user_id")
+  createdAt: Time!
+  userAgent: String
 }
 
 type Research {
@@ -50,7 +50,7 @@ type GroupCountResult {
 }
 
 input GroupCountInput {
-  research_id: ID!
+  researchId: ID!
   filterInput: String!
   resultMappingInput: String!
 }
@@ -67,12 +67,13 @@ type Query {
 input LoginInput {
   email: String!
   password: String!
+  turnstileResponse: String!
 }
 
 input NewEvent {
   content: Map!
-  research_id: String!
-  user_agent: String
+  researchId: String!
+  userAgent: String
 }
 
 type Mutation {

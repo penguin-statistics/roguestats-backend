@@ -13,15 +13,15 @@ type CategoryCount struct {
 
 type Event struct {
 	ID         string                 `json:"id" bun:"event_id"`
-	ResearchID string                 `json:"research_id" bun:"research_id"`
+	ResearchID string                 `json:"researchId" bun:"research_id"`
 	Content    map[string]interface{} `json:"content"`
-	UserID     string                 `json:"user_id" bun:"user_id"`
-	CreatedAt  time.Time              `json:"created_at"`
-	UserAgent  *string                `json:"user_agent,omitempty"`
+	UserID     string                 `json:"userId" bun:"user_id"`
+	CreatedAt  time.Time              `json:"createdAt"`
+	UserAgent  *string                `json:"userAgent,omitempty"`
 }
 
 type GroupCountInput struct {
-	ResearchID         string `json:"research_id"`
+	ResearchID         string `json:"researchId"`
 	FilterInput        string `json:"filterInput"`
 	ResultMappingInput string `json:"resultMappingInput"`
 }
@@ -32,14 +32,15 @@ type GroupCountResult struct {
 }
 
 type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	TurnstileResponse string `json:"turnstileResponse"`
 }
 
 type NewEvent struct {
 	Content    map[string]interface{} `json:"content"`
-	ResearchID string                 `json:"research_id"`
-	UserAgent  *string                `json:"user_agent,omitempty"`
+	ResearchID string                 `json:"researchId"`
+	UserAgent  *string                `json:"userAgent,omitempty"`
 }
 
 type Research struct {
