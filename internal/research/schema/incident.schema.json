@@ -1,145 +1,143 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://penguin-stats.io/roguestats/incident.schema.json",
-    "title": "Incident",
-    "description": "An event for incident research",
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-      "grade": {
-        "description": "The grade of this rogue session",
-        "type": "integer",
-        "minimum": 0,
-        "maximum": 15
-      },
-      "floor": {
-        "description": "The floor in which this incident happened",
-        "type": "integer",
-        "minimum": 1,
-        "maximum": 6
-      },
-      "isPortal": {
-        "description": "Whether this incident happened inside a portal or not",
-        "type": "boolean"
-      },
-      "incidentType": {
-        "description": "The incident type",
-        "type": "string",
-        "anyOf": [
-          {
-            "const": "ro3_res1",
-            "title": "吉兆"
-          },
-          {
-            "const": "ro3_res2",
-            "title": "雨！"
-          },
-          {
-            "const": "ro3_res3",
-            "title": "随到随取"
-          },
-          {
-            "const": "ro3_res4",
-            "title": "定期维护"
-          },
-          {
-            "const": "ro3_res5",
-            "title": "昏黑之室"
-          },
-          {
-            "const": "ro3_res2a",
-            "title": "疗愈仪式"
-          },
-          {
-            "const": "ro3_res3a",
-            "title": "黑色足迹"
-          },
-          {
-            "const": "ro3_res5a",
-            "title": "不冻河"
-          },
-          {
-            "const": "ro3_rec1",
-            "title": "野外生存专家"
-          },
-          {
-            "const": "ro3_rec2",
-            "title": "在地公共信号放大站756号"
-          },
-          {
-            "const": "ro3_relic1",
-            "title": "特里蒙旅行社特派团"
-          },
-          {
-            "const": "ro3_relic2",
-            "title": "在地公共移动站N6号"
-          },
-          {
-            "const": "ro3_spring",
-            "title": "度假胜地"
-          },
-          {
-            "const": "ro3_height",
-            "title": "负伤的主树"
-          },
-          {
-            "const": "ro3_pick1",
-            "title": "不见群山"
-          },
-          {
-            "const": "ro3_pick2",
-            "title": "远见所向"
-          },
-          {
-            "const": "ro3_normal1",
-            "title": "萨米之语"
-          },
-          {
-            "const": "ro3_normal2",
-            "title": "乌萨斯"
-          },
-          {
-            "const": "ro3_normal3",
-            "title": "无用之物"
-          },
-          {
-            "const": "ro3_bat1",
-            "title": "沼泽里的抽泣声"
-          },
-          {
-            "const": "ro3_bat2",
-            "title": "有利可图"
-          },
-          {
-            "const": "ro3_bat3",
-            "title": "随行人员"
-          },
-          {
-            "const": "ro3_bat4",
-            "title": "邪恶计划鸭"
-          },
-          {
-            "const": "ro3_bat5",
-            "title": "百里连营"
-          },
-          {
-            "const": "ro3_bat6",
-            "title": "请君入戏"
-          },
-          {
-            "const": "ro3_bat7",
-            "title": "北风女巫"
-          },
-          {
-            "const": "ro3_bat8",
-            "title": "时刻警惕"
-          },
-          {
-            "const": "ro3_bat9",
-            "title": "猜疑链"
-          }
-        ]
-      }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://penguin-stats.io/roguestats/incident.schema.json",
+  "title": "不期而遇",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "grade": {
+      "title": "难度",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 15
+    },
+    "floor": {
+      "title": "层数",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6
+    },
+    "isPortal": {
+      "title": "在树篱内",
+      "type": "boolean"
+    },
+    "incidentType": {
+      "title": "不期而遇类型",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "ro3_res1",
+          "title": "吉兆"
+        },
+        {
+          "const": "ro3_res2",
+          "title": "雨！"
+        },
+        {
+          "const": "ro3_res3",
+          "title": "随到随取"
+        },
+        {
+          "const": "ro3_res4",
+          "title": "定期维护"
+        },
+        {
+          "const": "ro3_res5",
+          "title": "昏黑之室"
+        },
+        {
+          "const": "ro3_res2a",
+          "title": "疗愈仪式"
+        },
+        {
+          "const": "ro3_res3a",
+          "title": "黑色足迹"
+        },
+        {
+          "const": "ro3_res5a",
+          "title": "不冻河"
+        },
+        {
+          "const": "ro3_rec1",
+          "title": "野外生存专家"
+        },
+        {
+          "const": "ro3_rec2",
+          "title": "在地公共信号放大站756号"
+        },
+        {
+          "const": "ro3_relic1",
+          "title": "特里蒙旅行社特派团"
+        },
+        {
+          "const": "ro3_relic2",
+          "title": "在地公共移动站N6号"
+        },
+        {
+          "const": "ro3_spring",
+          "title": "度假胜地"
+        },
+        {
+          "const": "ro3_height",
+          "title": "负伤的主树"
+        },
+        {
+          "const": "ro3_pick1",
+          "title": "不见群山"
+        },
+        {
+          "const": "ro3_pick2",
+          "title": "远见所向"
+        },
+        {
+          "const": "ro3_normal1",
+          "title": "萨米之语"
+        },
+        {
+          "const": "ro3_normal2",
+          "title": "乌萨斯"
+        },
+        {
+          "const": "ro3_normal3",
+          "title": "无用之物"
+        },
+        {
+          "const": "ro3_bat1",
+          "title": "沼泽里的抽泣声"
+        },
+        {
+          "const": "ro3_bat2",
+          "title": "有利可图"
+        },
+        {
+          "const": "ro3_bat3",
+          "title": "随行人员"
+        },
+        {
+          "const": "ro3_bat4",
+          "title": "邪恶计划鸭"
+        },
+        {
+          "const": "ro3_bat5",
+          "title": "百里连营"
+        },
+        {
+          "const": "ro3_bat6",
+          "title": "请君入戏"
+        },
+        {
+          "const": "ro3_bat7",
+          "title": "北风女巫"
+        },
+        {
+          "const": "ro3_bat8",
+          "title": "时刻警惕"
+        },
+        {
+          "const": "ro3_bat9",
+          "title": "猜疑链"
+        }
+      ]
     }
   }
-  
+}

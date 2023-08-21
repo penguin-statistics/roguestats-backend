@@ -1,115 +1,114 @@
 {
-    "$id": "https://penguin-stats.io/roguestats/portal.schema.json",
-    "type": "object",
-    "title": "Portal",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "properties": {
-      "floor": {
-        "type": "integer",
-        "maximum": 6,
-        "minimum": 1,
-        "description": "The floor in which this portal happened"
-      },
-      "grade": {
-        "type": "integer",
-        "maximum": 15,
-        "minimum": 0,
-        "description": "The grade of this rogue session"
-      },
-      "layout": {
-        "type": "string",
-        "anyOf": [
-          {
-            "const": "battle_3-2",
-            "title": "战斗：3-2"
-          },
-          {
-            "const": "battle_2-3",
-            "title": "战斗：2-3"
-          },
-          {
-            "const": "battle_3-3",
-            "title": "战斗：3-3"
-          },
-          {
-            "const": "event_2-2-2",
-            "title": "事件：2-2-2"
-          },
-          {
-            "const": "event_3-3",
-            "title": "事件：3-3"
-          },
-          {
-            "const": "event_2-2",
-            "title": "事件：2-2"
-          },
-          {
-            "const": "event_2-3-2",
-            "title": "事件：2-3-2"
-          },
-          {
-            "const": "mixed_2-2-1",
-            "title": "混合：2-2-1"
-          },
-          {
-            "const": "mixed_2-3-1",
-            "title": "混合：2-3-1"
-          },
-          {
-            "const": "mixed_2-3-2",
-            "title": "混合：2-3-2"
-          },
-          {
-            "const": "mixed_2-2-2",
-            "title": "混合：2-2-2"
-          },
-          {
-            "const": "mixed_3-1",
-            "title": "混合：3-1"
-          }
-        ],
-        "description": "The layout of nodes"
-      },
-      "variation": {
-        "type": "string",
-        "anyOf": [
-          {
-            "const": "variation_1",
-            "title": "己方生命攻击提升，出现国度"
-          },
-          {
-            "const": "variation_2",
-            "title": "攻击下降，距离2伤害提升"
-          },
-          {
-            "const": "variation_3",
-            "title": "同时部署人数、再部署减少"
-          },
-          {
-            "const": "variation_4",
-            "title": "技力消耗降低，专注失调"
-          },
-          {
-            "const": "variation_5",
-            "title": "敌方移速下降，重量防御法抗提升"
-          },
-          {
-            "const": "variation_6",
-            "title": "生命上限提升，会掉更多血"
-          },
-          {
-            "const": "variation_shop",
-            "title": "立即获得一笔资金，暗藏低价商品"
-          },
-          {
-            "const": "variation_shelter",
-            "title": "每前进一步都能获得希望"
-          }
-        ],
-        "description": "The portal variation type"
-      }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://penguin-stats.io/roguestats/portal.schema.json",
+  "title": "Portal",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "floor": {
+      "title": "层数",
+      "type": "integer",
+      "maximum": 6,
+      "minimum": 1
     },
-    "description": "An event for portal research",
-    "additionalProperties": false
+    "grade": {
+      "title": "难度",
+      "type": "integer",
+      "maximum": 15,
+      "minimum": 0
+    },
+    "layout": {
+      "title": "节点布局",
+      "description": "“战斗”代表只有战斗节点，“事件”代表完全无战斗节点，“混合”代表二者皆有。后面的每个数字代表每一列有多少个节点。",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "battle_3-2",
+          "title": "战斗：3-2"
+        },
+        {
+          "const": "battle_2-3",
+          "title": "战斗：2-3"
+        },
+        {
+          "const": "battle_3-3",
+          "title": "战斗：3-3"
+        },
+        {
+          "const": "event_2-2-2",
+          "title": "事件：2-2-2"
+        },
+        {
+          "const": "event_3-3",
+          "title": "事件：3-3"
+        },
+        {
+          "const": "event_2-2",
+          "title": "事件：2-2"
+        },
+        {
+          "const": "event_2-3-2",
+          "title": "事件：2-3-2"
+        },
+        {
+          "const": "mixed_2-2-1",
+          "title": "混合：2-2-1"
+        },
+        {
+          "const": "mixed_2-3-1",
+          "title": "混合：2-3-1"
+        },
+        {
+          "const": "mixed_2-3-2",
+          "title": "混合：2-3-2"
+        },
+        {
+          "const": "mixed_2-2-2",
+          "title": "混合：2-2-2"
+        },
+        {
+          "const": "mixed_3-1",
+          "title": "混合：3-1"
+        }
+      ]
+    },
+    "variation": {
+      "title": "树篱buff/debuff",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "variation_1",
+          "title": "己方生命攻击提升，出现国度"
+        },
+        {
+          "const": "variation_2",
+          "title": "攻击下降，距离2伤害提升"
+        },
+        {
+          "const": "variation_3",
+          "title": "同时部署人数、再部署减少"
+        },
+        {
+          "const": "variation_4",
+          "title": "技力消耗降低，专注失调"
+        },
+        {
+          "const": "variation_5",
+          "title": "敌方移速下降，重量防御法抗提升"
+        },
+        {
+          "const": "variation_6",
+          "title": "生命上限提升，会掉更多血"
+        },
+        {
+          "const": "variation_shop",
+          "title": "立即获得一笔资金，暗藏低价商品"
+        },
+        {
+          "const": "variation_shelter",
+          "title": "每前进一步都能获得希望"
+        }
+      ]
+    }
   }
-  
+}

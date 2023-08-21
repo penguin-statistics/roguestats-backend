@@ -1,394 +1,397 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://penguin-stats.io/roguestats/battle.schema.json",
-    "title": "Battle",
-    "description": "An event for battle research",
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-      "band": {
-        "description": "The initial band type",
-        "type": "string",
-        "anyOf": [
-          {
-            "const": "rogue_3_band_1",
-            "title": "指挥分队"
-          },
-          {
-            "const": "rogue_3_band_2",
-            "title": "集群分队"
-          },
-          {
-            "const": "rogue_3_band_3",
-            "title": "后勤分队"
-          },
-          {
-            "const": "rogue_3_band_4",
-            "title": "矛头分队"
-          },
-          {
-            "const": "rogue_3_band_5",
-            "title": "突击战术分队（近锋）"
-          },
-          {
-            "const": "rogue_3_band_6",
-            "title": "堡垒战术分队（重辅）"
-          },
-          {
-            "const": "rogue_3_band_7",
-            "title": "远程战术分队（狙医）"
-          },
-          {
-            "const": "rogue_3_band_8",
-            "title": "破坏战术分队（术特）"
-          },
-          {
-            "const": "rogue_3_band_9",
-            "title": "特训分队"
-          },
-          {
-            "const": "rogue_3_band_10",
-            "title": "高规格分队"
-          },
-          {
-            "const": "rogue_3_band_11",
-            "title": "永恒狩猎分队"
-          },
-          {
-            "const": "rogue_3_band_12",
-            "title": "生活至上分队"
-          },
-          {
-            "const": "rogue_3_band_13",
-            "title": "科学主义分队"
-          }
-        ]
-      },
-      "grade": {
-        "description": "The grade of this rogue session",
-        "type": "integer",
-        "minimum": 0,
-        "maximum": 15
-      },
-      "floor": {
-        "description": "The floor in which this battle happened",
-        "type": "integer",
-        "minimum": 1,
-        "maximum": 6
-      },
-      "isPortal": {
-        "description": "Whether this battle happened inside a portal or not",
-        "type": "boolean"
-      },
-      "nodeType": {
-        "description": "The node type that triggered this battle",
-        "type": "string",
-        "anyOf": [
-          {
-            "const": "BATTLE_NORMAL",
-            "title": "作战"
-          },
-          {
-            "const": "BATTLE_ELITE",
-            "title": "紧急作战"
-          },
-          {
-            "const": "BATTLE_BOSS",
-            "title": "险路恶敌"
-          },
-          {
-            "const": "INCIDENT",
-            "title": "不期而遇"
-          },
-          {
-            "const": "INCIDENT_RES3A",
-            "title": "不期而遇-黑色足迹"
-          },
-          {
-            "const": "INCIDENT_MIMIC_ENEMY",
-            "title": "不期而遇-鸭狗熊"
-          },
-          {
-            "const": "SACRIFICE",
-            "title": "失与得"
-          },
-          {
-            "const": "BATTLE_SHOP",
-            "title": "诡异行商"
-          }
-        ]
-      },
-      "visionBeforeBattle": {
-        "description": "The vision count before the battle",
-        "type": "integer",
-        "minimum": 0,
-        "maximum": 6
-      },
-      "isPerfect": {
-        "description": "Whether the battle result is perfect or not",
-        "type": "boolean"
-      },
-      "gainExp": {
-        "description": "Exp gained from the battle",
-        "type": "integer",
-        "minimum": 1,
-        "maximum": 100
-      },
-      "dropGold": {
-        "description": "Gold dropped in the battle",
-        "type": "integer",
-        "minimum": 1,
-        "maximum": 10
-      },
-      "dropVision": {
-        "description": "Vision dropped in the battle",
-        "type": "integer",
-        "minimum": 0,
-        "maximum": 2
-      },
-      "dropRecruitTickets": {
-        "description": "Tickets dropped in the battle",
-        "type": "array",
-        "minItems": 2,
-        "maxItems": 2,
-        "items": {
-          "type": "array",
-          "minItems": 0,
-          "maxItems": 2,
-          "uniqueItems": true,
-          "items": {
-            "anyOf": [
-              {
-                "const": "rogue_3_recruit_ticket_pioneer",
-                "title": "先锋"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_warrior",
-                "title": "近卫"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_tank",
-                "title": "重装"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_sniper",
-                "title": "狙击"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_caster",
-                "title": "术师"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_support",
-                "title": "辅助"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_medic",
-                "title": "医疗"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_special",
-                "title": "特种"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_double_1",
-                "title": "突击协议（近锋）"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_double_2",
-                "title": "堡垒协议（重辅）"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_double_3",
-                "title": "远程协议（狙医）"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_double_4",
-                "title": "破坏协议（术特）"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_quad_melee",
-                "title": "前线统合"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_quad_ranged",
-                "title": "后方协调"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_quad_melee_discount",
-                "title": "前线统合资深"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_quad_ranged_discount",
-                "title": "后方协调资深"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_all",
-                "title": "高级人事调度函"
-              },
-              {
-                "const": "rogue_3_recruit_ticket_all_discount",
-                "title": "高级人事资深"
-              }
-            ]
-          }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://penguin-stats.io/roguestats/battle.schema.json",
+  "title": "作战节点",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "band": {
+      "title": "初始分队",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "rogue_3_band_1",
+          "title": "指挥分队"
+        },
+        {
+          "const": "rogue_3_band_2",
+          "title": "集群分队"
+        },
+        {
+          "const": "rogue_3_band_3",
+          "title": "后勤分队"
+        },
+        {
+          "const": "rogue_3_band_4",
+          "title": "矛头分队"
+        },
+        {
+          "const": "rogue_3_band_5",
+          "title": "突击战术分队（近锋）"
+        },
+        {
+          "const": "rogue_3_band_6",
+          "title": "堡垒战术分队（重辅）"
+        },
+        {
+          "const": "rogue_3_band_7",
+          "title": "远程战术分队（狙医）"
+        },
+        {
+          "const": "rogue_3_band_8",
+          "title": "破坏战术分队（术特）"
+        },
+        {
+          "const": "rogue_3_band_9",
+          "title": "特训分队"
+        },
+        {
+          "const": "rogue_3_band_10",
+          "title": "高规格分队"
+        },
+        {
+          "const": "rogue_3_band_11",
+          "title": "永恒狩猎分队"
+        },
+        {
+          "const": "rogue_3_band_12",
+          "title": "生活至上分队"
+        },
+        {
+          "const": "rogue_3_band_13",
+          "title": "科学主义分队"
         }
-      },
-      "dropTotem": {
-        "description": "Totem options dropped in the battle",
+      ]
+    },
+    "grade": {
+      "title": "难度",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 15
+    },
+    "floor": {
+      "title": "层数",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6
+    },
+    "isPortal": {
+      "title": "在树篱内",
+      "type": "boolean"
+    },
+    "nodeType": {
+      "title": "节点类型",
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "BATTLE_NORMAL",
+          "title": "作战"
+        },
+        {
+          "const": "BATTLE_ELITE",
+          "title": "紧急作战"
+        },
+        {
+          "const": "BATTLE_BOSS",
+          "title": "险路恶敌"
+        },
+        {
+          "const": "INCIDENT",
+          "title": "不期而遇"
+        },
+        {
+          "const": "INCIDENT_RES3A",
+          "title": "不期而遇-黑色足迹"
+        },
+        {
+          "const": "INCIDENT_MIMIC_ENEMY",
+          "title": "不期而遇-鸭狗熊"
+        },
+        {
+          "const": "SACRIFICE",
+          "title": "失与得"
+        },
+        {
+          "const": "BATTLE_SHOP",
+          "title": "诡异行商"
+        }
+      ]
+    },
+    "visionBeforeBattle": {
+      "title": "战斗前的抗干扰指数",
+      "description": "若藏品有琥珀伤痕导致大于6，请留空不填",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "isPerfect": {
+      "title": "完美作战",
+      "type": "boolean"
+    },
+    "gainExp": {
+      "title": "获取经验",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "dropGold": {
+      "title": "掉落源石锭",
+      "description": "不要计入宝箱和密文板的加成",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "dropVision": {
+      "title": "掉落抗干扰指数",
+      "description": "不要计入密文板的加成",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "dropRecruitTickets": {
+      "title": "掉落招募券",
+      "description": "若藏品有电台，请留空不填；一个【招募券掉落框】内若为二选一，请同时选择两项；如果没有第二个【招募券掉落框】，第二个请留空",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
         "type": "array",
         "minItems": 0,
-        "maxItems": 3,
+        "maxItems": 2,
         "uniqueItems": true,
         "items": {
           "anyOf": [
             {
-              "const": "rogue_3_totem_R_L1",
-              "title": "黜人"
+              "const": "rogue_3_recruit_ticket_pioneer",
+              "title": "先锋"
             },
             {
-              "const": "rogue_3_totem_R_L2",
-              "title": "猎手"
+              "const": "rogue_3_recruit_ticket_warrior",
+              "title": "近卫"
             },
             {
-              "const": "rogue_3_totem_R_L3",
-              "title": "战士"
+              "const": "rogue_3_recruit_ticket_tank",
+              "title": "重装"
             },
             {
-              "const": "rogue_3_totem_R_L4",
-              "title": "萨满"
+              "const": "rogue_3_recruit_ticket_sniper",
+              "title": "狙击"
             },
             {
-              "const": "rogue_3_totem_R_L5",
-              "title": "雪祀"
+              "const": "rogue_3_recruit_ticket_caster",
+              "title": "术师"
             },
             {
-              "const": "rogue_3_totem_R_L6",
-              "title": "英雄"
+              "const": "rogue_3_recruit_ticket_support",
+              "title": "辅助"
             },
             {
-              "const": "rogue_3_totem_R_E1",
-              "title": "歌唱"
+              "const": "rogue_3_recruit_ticket_medic",
+              "title": "医疗"
             },
             {
-              "const": "rogue_3_totem_R_E2",
-              "title": "沉默"
+              "const": "rogue_3_recruit_ticket_special",
+              "title": "特种"
             },
             {
-              "const": "rogue_3_totem_R_E3",
-              "title": "朗诵"
+              "const": "rogue_3_recruit_ticket_double_1",
+              "title": "突击协议（近锋）"
             },
             {
-              "const": "rogue_3_totem_R_E4",
-              "title": "辩论"
+              "const": "rogue_3_recruit_ticket_double_2",
+              "title": "堡垒协议（重辅）"
             },
             {
-              "const": "rogue_3_totem_R_E5",
-              "title": "慰藉"
+              "const": "rogue_3_recruit_ticket_double_3",
+              "title": "远程协议（狙医）"
             },
             {
-              "const": "rogue_3_totem_R_E6",
-              "title": "告解"
+              "const": "rogue_3_recruit_ticket_double_4",
+              "title": "破坏协议（术特）"
             },
             {
-              "const": "rogue_3_totem_G_L1",
-              "title": "树冠"
+              "const": "rogue_3_recruit_ticket_quad_melee",
+              "title": "前线统合"
             },
             {
-              "const": "rogue_3_totem_G_L2",
-              "title": "水面"
+              "const": "rogue_3_recruit_ticket_quad_ranged",
+              "title": "后方协调"
             },
             {
-              "const": "rogue_3_totem_G_L3",
-              "title": "眼睛"
+              "const": "rogue_3_recruit_ticket_quad_melee_discount",
+              "title": "前线统合资深"
             },
             {
-              "const": "rogue_3_totem_G_L4",
-              "title": "拱门"
+              "const": "rogue_3_recruit_ticket_quad_ranged_discount",
+              "title": "后方协调资深"
             },
             {
-              "const": "rogue_3_totem_G_L5",
-              "title": "光芒"
+              "const": "rogue_3_recruit_ticket_all",
+              "title": "高级人事调度函"
             },
             {
-              "const": "rogue_3_totem_G_L6",
-              "title": "大地"
-            },
-            {
-              "const": "rogue_3_totem_G_E1",
-              "title": "喜悦"
-            },
-            {
-              "const": "rogue_3_totem_G_E2",
-              "title": "惊讶"
-            },
-            {
-              "const": "rogue_3_totem_G_E3",
-              "title": "愤怒"
-            },
-            {
-              "const": "rogue_3_totem_G_E4",
-              "title": "疑惑"
-            },
-            {
-              "const": "rogue_3_totem_G_E5",
-              "title": "憧憬"
-            },
-            {
-              "const": "rogue_3_totem_G_E6",
-              "title": "爱恋"
-            },
-            {
-              "const": "rogue_3_totem_B_L1",
-              "title": "源石"
-            },
-            {
-              "const": "rogue_3_totem_B_L2",
-              "title": "乔木"
-            },
-            {
-              "const": "rogue_3_totem_B_L3",
-              "title": "砂石"
-            },
-            {
-              "const": "rogue_3_totem_B_L4",
-              "title": "灌木"
-            },
-            {
-              "const": "rogue_3_totem_B_L5",
-              "title": "兽类"
-            },
-            {
-              "const": "rogue_3_totem_B_L6",
-              "title": "人类"
-            },
-            {
-              "const": "rogue_3_totem_B_E1",
-              "title": "巡视"
-            },
-            {
-              "const": "rogue_3_totem_B_E2",
-              "title": "筑巢"
-            },
-            {
-              "const": "rogue_3_totem_B_E3",
-              "title": "捕猎"
-            },
-            {
-              "const": "rogue_3_totem_B_E4",
-              "title": "掠夺"
-            },
-            {
-              "const": "rogue_3_totem_B_E5",
-              "title": "繁衍"
-            },
-            {
-              "const": "rogue_3_totem_B_E6",
-              "title": "迁徙"
+              "const": "rogue_3_recruit_ticket_all_discount",
+              "title": "高级人事资深"
             }
           ]
         }
       }
+    },
+    "dropTotem": {
+      "title": "掉落密文板",
+      "description": "若藏品有伶牙毁林者，请留空不填；请同时把两个选项都选上",
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const": "rogue_3_totem_R_L1",
+            "title": "黜人"
+          },
+          {
+            "const": "rogue_3_totem_R_L2",
+            "title": "猎手"
+          },
+          {
+            "const": "rogue_3_totem_R_L3",
+            "title": "战士"
+          },
+          {
+            "const": "rogue_3_totem_R_L4",
+            "title": "萨满"
+          },
+          {
+            "const": "rogue_3_totem_R_L5",
+            "title": "雪祀"
+          },
+          {
+            "const": "rogue_3_totem_R_L6",
+            "title": "英雄"
+          },
+          {
+            "const": "rogue_3_totem_R_E1",
+            "title": "歌唱"
+          },
+          {
+            "const": "rogue_3_totem_R_E2",
+            "title": "沉默"
+          },
+          {
+            "const": "rogue_3_totem_R_E3",
+            "title": "朗诵"
+          },
+          {
+            "const": "rogue_3_totem_R_E4",
+            "title": "辩论"
+          },
+          {
+            "const": "rogue_3_totem_R_E5",
+            "title": "慰藉"
+          },
+          {
+            "const": "rogue_3_totem_R_E6",
+            "title": "告解"
+          },
+          {
+            "const": "rogue_3_totem_G_L1",
+            "title": "树冠"
+          },
+          {
+            "const": "rogue_3_totem_G_L2",
+            "title": "水面"
+          },
+          {
+            "const": "rogue_3_totem_G_L3",
+            "title": "眼睛"
+          },
+          {
+            "const": "rogue_3_totem_G_L4",
+            "title": "拱门"
+          },
+          {
+            "const": "rogue_3_totem_G_L5",
+            "title": "光芒"
+          },
+          {
+            "const": "rogue_3_totem_G_L6",
+            "title": "大地"
+          },
+          {
+            "const": "rogue_3_totem_G_E1",
+            "title": "喜悦"
+          },
+          {
+            "const": "rogue_3_totem_G_E2",
+            "title": "惊讶"
+          },
+          {
+            "const": "rogue_3_totem_G_E3",
+            "title": "愤怒"
+          },
+          {
+            "const": "rogue_3_totem_G_E4",
+            "title": "疑惑"
+          },
+          {
+            "const": "rogue_3_totem_G_E5",
+            "title": "憧憬"
+          },
+          {
+            "const": "rogue_3_totem_G_E6",
+            "title": "爱恋"
+          },
+          {
+            "const": "rogue_3_totem_B_L1",
+            "title": "源石"
+          },
+          {
+            "const": "rogue_3_totem_B_L2",
+            "title": "乔木"
+          },
+          {
+            "const": "rogue_3_totem_B_L3",
+            "title": "砂石"
+          },
+          {
+            "const": "rogue_3_totem_B_L4",
+            "title": "灌木"
+          },
+          {
+            "const": "rogue_3_totem_B_L5",
+            "title": "兽类"
+          },
+          {
+            "const": "rogue_3_totem_B_L6",
+            "title": "人类"
+          },
+          {
+            "const": "rogue_3_totem_B_E1",
+            "title": "巡视"
+          },
+          {
+            "const": "rogue_3_totem_B_E2",
+            "title": "筑巢"
+          },
+          {
+            "const": "rogue_3_totem_B_E3",
+            "title": "捕猎"
+          },
+          {
+            "const": "rogue_3_totem_B_E4",
+            "title": "掠夺"
+          },
+          {
+            "const": "rogue_3_totem_B_E5",
+            "title": "繁衍"
+          },
+          {
+            "const": "rogue_3_totem_B_E6",
+            "title": "迁徙"
+          }
+        ]
+      }
     }
   }
-  
+}

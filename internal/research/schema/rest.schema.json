@@ -1,58 +1,57 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://penguin-stats.io/roguestats/rest.schema.json",
-    "title": "Rest",
-    "description": "An event for rest research",
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-      "grade": {
-        "description": "The grade of this rogue session",
-        "type": "integer",
-        "minimum": 0,
-        "maximum": 15
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://penguin-stats.io/roguestats/rest.schema.json",
+  "title": "安全屋",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "grade": {
+      "title": "难度",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 15
+    },
+    "floor": {
+      "title": "层数",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6
+    },
+    "restChoices": {
+      "title": "选项",
+      "description": "请选择出现的所有选项",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "const": "ro3_rest_1",
+            "title": "稍事休息"
+          },
+          {
+            "const": "ro3_rest_2",
+            "title": "强化训练"
+          },
+          {
+            "const": "ro3_rest_3",
+            "title": "鼓舞士气"
+          },
+          {
+            "const": "ro3_rest_4",
+            "title": "重整编制"
+          },
+          {
+            "const": "ro3_rest_5",
+            "title": "维护设备"
+          },
+          {
+            "const": "ro3_rest_6",
+            "title": "求得启示"
+          }
+        ]
       },
-      "floor": {
-        "description": "The floor in which this rest happened",
-        "type": "integer",
-        "minimum": 1,
-        "maximum": 6
-      },
-      "restChoices": {
-        "description": "Choices shown in the rest node",
-        "type": "array",
-        "items": {
-          "anyOf": [
-            {
-              "const": "ro3_rest_1",
-              "title": "稍事休息"
-            },
-            {
-              "const": "ro3_rest_2",
-              "title": "强化训练"
-            },
-            {
-              "const": "ro3_rest_3",
-              "title": "鼓舞士气"
-            },
-            {
-              "const": "ro3_rest_4",
-              "title": "重整编制"
-            },
-            {
-              "const": "ro3_rest_5",
-              "title": "维护设备"
-            },
-            {
-              "const": "ro3_rest_6",
-              "title": "求得启示"
-            }
-          ]
-        },
-        "maxItems": 3,
-        "minItems": 3,
-        "uniqueItems": true
-      }
+      "maxItems": 3,
+      "minItems": 3,
+      "uniqueItems": true
     }
   }
-  
+}
