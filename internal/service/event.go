@@ -58,7 +58,7 @@ func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first 
 		return nil, err
 	}
 	eventsConnection := &model.EventsConnection{
-		Edges:    make([]*model.EventsEdge, 0),
+		Edges:    make([]*model.EventsEdge, 0, len(events)),
 		PageInfo: &model.PageInfo{},
 	}
 	for _, event := range events {
@@ -69,19 +69,20 @@ func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first 
 	}
 
 	// decide StartCursor and EndCursor
-	endID := events[len(events)-1].ID
+	var endID string
 	if len(events) > 0 {
+		endID = events[len(events)-1].ID
 		eventsConnection.PageInfo.StartCursor = cursorutils.EncodeCursor(events[0].ID)
 		eventsConnection.PageInfo.EndCursor = cursorutils.EncodeCursor(endID)
-	}
 
-	// decide HasNextPage
-	nextEvent, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, 1, endID)
-	if err != nil {
-		return nil, err
+		// decide HasNextPage
+		nextEvent, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, 1, endID)
+		if err != nil {
+			return nil, err
+		}
+		eventsConnection.PageInfo.HasNextPage = new(bool)
+		*eventsConnection.PageInfo.HasNextPage = len(nextEvent) > 0
 	}
-	eventsConnection.PageInfo.HasNextPage = new(bool)
-	*eventsConnection.PageInfo.HasNextPage = len(nextEvent) > 0
 
 	return eventsConnection, nil
 }
