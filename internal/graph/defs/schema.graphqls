@@ -31,6 +31,7 @@ type Research {
   id: ID! @goTag(key: "bun", value: "research_id")
   name: String!
   schema: Map!
+  eventsConnection(first: Int = 10, after: ID): EventsConnection
 }
 
 type Topic {
@@ -55,10 +56,27 @@ input GroupCountInput {
   resultMappingInput: String!
 }
 
+type EventsConnection {
+  edges: [EventsEdge!]!
+  pageInfo: PageInfo!
+}
+
+type EventsEdge {
+  node: Event!
+  cursor: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean
+  startCursor: ID!
+  endCursor: ID!
+}
+
 type Query {
   me: User!
   research(id: ID!): Research!
   researches: [Research!]!
+  events(researchId: ID, first: Int = 10, after: ID): EventsConnection!
   groupCount(input: GroupCountInput!): GroupCountResult!
 }
 

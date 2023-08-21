@@ -20,6 +20,16 @@ type Event struct {
 	UserAgent  *string                `json:"userAgent,omitempty"`
 }
 
+type EventsConnection struct {
+	Edges    []*EventsEdge `json:"edges"`
+	PageInfo *PageInfo     `json:"pageInfo"`
+}
+
+type EventsEdge struct {
+	Node   *Event `json:"node"`
+	Cursor string `json:"cursor"`
+}
+
 type GroupCountInput struct {
 	ResearchID         string `json:"researchId"`
 	FilterInput        string `json:"filterInput"`
@@ -43,10 +53,10 @@ type NewEvent struct {
 	UserAgent  *string                `json:"userAgent,omitempty"`
 }
 
-type Research struct {
-	ID     string                 `json:"id" bun:"research_id"`
-	Name   string                 `json:"name"`
-	Schema map[string]interface{} `json:"schema"`
+type PageInfo struct {
+	HasNextPage *bool  `json:"hasNextPage,omitempty"`
+	StartCursor string `json:"startCursor"`
+	EndCursor   string `json:"endCursor"`
 }
 
 type Topic struct {

@@ -14,6 +14,7 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/fx"
 
+	"exusiai.dev/roguestats-backend/internal/cursorutils"
 	"exusiai.dev/roguestats-backend/internal/exprutils"
 	"exusiai.dev/roguestats-backend/internal/model"
 	"exusiai.dev/roguestats-backend/internal/repo"
@@ -49,6 +50,40 @@ func (s Event) CreateEventFromInput(ctx context.Context, input *model.NewEvent) 
 		return nil, err
 	}
 	return event, nil
+}
+
+func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first int, after string) (*model.EventsConnection, error) {
+	events, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, first, after)
+	if err != nil {
+		return nil, err
+	}
+	eventsConnection := &model.EventsConnection{
+		Edges:    make([]*model.EventsEdge, 0),
+		PageInfo: &model.PageInfo{},
+	}
+	for _, event := range events {
+		eventsConnection.Edges = append(eventsConnection.Edges, &model.EventsEdge{
+			Node:   event,
+			Cursor: cursorutils.EncodeCursor(event.ID),
+		})
+	}
+
+	// decide StartCursor and EndCursor
+	endID := events[len(events)-1].ID
+	if len(events) > 0 {
+		eventsConnection.PageInfo.StartCursor = cursorutils.EncodeCursor(events[0].ID)
+		eventsConnection.PageInfo.EndCursor = cursorutils.EncodeCursor(endID)
+	}
+
+	// decide HasNextPage
+	nextEvent, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, 1, endID)
+	if err != nil {
+		return nil, err
+	}
+	eventsConnection.PageInfo.HasNextPage = new(bool)
+	*eventsConnection.PageInfo.HasNextPage = len(nextEvent) > 0
+
+	return eventsConnection, nil
 }
 
 /**

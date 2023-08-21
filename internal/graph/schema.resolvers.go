@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 
+	"exusiai.dev/roguestats-backend/internal/cursorutils"
 	"exusiai.dev/roguestats-backend/internal/model"
 )
 
@@ -35,6 +36,19 @@ func (r *queryResolver) Researches(ctx context.Context) ([]*model.Research, erro
 	return r.ResearchService.GetAllResearch(ctx)
 }
 
+// Events is the resolver for the events field.
+func (r *queryResolver) Events(ctx context.Context, researchID *string, first *int, after *string) (*model.EventsConnection, error) {
+	var decodedCursor string
+	var err error
+	if after != nil {
+		decodedCursor, err = cursorutils.DecodeCursor(*after)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r.EventService.GetPaginatedEvents(ctx, *researchID, *first, decodedCursor)
+}
+
 // GroupCount is the resolver for the groupCount field.
 func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
 	groupCountResult, err := r.EventService.CalculateStats(ctx, input.ResearchID, input.FilterInput, input.ResultMappingInput)
@@ -44,11 +58,28 @@ func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountIn
 	return groupCountResult, nil
 }
 
+// EventsConnection is the resolver for the eventsConnection field.
+func (r *researchResolver) EventsConnection(ctx context.Context, obj *model.Research, first *int, after *string) (*model.EventsConnection, error) {
+	var decodedCursor string
+	var err error
+	if after != nil {
+		decodedCursor, err = cursorutils.DecodeCursor(*after)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r.EventService.GetPaginatedEvents(ctx, obj.ID, *first, decodedCursor)
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Research returns ResearchResolver implementation.
+func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type researchResolver struct{ *Resolver }

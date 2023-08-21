@@ -40,3 +40,21 @@ func (r *Event) GetEventsByResearchID(ctx context.Context, researchID string) ([
 
 	return events, err
 }
+
+func (r *Event) GetPaginatedEventsByResearchID(ctx context.Context, researchID string, first int, after string) ([]*model.Event, error) {
+	var events []*model.Event
+
+	query := r.DB.NewSelect().Model(&events)
+	if researchID != "" {
+		query = query.Where("research_id = ?", researchID)
+	}
+	if after != "" {
+		query = query.Where("event_id > ?", after)
+	}
+
+	err := query.
+		Order("event_id ASC").
+		Limit(first).
+		Scan(ctx)
+	return events, err
+}
