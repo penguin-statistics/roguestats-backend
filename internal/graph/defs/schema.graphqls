@@ -6,7 +6,7 @@ scalar Any
 
 ### Directives ###
 
-directive @public on FIELD_DEFINITION
+directive @admin on FIELD_DEFINITION
 directive @private(userIdFieldName: String = "userId") on FIELD_DEFINITION
 
 ### Queries ###
@@ -94,9 +94,17 @@ input NewEvent {
   userAgent: String
 }
 
+input CreateUserInput {
+  name: String!
+  email: String!
+  attributes: Map
+}
+
 type Mutation {
   login(input: LoginInput!): User!
   createEvent(input: NewEvent!): Event!
+
+  createUser(input: CreateUserInput!): User!
 }
 
 ### gqlgen Directives ###

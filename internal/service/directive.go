@@ -17,6 +17,22 @@ type Directive struct {
 	User User
 }
 
+// Admin directive is used to check if the current user is an admin.
+// if not, return null for the field.
+func (s Directive) Admin(ctx context.Context, obj any, next graphql.Resolver) (res any, err error) {
+	currentUser := appcontext.CurrentUser(ctx)
+	if currentUser == nil {
+		// for anonymous user, return null as well
+		return nil, nil
+	}
+
+	if currentUser.Attributes["admin"] == true {
+		return next(ctx)
+	}
+
+	return nil, nil
+}
+
 // Private directive is used to check if the current user is the owner of the object.
 // if not, return null for the field.
 func (s Directive) Private(ctx context.Context, obj any, next graphql.Resolver, userIDFieldName *string) (res any, err error) {

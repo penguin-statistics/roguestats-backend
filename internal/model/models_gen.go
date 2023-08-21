@@ -11,6 +11,12 @@ type CategoryCount struct {
 	Count    int         `json:"count"`
 }
 
+type CreateUserInput struct {
+	Name       string                 `json:"name"`
+	Email      string                 `json:"email"`
+	Attributes map[string]interface{} `json:"attributes,omitempty"`
+}
+
 type Event struct {
 	ID         string                 `json:"id" bun:"event_id"`
 	ResearchID string                 `json:"researchId" bun:"research_id"`

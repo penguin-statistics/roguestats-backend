@@ -36,6 +36,9 @@ type ConfigSpec struct {
 
 	// TurnstileSecret is the secret used to verify the turnstile response.
 	TurnstileSecret string `split_words:"true" required:"true"`
+
+	// ResendApiKey is the API key used to send emails via Resend.
+	ResendApiKey string `split_words:"true" required:"true"`
 }
 
 type Config struct {

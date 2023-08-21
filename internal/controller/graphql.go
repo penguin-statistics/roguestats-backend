@@ -33,6 +33,7 @@ func RegisterGraphQL(c GraphQL) {
 		},
 	}
 	graphConfig.Directives.Private = c.DirectiveService.Private
+	graphConfig.Directives.Admin = c.DirectiveService.Admin
 
 	srv := handler.New(graph.NewExecutableSchema(graphConfig))
 

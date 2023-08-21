@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.36
 	github.com/antonmedv/expr v1.12.7
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/dchest/uniuri v1.2.0
 	github.com/gofiber/adaptor/v2 v2.2.1
 	github.com/gofiber/fiber/v2 v2.48.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
@@ -13,6 +14,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/machinebox/graphql v0.2.2
 	github.com/pkg/errors v0.9.1
+	github.com/resendlabs/resend-go v1.7.0
 	github.com/rs/zerolog v1.29.1
 	github.com/uptrace/bun v1.1.14
 	github.com/uptrace/bun/dialect/pgdialect v1.1.14

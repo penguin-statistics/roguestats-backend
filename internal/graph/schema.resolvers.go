@@ -21,6 +21,11 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input model.NewEvent
 	return r.EventService.CreateEventFromInput(ctx, &input)
 }
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+	return r.AuthService.CreateUser(ctx, input)
+}
+
 // Me is the resolver for the `me` field.
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	return r.AuthService.CurrentUser(ctx)

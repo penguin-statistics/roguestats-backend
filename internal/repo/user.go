@@ -46,3 +46,11 @@ func (r *User) GetUsers(ctx context.Context) ([]*model.User, error) {
 
 	return users, err
 }
+
+func (r *User) CreateUser(ctx context.Context, user *model.User) error {
+	_, err := r.DB.NewInsert().
+		Model(user).
+		Exec(ctx)
+
+	return err
+}
