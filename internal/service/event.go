@@ -82,6 +82,14 @@ func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first 
 		}
 		eventsConnection.PageInfo.HasNextPage = new(bool)
 		*eventsConnection.PageInfo.HasNextPage = len(nextEvent) > 0
+
+		// decide HasPreviousPage
+		previousEvent, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, 1, events[0].ID)
+		if err != nil {
+			return nil, err
+		}
+		eventsConnection.PageInfo.HasPreviousPage = new(bool)
+		*eventsConnection.PageInfo.HasPreviousPage = len(previousEvent) > 0
 	}
 
 	return eventsConnection, nil

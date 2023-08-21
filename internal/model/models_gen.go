@@ -60,9 +60,10 @@ type NewEvent struct {
 }
 
 type PageInfo struct {
-	HasNextPage *bool  `json:"hasNextPage,omitempty"`
-	StartCursor string `json:"startCursor"`
-	EndCursor   string `json:"endCursor"`
+	HasNextPage     *bool  `json:"hasNextPage,omitempty"`
+	HasPreviousPage *bool  `json:"hasPreviousPage,omitempty"`
+	StartCursor     string `json:"startCursor"`
+	EndCursor       string `json:"endCursor"`
 }
 
 type Topic struct {
