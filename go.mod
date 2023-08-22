@@ -23,6 +23,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.8
 	go.uber.org/fx v1.20.0
 	golang.org/x/crypto v0.9.0
+	gopkg.in/guregu/null.v3 v3.5.0
 )
 
 require github.com/matryer/is v1.4.1 // indirect
@@ -58,7 +59,7 @@ require (
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
-	gopkg.in/guregu/null.v3 v3.5.0
+	gopkg.in/guregu/null.v4 v4.0.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mellium.im/sasl v0.3.1 // indirect
 )
