@@ -25,7 +25,10 @@ require (
 	golang.org/x/crypto v0.9.0
 )
 
-require github.com/matryer/is v1.4.1 // indirect
+require (
+	github.com/matryer/is v1.4.1 // indirect
+	github.com/oklog/ulid/v2 v2.1.0 // indirect
+)
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect

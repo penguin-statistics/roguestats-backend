@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
+	"github.com/oklog/ulid/v2"
 	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/fx"
@@ -57,13 +58,23 @@ func (s Event) CreateEventFromInput(ctx context.Context, input *model.NewEvent) 
 }
 
 func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first int, after string) (*model.EventsConnection, error) {
-	events, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, first, after)
+	events, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, first+1, after)
 	if err != nil {
 		return nil, err
 	}
+
+	hasNextPage := len(events) > first
+	hasPreviousPage := after != ""
+	if len(events) > first {
+		events = events[:len(events)-1]
+	}
+
 	eventsConnection := &model.EventsConnection{
-		Edges:    make([]*model.EventsEdge, 0, len(events)),
-		PageInfo: &model.PageInfo{},
+		Edges: make([]*model.EventsEdge, 0, len(events)),
+		PageInfo: &model.PageInfo{
+			HasNextPage:     &hasNextPage,
+			HasPreviousPage: &hasPreviousPage,
+		},
 	}
 	for _, event := range events {
 		eventsConnection.Edges = append(eventsConnection.Edges, &model.EventsEdge{
@@ -73,27 +84,9 @@ func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first 
 	}
 
 	// decide StartCursor and EndCursor
-	var endID string
 	if len(events) > 0 {
-		endID = events[len(events)-1].ID
 		eventsConnection.PageInfo.StartCursor = cursorutils.EncodeCursor(events[0].ID)
-		eventsConnection.PageInfo.EndCursor = cursorutils.EncodeCursor(endID)
-
-		// decide HasNextPage
-		nextEvent, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, 1, endID)
-		if err != nil {
-			return nil, err
-		}
-		eventsConnection.PageInfo.HasNextPage = new(bool)
-		*eventsConnection.PageInfo.HasNextPage = len(nextEvent) > 0
-
-		// decide HasPreviousPage
-		previousEvent, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, 1, events[0].ID)
-		if err != nil {
-			return nil, err
-		}
-		eventsConnection.PageInfo.HasPreviousPage = new(bool)
-		*eventsConnection.PageInfo.HasPreviousPage = len(previousEvent) > 0
+		eventsConnection.PageInfo.EndCursor = cursorutils.EncodeCursor(events[len(events)-1].ID)
 	}
 
 	return eventsConnection, nil
@@ -233,14 +226,8 @@ func (s Event) convertFromEventInputToEvent(ctx context.Context, input *model.Ne
 		return nil, err
 	}
 
-	// FIXME: should use a global snowflake node or something like an ID generator
-	node, err := snowflake.NewNode(1)
-	if err != nil {
-		return nil, err
-	}
-
 	event := &model.Event{
-		ID:         node.Generate().String(),
+		ID:         strings.ToLower(ulid.Make().String()),
 		ResearchID: input.ResearchID,
 		Content:    input.Content,
 		UserID:     user.ID,
