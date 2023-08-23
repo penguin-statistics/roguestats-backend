@@ -20,6 +20,17 @@ func (r *Event) CreateEvent(ctx context.Context, event *model.Event) error {
 	return err
 }
 
+func (r *Event) GetEvent(ctx context.Context, eventID string) (*model.Event, error) {
+	var event model.Event
+
+	err := r.DB.NewSelect().
+		Model(&event).
+		Where("event_id = ?", eventID).
+		Scan(ctx)
+
+	return &event, err
+}
+
 func (r *Event) GetEvents(ctx context.Context) ([]*model.Event, error) {
 	var events []*model.Event
 

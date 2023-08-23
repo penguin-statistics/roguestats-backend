@@ -100,10 +100,11 @@ type ComplexityRoot struct {
 	}
 
 	Research struct {
-		EventsConnection func(childComplexity int, first *int, after *string) int
-		ID               func(childComplexity int) int
-		Name             func(childComplexity int) int
-		Schema           func(childComplexity int) int
+		Event  func(childComplexity int, input string) int
+		Events func(childComplexity int, first *int, after *string) int
+		ID     func(childComplexity int) int
+		Name   func(childComplexity int) int
+		Schema func(childComplexity int) int
 	}
 
 	Topic struct {
@@ -133,7 +134,8 @@ type QueryResolver interface {
 	GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error)
 }
 type ResearchResolver interface {
-	EventsConnection(ctx context.Context, obj *model.Research, first *int, after *string) (*model.EventsConnection, error)
+	Event(ctx context.Context, obj *model.Research, input string) (*model.Event, error)
+	Events(ctx context.Context, obj *model.Research, first *int, after *string) (*model.EventsConnection, error)
 }
 
 type executableSchema struct {
@@ -363,17 +365,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Researches(childComplexity), true
 
-	case "Research.eventsConnection":
-		if e.complexity.Research.EventsConnection == nil {
+	case "Research.event":
+		if e.complexity.Research.Event == nil {
 			break
 		}
 
-		args, err := ec.field_Research_eventsConnection_args(context.TODO(), rawArgs)
+		args, err := ec.field_Research_event_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Research.EventsConnection(childComplexity, args["first"].(*int), args["after"].(*string)), true
+		return e.complexity.Research.Event(childComplexity, args["input"].(string)), true
+
+	case "Research.events":
+		if e.complexity.Research.Events == nil {
+			break
+		}
+
+		args, err := ec.field_Research_events_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Research.Events(childComplexity, args["first"].(*int), args["after"].(*string)), true
 
 	case "Research.id":
 		if e.complexity.Research.ID == nil {
@@ -711,7 +725,22 @@ func (ec *executionContext) field_Query_research_args(ctx context.Context, rawAr
 	return args, nil
 }
 
-func (ec *executionContext) field_Research_eventsConnection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Research_event_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Research_events_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -1910,8 +1939,10 @@ func (ec *executionContext) fieldContext_Query_research(ctx context.Context, fie
 				return ec.fieldContext_Research_name(ctx, field)
 			case "schema":
 				return ec.fieldContext_Research_schema(ctx, field)
-			case "eventsConnection":
-				return ec.fieldContext_Research_eventsConnection(ctx, field)
+			case "event":
+				return ec.fieldContext_Research_event(ctx, field)
+			case "events":
+				return ec.fieldContext_Research_events(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Research", field.Name)
 		},
@@ -1975,8 +2006,10 @@ func (ec *executionContext) fieldContext_Query_researches(ctx context.Context, f
 				return ec.fieldContext_Research_name(ctx, field)
 			case "schema":
 				return ec.fieldContext_Research_schema(ctx, field)
-			case "eventsConnection":
-				return ec.fieldContext_Research_eventsConnection(ctx, field)
+			case "event":
+				return ec.fieldContext_Research_event(ctx, field)
+			case "events":
+				return ec.fieldContext_Research_events(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Research", field.Name)
 		},
@@ -2367,8 +2400,8 @@ func (ec *executionContext) fieldContext_Research_schema(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Research_eventsConnection(ctx context.Context, field graphql.CollectedField, obj *model.Research) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Research_eventsConnection(ctx, field)
+func (ec *executionContext) _Research_event(ctx context.Context, field graphql.CollectedField, obj *model.Research) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Research_event(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2381,7 +2414,76 @@ func (ec *executionContext) _Research_eventsConnection(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Research().EventsConnection(rctx, obj, fc.Args["first"].(*int), fc.Args["after"].(*string))
+		return ec.resolvers.Research().Event(rctx, obj, fc.Args["input"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Event)
+	fc.Result = res
+	return ec.marshalNEvent2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋmodelᚐEvent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Research_event(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Research",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Event_id(ctx, field)
+			case "researchId":
+				return ec.fieldContext_Event_researchId(ctx, field)
+			case "content":
+				return ec.fieldContext_Event_content(ctx, field)
+			case "userId":
+				return ec.fieldContext_Event_userId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Event_createdAt(ctx, field)
+			case "userAgent":
+				return ec.fieldContext_Event_userAgent(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Research_event_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Research_events(ctx context.Context, field graphql.CollectedField, obj *model.Research) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Research_events(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Research().Events(rctx, obj, fc.Args["first"].(*int), fc.Args["after"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2395,7 +2497,7 @@ func (ec *executionContext) _Research_eventsConnection(ctx context.Context, fiel
 	return ec.marshalOEventsConnection2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋmodelᚐEventsConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Research_eventsConnection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Research_events(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Research",
 		Field:      field,
@@ -2418,7 +2520,7 @@ func (ec *executionContext) fieldContext_Research_eventsConnection(ctx context.C
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Research_eventsConnection_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Research_events_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2446,11 +2548,14 @@ func (ec *executionContext) _Topic_id(ctx context.Context, field graphql.Collect
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Topic_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4713,6 +4818,43 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj model.Node) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.User:
+		return ec._User(ctx, sel, &obj)
+	case *model.User:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._User(ctx, sel, obj)
+	case model.Event:
+		return ec._Event(ctx, sel, &obj)
+	case *model.Event:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Event(ctx, sel, obj)
+	case model.Research:
+		return ec._Research(ctx, sel, &obj)
+	case *model.Research:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Research(ctx, sel, obj)
+	case model.Topic:
+		return ec._Topic(ctx, sel, &obj)
+	case *model.Topic:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Topic(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
@@ -4761,7 +4903,7 @@ func (ec *executionContext) _CategoryCount(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var eventImplementors = []string{"Event"}
+var eventImplementors = []string{"Event", "Node"}
 
 func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *model.Event) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, eventImplementors)
@@ -5225,7 +5367,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var researchImplementors = []string{"Research"}
+var researchImplementors = []string{"Research", "Node"}
 
 func (ec *executionContext) _Research(ctx context.Context, sel ast.SelectionSet, obj *model.Research) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, researchImplementors)
@@ -5251,7 +5393,7 @@ func (ec *executionContext) _Research(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "eventsConnection":
+		case "event":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -5260,7 +5402,43 @@ func (ec *executionContext) _Research(ctx context.Context, sel ast.SelectionSet,
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Research_eventsConnection(ctx, field, obj)
+				res = ec._Research_event(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "events":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Research_events(ctx, field, obj)
 				return res
 			}
 
@@ -5307,7 +5485,7 @@ func (ec *executionContext) _Research(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
-var topicImplementors = []string{"Topic"}
+var topicImplementors = []string{"Topic", "Node"}
 
 func (ec *executionContext) _Topic(ctx context.Context, sel ast.SelectionSet, obj *model.Topic) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, topicImplementors)
@@ -5320,6 +5498,9 @@ func (ec *executionContext) _Topic(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = graphql.MarshalString("Topic")
 		case "id":
 			out.Values[i] = ec._Topic_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "filterInput":
 			out.Values[i] = ec._Topic_filterInput(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5353,7 +5534,7 @@ func (ec *executionContext) _Topic(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var userImplementors = []string{"User"}
+var userImplementors = []string{"User", "Node"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)

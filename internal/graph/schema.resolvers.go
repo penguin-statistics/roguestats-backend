@@ -63,8 +63,13 @@ func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountIn
 	return groupCountResult, nil
 }
 
-// EventsConnection is the resolver for the eventsConnection field.
-func (r *researchResolver) EventsConnection(ctx context.Context, obj *model.Research, first *int, after *string) (*model.EventsConnection, error) {
+// Event is the resolver for the event field.
+func (r *researchResolver) Event(ctx context.Context, obj *model.Research, input string) (*model.Event, error) {
+	return r.EventService.GetEvent(ctx, obj.ID)
+}
+
+// Events is the resolver for the events field.
+func (r *researchResolver) Events(ctx context.Context, obj *model.Research, first *int, after *string) (*model.EventsConnection, error) {
 	var decodedCursor string
 	var err error
 	if after != nil {
@@ -85,6 +90,8 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // Research returns ResearchResolver implementation.
 func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type researchResolver struct{ *Resolver }
+type (
+	mutationResolver struct{ *Resolver }
+	queryResolver    struct{ *Resolver }
+	researchResolver struct{ *Resolver }
+)

@@ -32,6 +32,10 @@ func (s Event) CreateEvent(ctx context.Context, event *model.Event) error {
 	return s.EventRepo.CreateEvent(ctx, event)
 }
 
+func (s Event) GetEvent(ctx context.Context, eventID string) (*model.Event, error) {
+	return s.EventRepo.GetEvent(ctx, eventID)
+}
+
 func (s Event) GetEvents(ctx context.Context) ([]*model.Event, error) {
 	return s.EventRepo.GetEvents(ctx)
 }

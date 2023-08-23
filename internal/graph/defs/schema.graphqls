@@ -9,16 +9,22 @@ scalar Any
 directive @admin on FIELD_DEFINITION
 directive @private(userIdFieldName: String = "userId") on FIELD_DEFINITION
 
+### Interfaces ###
+
+interface Node {
+  id: ID!
+}
+
 ### Queries ###
 
-type User {
+type User implements Node {
   id: ID! @goTag(key: "bun", value: "user_id")
   name: String!
   email: String @private(userIdFieldName: "id")
   attributes: Map
 }
 
-type Event {
+type Event implements Node {
   id: ID! @goTag(key: "bun", value: "event_id")
   researchId: ID! @goTag(key: "bun", value: "research_id")
   content: Map!
@@ -27,15 +33,20 @@ type Event {
   userAgent: String
 }
 
-type Research {
+type Research implements Node {
   id: ID! @goTag(key: "bun", value: "research_id")
   name: String!
   schema: Map!
-  eventsConnection(first: Int = 10, after: ID): EventsConnection
+  event(input: ID!): Event!
+    @goTag(key: "bun", value: "-")
+    @goField(forceResolver: true)
+  events(first: Int = 10, after: ID): EventsConnection
+    @goTag(key: "bun", value: "-")
+    @goField(forceResolver: true)
 }
 
-type Topic {
-  id: ID @goTag(key: "bun", value: "topic_id")
+type Topic implements Node {
+  id: ID! @goTag(key: "bun", value: "topic_id")
   filterInput: String!
   resultMappingInput: String!
 }

@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type Node interface {
+	IsNode()
+	GetID() string
+}
+
 type CategoryCount struct {
 	Category interface{} `json:"category"`
 	Count    int         `json:"count"`
@@ -25,6 +30,9 @@ type Event struct {
 	CreatedAt  time.Time              `json:"createdAt"`
 	UserAgent  *string                `json:"userAgent,omitempty"`
 }
+
+func (Event) IsNode()            {}
+func (this Event) GetID() string { return this.ID }
 
 type EventsConnection struct {
 	Edges    []*EventsEdge `json:"edges"`
@@ -66,11 +74,25 @@ type PageInfo struct {
 	EndCursor       string `json:"endCursor"`
 }
 
-type Topic struct {
-	ID                 *string `json:"id,omitempty" bun:"topic_id"`
-	FilterInput        string  `json:"filterInput"`
-	ResultMappingInput string  `json:"resultMappingInput"`
+type Research struct {
+	ID     string                 `json:"id" bun:"research_id"`
+	Name   string                 `json:"name"`
+	Schema map[string]interface{} `json:"schema"`
+	Event  *Event                 `json:"event" bun:"-"`
+	Events *EventsConnection      `json:"events,omitempty" bun:"-"`
 }
+
+func (Research) IsNode()            {}
+func (this Research) GetID() string { return this.ID }
+
+type Topic struct {
+	ID                 string `json:"id" bun:"topic_id"`
+	FilterInput        string `json:"filterInput"`
+	ResultMappingInput string `json:"resultMappingInput"`
+}
+
+func (Topic) IsNode()            {}
+func (this Topic) GetID() string { return this.ID }
 
 type User struct {
 	ID         string                 `json:"id" bun:"user_id"`
@@ -80,3 +102,6 @@ type User struct {
 	// User's encrypted credential
 	Credential string `json:"-"`
 }
+
+func (User) IsNode()            {}
+func (this User) GetID() string { return this.ID }
