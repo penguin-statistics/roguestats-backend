@@ -23,7 +23,7 @@ require (
 	github.com/urfave/cli/v2 v2.25.7
 	github.com/vektah/gqlparser/v2 v2.5.8
 	go.uber.org/fx v1.20.0
-	golang.org/x/crypto v0.9.0
+	golang.org/x/crypto v0.12.0
 	gopkg.in/guregu/null.v3 v3.5.0
 	gopkg.in/guregu/null.v4 v4.0.0
 )
@@ -58,8 +58,8 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mellium.im/sasl v0.3.1 // indirect
