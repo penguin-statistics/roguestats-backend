@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/99designs/gqlgen v0.17.36
-	github.com/antonmedv/expr v1.14.2
+	github.com/antonmedv/expr v1.14.3
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dchest/uniuri v1.2.0
 	github.com/gofiber/adaptor/v2 v2.2.1
