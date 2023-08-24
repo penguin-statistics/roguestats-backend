@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/99designs/gqlgen v0.17.36
 	github.com/antonmedv/expr v1.14.3
-	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dchest/uniuri v1.2.0
 	github.com/gofiber/adaptor/v2 v2.2.1
 	github.com/gofiber/fiber/v2 v2.48.0
@@ -25,7 +24,6 @@ require (
 	go.uber.org/fx v1.20.0
 	golang.org/x/crypto v0.12.0
 	gopkg.in/guregu/null.v3 v3.5.0
-	gopkg.in/guregu/null.v4 v4.0.0
 )
 
 require github.com/matryer/is v1.4.1 // indirect
