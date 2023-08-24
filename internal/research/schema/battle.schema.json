@@ -1,6 +1,6 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://penguin-stats.io/roguestats/battle.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://rogue.penguin-stats.io/_/schema/research/battle",
   "title": "作战节点",
   "type": "object",
   "additionalProperties": false,
