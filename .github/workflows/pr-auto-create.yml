@@ -30,10 +30,11 @@ jobs:
           script: |
             let lastRelease = 'v0.0.0'
             try {
-              const { data: { tag_name: lastRelease } } = await github.rest.repos.getLatestRelease({
+              const { data: { tag_name: fetchedLastRelease } } = await github.rest.repos.getLatestRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo
               })
+              lastRelease = fetchedLastRelease
             } catch (e) {
               console.log('No release found, creating first release')
             }
