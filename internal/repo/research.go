@@ -20,6 +20,7 @@ func (r *Research) GetAllResearch(ctx context.Context) ([]*model.Research, error
 
 	err := r.DB.NewSelect().
 		Model(&research).
+		Order("research_id ASC").
 		Scan(ctx)
 
 	return research, err
