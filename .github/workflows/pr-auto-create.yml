@@ -28,10 +28,15 @@ jobs:
         with:
           github-token: ${{ secrets.PAT_FOR_RELEASE_TAGGER }}
           script: |
-            const { data: { tag_name: lastRelease } } = await github.rest.repos.getLatestRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            })
+            let lastRelease = 'v0.0.0'
+            try {
+              const { data: { tag_name: lastRelease } } = await github.rest.repos.getLatestRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo
+              })
+            } catch (e) {
+              console.log('No release found, creating first release')
+            }
             const nextRelease = lastRelease.replace(/(\d+)$/, (match, p1) => Number(p1) + 1)
             const prTitle = `Release ${nextRelease}`
             const pr = await github.rest.pulls.create({
