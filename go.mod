@@ -13,6 +13,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/machinebox/graphql v0.2.2
+	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/resendlabs/resend-go v1.7.0
 	github.com/rs/zerolog v1.30.0
@@ -22,14 +23,11 @@ require (
 	github.com/urfave/cli/v2 v2.25.7
 	github.com/vektah/gqlparser/v2 v2.5.8
 	go.uber.org/fx v1.20.0
-	golang.org/x/crypto v0.9.0
+	golang.org/x/crypto v0.12.0
 	gopkg.in/guregu/null.v3 v3.5.0
 )
 
-require (
-	github.com/matryer/is v1.4.1 // indirect
-	github.com/oklog/ulid/v2 v2.1.0 // indirect
-)
+require github.com/matryer/is v1.4.1 // indirect
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
@@ -59,8 +57,8 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	gopkg.in/guregu/null.v4 v4.0.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
