@@ -78,7 +78,7 @@ func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*mode
 	}
 	randomString := base64.RawURLEncoding.EncodeToString(randomBytes[:])
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomString), 14)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomString), 12)
 	if err != nil {
 		return nil, err
 	}
