@@ -8,10 +8,10 @@ import (
 type Meta struct {
 	fx.In
 
-	Route            fiber.Router `name:"internal"`
+	Route fiber.Router `name:"internal"`
 }
 
-func RegisterMeta(c GraphQL) {
+func RegisterMeta(c Meta) {
 	c.Route.Get("/ping", func(c *fiber.Ctx) error {
 		return c.SendString("pong")
 	})

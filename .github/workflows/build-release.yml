@@ -39,5 +39,5 @@ jobs:
           sentry-project: ${{ secrets.SENTRY_PROJECT }}
           use-ghrelease: true
           use-manifestbot: true
-          manifestbot-file-path: "applications/roguestats-backend/values-prod.yaml"
+          manifestbot-file-path: "applications/roguestats/values-prod.yaml"
           manifestbot-token: ${{ secrets.PAT_FOR_MANIFESTBOT }}
