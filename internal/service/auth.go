@@ -17,6 +17,7 @@ import (
 	"exusiai.dev/roguestats-backend/internal/blob"
 	"exusiai.dev/roguestats-backend/internal/model"
 	"exusiai.dev/roguestats-backend/internal/repo"
+	"exusiai.dev/roguestats-backend/internal/x/entid"
 )
 
 type Auth struct {
@@ -71,7 +72,7 @@ func (s Auth) AuthByToken(ctx context.Context, token string) (*model.User, error
 }
 
 func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*model.User, error) {
-	var randomBytes [32]byte
+	var randomBytes [16]byte
 	_, err := rand.Read(randomBytes[:])
 	if err != nil {
 		return nil, err
@@ -84,6 +85,7 @@ func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*mode
 	}
 
 	user := &model.User{
+		ID:         entid.User(),
 		Name:       args.Name,
 		Email:      &args.Email,
 		Attributes: args.Attributes,

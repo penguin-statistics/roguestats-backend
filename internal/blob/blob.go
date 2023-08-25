@@ -18,7 +18,7 @@ type RenderArtifact struct {
 }
 
 func RenderHTML(filename string, data any) (string, error) {
-	t, err := htmltmpl.ParseFS(content, "template/"+filename+".tmpl")
+	t, err := htmltmpl.ParseFS(content, "template/"+filename+".html.tmpl")
 	if err != nil {
 		return "", err
 	}
@@ -33,7 +33,7 @@ func RenderHTML(filename string, data any) (string, error) {
 }
 
 func RenderText(filename string, data any) (string, error) {
-	t, err := texttmpl.ParseFS(content, "template/"+filename+".tmpl")
+	t, err := texttmpl.ParseFS(content, "template/"+filename+".txt.tmpl")
 	if err != nil {
 		return "", err
 	}

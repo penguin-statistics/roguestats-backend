@@ -42,7 +42,7 @@ func (r *queryResolver) Researches(ctx context.Context) ([]*model.Research, erro
 }
 
 // Events is the resolver for the events field.
-func (r *queryResolver) Events(ctx context.Context, researchID *string, first *int, after *string) (*model.EventsConnection, error) {
+func (r *queryResolver) Events(ctx context.Context, first *int, after *string, researchID *string, userID *string) (*model.EventsConnection, error) {
 	var decodedCursor string
 	var err error
 	if after != nil {
@@ -63,35 +63,13 @@ func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountIn
 	return groupCountResult, nil
 }
 
-// Event is the resolver for the event field.
-func (r *researchResolver) Event(ctx context.Context, obj *model.Research, input string) (*model.Event, error) {
-	return r.EventService.GetEvent(ctx, obj.ID)
-}
-
-// Events is the resolver for the events field.
-func (r *researchResolver) Events(ctx context.Context, obj *model.Research, first *int, after *string) (*model.EventsConnection, error) {
-	var decodedCursor string
-	var err error
-	if after != nil {
-		decodedCursor, err = cursorutils.DecodeCursor(*after)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return r.EventService.GetPaginatedEvents(ctx, obj.ID, *first, decodedCursor)
-}
-
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-// Research returns ResearchResolver implementation.
-func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
-
 type (
 	mutationResolver struct{ *Resolver }
 	queryResolver    struct{ *Resolver }
-	researchResolver struct{ *Resolver }
 )

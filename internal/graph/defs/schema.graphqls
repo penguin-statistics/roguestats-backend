@@ -37,12 +37,6 @@ type Research implements Node {
   id: ID! @goTag(key: "bun", value: "research_id")
   name: String!
   schema: Map!
-  event(input: ID!): Event!
-    @goTag(key: "bun", value: "-")
-    @goField(forceResolver: true)
-  events(first: Int = 10, after: ID): EventsConnection
-    @goTag(key: "bun", value: "-")
-    @goField(forceResolver: true)
 }
 
 type Topic implements Node {
@@ -88,7 +82,13 @@ type Query {
   me: User!
   research(id: ID!): Research!
   researches: [Research!]!
-  events(researchId: ID, first: Int = 10, after: ID): EventsConnection!
+  events(
+    first: Int = 10
+    after: ID
+
+    researchId: ID
+    userId: ID
+  ): EventsConnection!
   groupCount(input: GroupCountInput!): GroupCountResult!
 }
 

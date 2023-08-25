@@ -7,10 +7,8 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
-	"strings"
 	"time"
 
-	"github.com/oklog/ulid/v2"
 	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/fx"
@@ -19,6 +17,7 @@ import (
 	"exusiai.dev/roguestats-backend/internal/exprutils"
 	"exusiai.dev/roguestats-backend/internal/model"
 	"exusiai.dev/roguestats-backend/internal/repo"
+	"exusiai.dev/roguestats-backend/internal/x/entid"
 )
 
 type Event struct {
@@ -227,7 +226,7 @@ func (s Event) convertFromEventInputToEvent(ctx context.Context, input *model.Ne
 	}
 
 	event := &model.Event{
-		ID:         strings.ToLower(ulid.Make().String()),
+		ID:         entid.Event(),
 		ResearchID: input.ResearchID,
 		Content:    input.Content,
 		UserID:     user.ID,

@@ -6,6 +6,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/rs/zerolog/log"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/fx"
 
 	"exusiai.dev/roguestats-backend/internal/appcontext"
@@ -18,19 +19,18 @@ type Directive struct {
 }
 
 // Admin directive is used to check if the current user is an admin.
-// if not, return null for the field.
+// if not, return error.
 func (s Directive) Admin(ctx context.Context, obj any, next graphql.Resolver) (res any, err error) {
 	currentUser := appcontext.CurrentUser(ctx)
 	if currentUser == nil {
-		// for anonymous user, return null as well
-		return nil, nil
+		return nil, gqlerror.Errorf("You must be logged in to access this resource")
 	}
 
-	if currentUser.Attributes["admin"] == true {
+	if currentUser.Attributes["role"] == "admin" {
 		return next(ctx)
 	}
 
-	return nil, nil
+	return nil, gqlerror.Errorf("You must be an admin to access this resource")
 }
 
 // Private directive is used to check if the current user is the owner of the object.

@@ -78,8 +78,6 @@ type Research struct {
 	ID     string                 `json:"id" bun:"research_id"`
 	Name   string                 `json:"name"`
 	Schema map[string]interface{} `json:"schema"`
-	Event  *Event                 `json:"event" bun:"-"`
-	Events *EventsConnection      `json:"events,omitempty" bun:"-"`
 }
 
 func (Research) IsNode()            {}
