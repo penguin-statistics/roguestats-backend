@@ -1,16 +1,22 @@
 package db
 
 import (
-	"database/sql"
+	"context"
+
+	"github.com/rs/zerolog/log"
 
 	"exusiai.dev/roguestats-backend/internal/app/appconfig"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
+	"exusiai.dev/roguestats-backend/internal/ent"
 )
 
-func New(conf *appconfig.Config) *bun.DB {
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(conf.DatabaseURL)))
-	db := bun.NewDB(sqldb, pgdialect.New())
-	return db
+func New(conf *appconfig.Config) *ent.Client {
+	client, err := ent.Open("postgres", conf.DatabaseURL)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed connecting to database")
+	}
+
+	if err := client.Schema.Create(context.Background()); err != nil {
+		log.Fatal().Err(err).Msg("failed creating schema resources")
+	}
+	return client
 }

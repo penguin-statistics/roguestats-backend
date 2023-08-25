@@ -3,6 +3,7 @@ module exusiai.dev/roguestats-backend
 go 1.19
 
 require (
+	entgo.io/ent v0.12.3
 	github.com/99designs/gqlgen v0.17.36
 	github.com/antonmedv/expr v1.14.3
 	github.com/davecgh/go-spew v1.1.1
@@ -18,8 +19,6 @@ require (
 	github.com/resendlabs/resend-go v1.7.0
 	github.com/rs/zerolog v1.30.0
 	github.com/uptrace/bun v1.1.14
-	github.com/uptrace/bun/dialect/pgdialect v1.1.14
-	github.com/uptrace/bun/driver/pgdriver v1.1.14
 	github.com/urfave/cli/v2 v2.25.7
 	github.com/vektah/gqlparser/v2 v2.5.8
 	go.uber.org/fx v1.20.0
@@ -27,7 +26,17 @@ require (
 	gopkg.in/guregu/null.v4 v4.0.0
 )
 
-require github.com/matryer/is v1.4.1 // indirect
+require (
+	ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf // indirect
+	github.com/agext/levenshtein v1.2.1 // indirect
+	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/go-openapi/inflect v0.19.0 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
+	github.com/matryer/is v1.4.1 // indirect
+	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
+	github.com/zclconf/go-cty v1.8.0 // indirect
+)
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
@@ -61,5 +70,4 @@ require (
 	golang.org/x/text v0.12.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	mellium.im/sasl v0.3.1 // indirect
 )
