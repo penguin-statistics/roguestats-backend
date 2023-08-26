@@ -11,7 +11,7 @@ import (
 )
 
 type ExprRunner struct {
-	methodEnv map[string]interface{}
+	methodEnv map[string]any
 	v         vm.VM
 }
 
@@ -23,7 +23,7 @@ var (
 func GetExprRunner() *ExprRunner {
 	exprRunnerOnce.Do(func() {
 		methods := getMethods(reflect.TypeOf(ExprFunction{}))
-		methodEnv := make(map[string]interface{})
+		methodEnv := make(map[string]any)
 		exprFunction := ExprFunction{}
 		for _, method := range methods {
 			methodEnv[method] = reflect.ValueOf(exprFunction).MethodByName(method).Interface()
@@ -36,8 +36,8 @@ func GetExprRunner() *ExprRunner {
 	return exprRunnerInstance
 }
 
-func (e ExprRunner) PrepareEnv(event *ent.Event) map[string]interface{} {
-	env := map[string]interface{}{
+func (e ExprRunner) PrepareEnv(event *ent.Event) map[string]any {
+	env := map[string]any{
 		"content": event.Content,
 	}
 	for k, v := range e.methodEnv {
@@ -46,7 +46,7 @@ func (e ExprRunner) PrepareEnv(event *ent.Event) map[string]interface{} {
 	return env
 }
 
-func (e ExprRunner) RunCode(code string, env map[string]interface{}) (interface{}, error) {
+func (e ExprRunner) RunCode(code string, env map[string]any) (any, error) {
 	program, err := expr.Compile(code)
 	if err != nil {
 		return nil, err

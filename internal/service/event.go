@@ -76,7 +76,7 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
 		return nil, err
 	}
 
-	categoryCountMap := make(map[interface{}]int)
+	categoryCountMap := make(map[any]int)
 
 	totalCount := 0
 	for _, event := range filteredEvents {
@@ -146,7 +146,7 @@ func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filte
 	return filteredEvents, nil
 }
 
-func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]interface{}, error) {
+func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]any, error) {
 	exprRunner := exprutils.GetExprRunner()
 	output, err := exprRunner.RunCode(resultMappingInput, exprRunner.PrepareEnv(event))
 	if err != nil {
@@ -156,9 +156,9 @@ func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]
 		return nil, nil
 	}
 
-	mappedResults := make([]interface{}, 0)
+	mappedResults := make([]any, 0)
 	if isArray(output) {
-		mappedResults = output.([]interface{})
+		mappedResults = output.([]any)
 	} else {
 		mappedResults = append(mappedResults, output)
 	}
@@ -172,7 +172,7 @@ func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]
 	return mappedResults, nil
 }
 
-func isHashable(v interface{}) bool {
+func isHashable(v any) bool {
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Slice, reflect.Map, reflect.Func:
 		return false
@@ -181,7 +181,7 @@ func isHashable(v interface{}) bool {
 	}
 }
 
-func isArray(input interface{}) bool {
+func isArray(input any) bool {
 	kind := reflect.TypeOf(input).Kind()
 	return kind == reflect.Array || kind == reflect.Slice
 }

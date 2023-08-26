@@ -97,7 +97,7 @@ func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*ent.
 		return nil, err
 	}
 
-	rendered, err := blob.RenderPair("password-generated", map[string]interface{}{
+	rendered, err := blob.RenderPair("password-generated", map[string]any{
 		"Username": user.Name,
 		"Email":    user.Email,
 		"Password": randomString,
