@@ -201,9 +201,8 @@ enum ResearchOrderField {
 type User implements Node {
   id: ID!
   name: String!
-  email: String! @private(userIdFieldName: "id")
-  credential: String!
-  attributes: Map
+  email: String @private(userIdFieldName: "id")
+  attributes: Map @private(userIdFieldName: "id")
 }
 
 type Query {
