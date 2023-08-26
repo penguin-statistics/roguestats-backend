@@ -10,7 +10,7 @@ import (
 	"exusiai.dev/roguestats-backend/internal/service"
 )
 
-type Middleware struct {
+ type Middleware struct {
 	fx.In
 
 	Auth service.Auth
@@ -33,5 +33,14 @@ func (m Middleware) CurrentUser() func(ctx *fiber.Ctx) error {
 		ctx.Context().SetUserValue("currentUser", user)
 
 		return ctx.Next()
+	}
+}
+
+func (m Middleware) InjectFiberCtx() func(ctx *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		// inject fiber context into *fasthttp.RequestCtx
+		ctx := c.Context()
+		ctx.SetUserValue("fiberCtx", c)
+		return c.Next()
 	}
 }

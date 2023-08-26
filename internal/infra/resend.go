@@ -7,6 +7,5 @@ import (
 )
 
 func Resend(conf *appconfig.Config) *resend.Client {
-	client := resend.NewClient(conf.ResendApiKey)
-	return client
+	return resend.NewClient(conf.ResendApiKey)
 }

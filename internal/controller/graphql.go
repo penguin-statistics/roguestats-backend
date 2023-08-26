@@ -3,6 +3,7 @@ package controller
 import (
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
@@ -12,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
+	"exusiai.dev/roguestats-backend/internal/ent"
 	"exusiai.dev/roguestats-backend/internal/graph"
 	"exusiai.dev/roguestats-backend/internal/middleware"
 	"exusiai.dev/roguestats-backend/internal/service"
@@ -23,6 +25,7 @@ type GraphQL struct {
 	ResolverDeps     graph.ResolverDeps
 	Middleware       middleware.Middleware
 	DirectiveService service.Directive
+	Ent 			*ent.Client
 	Route            fiber.Router `name:"root"`
 }
 
@@ -51,12 +54,8 @@ func RegisterGraphQL(c GraphQL) {
 	srv.Use(extension.AutomaticPersistedQuery{
 		Cache: lru.New(100),
 	})
+	srv.Use(entgql.Transactioner{TxOpener: c.Ent})
 
 	c.Route.Get("/", adaptor.HTTPHandler(playground.Handler("GraphQL playground", "/graphql")))
-	c.Route.Post("/graphql", func(c *fiber.Ctx) error {
-		// inject fiber context into *fasthttp.RequestCtx
-		ctx := c.Context()
-		ctx.SetUserValue("fiberCtx", c)
-		return c.Next()
-	}, c.Middleware.CurrentUser(), adaptor.HTTPHandler(srv))
+	c.Route.Post("/graphql", c.Middleware.InjectFiberCtx(), c.Middleware.CurrentUser(), adaptor.HTTPHandler(srv))
 }

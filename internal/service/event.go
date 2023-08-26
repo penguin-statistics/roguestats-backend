@@ -27,13 +27,15 @@ type Event struct {
 }
 
 func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
+	client := ent.FromContext(ctx)
+
 	user, err := s.AuthService.CurrentUser(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// get schema from research
-	research, err := s.Ent.Research.Get(ctx, input.ResearchID)
+	research, err := client.Research.Get(ctx, input.ResearchID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("research not found")
@@ -54,7 +56,7 @@ func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEvent
 		return nil, err
 	}
 
-	return s.Ent.Event.Create().
+	return client.Event.Create().
 		SetContent(input.Content).
 		SetUserAgent(input.UserAgent).
 		SetResearchID(input.ResearchID).

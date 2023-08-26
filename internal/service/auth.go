@@ -86,7 +86,9 @@ func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*ent.
 		return nil, err
 	}
 
-	user, err := s.Ent.User.Create().
+	client := ent.FromContext(ctx)
+
+	user, err := client.User.Create().
 		SetName(args.Name).
 		SetEmail(args.Email).
 		SetAttributes(args.Attributes).
