@@ -16,7 +16,7 @@ import (
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id"`
+	ID string `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Email holds the value of the "email" field.
@@ -38,6 +38,10 @@ type UserEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+
+	namedEvents map[string][]*Event
 }
 
 // EventsOrErr returns the Events value or an error if the edge
@@ -159,6 +163,30 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", u.Attributes))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedEvents(name string) ([]*Event, error) {
+	if u.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedEvents(name string, edges ...*Event) {
+	if u.Edges.namedEvents == nil {
+		u.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedEvents[name] = []*Event{}
+	} else {
+		u.Edges.namedEvents[name] = append(u.Edges.namedEvents[name], edges...)
+	}
 }
 
 // Users is a parsable slice of User.

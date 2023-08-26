@@ -20,9 +20,7 @@ type Resolver struct {
 type ResolverDeps struct {
 	fx.In
 
-	DB              *ent.Client
-	AuthService     service.Auth
-	UserService     service.User
-	EventService    service.Event
-	ResearchService service.Research
+	Ent          *ent.Client
+	AuthService  service.Auth
+	EventService service.Event
 }

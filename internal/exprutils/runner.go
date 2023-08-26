@@ -7,7 +7,7 @@ import (
 	"github.com/antonmedv/expr"
 	"github.com/antonmedv/expr/vm"
 
-	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/ent"
 )
 
 type ExprRunner struct {
@@ -15,8 +15,10 @@ type ExprRunner struct {
 	v         vm.VM
 }
 
-var exprRunnerInstance *ExprRunner
-var exprRunnerOnce sync.Once
+var (
+	exprRunnerInstance *ExprRunner
+	exprRunnerOnce     sync.Once
+)
 
 func GetExprRunner() *ExprRunner {
 	exprRunnerOnce.Do(func() {
@@ -34,7 +36,7 @@ func GetExprRunner() *ExprRunner {
 	return exprRunnerInstance
 }
 
-func (e ExprRunner) PrepareEnv(event *model.Event) map[string]interface{} {
+func (e ExprRunner) PrepareEnv(event *ent.Event) map[string]interface{} {
 	env := map[string]interface{}{
 		"content": event.Content,
 	}

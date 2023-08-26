@@ -3,6 +3,9 @@
 package ent
 
 import (
+	"time"
+
+	"exusiai.dev/roguestats-backend/internal/ent/event"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/schema"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
@@ -12,6 +15,16 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	eventFields := schema.Event{}.Fields()
+	_ = eventFields
+	// eventDescCreatedAt is the schema descriptor for created_at field.
+	eventDescCreatedAt := eventFields[1].Descriptor()
+	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
+	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
+	// eventDescID is the schema descriptor for id field.
+	eventDescID := eventFields[0].Descriptor()
+	// event.DefaultID holds the default value on creation for the id field.
+	event.DefaultID = eventDescID.Default.(func() string)
 	researchFields := schema.Research{}.Fields()
 	_ = researchFields
 	// researchDescName is the schema descriptor for name field.

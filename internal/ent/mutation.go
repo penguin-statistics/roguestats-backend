@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -36,7 +37,7 @@ type EventMutation struct {
 	op              Op
 	typ             string
 	id              *string
-	created_at      *string
+	created_at      *time.Time
 	user_agent      *string
 	content         *map[string]interface{}
 	clearedFields   map[string]struct{}
@@ -154,12 +155,12 @@ func (m *EventMutation) IDs(ctx context.Context) ([]string, error) {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *EventMutation) SetCreatedAt(s string) {
-	m.created_at = &s
+func (m *EventMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *EventMutation) CreatedAt() (r string, exists bool) {
+func (m *EventMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -170,7 +171,7 @@ func (m *EventMutation) CreatedAt() (r string, exists bool) {
 // OldCreatedAt returns the old "created_at" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldCreatedAt(ctx context.Context) (v string, err error) {
+func (m *EventMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -422,7 +423,7 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 func (m *EventMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case event.FieldCreatedAt:
-		v, ok := value.(string)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

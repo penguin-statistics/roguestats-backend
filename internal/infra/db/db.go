@@ -7,6 +7,8 @@ import (
 
 	"exusiai.dev/roguestats-backend/internal/app/appconfig"
 	"exusiai.dev/roguestats-backend/internal/ent"
+
+	_ "github.com/lib/pq"
 )
 
 func New(conf *appconfig.Config) *ent.Client {

@@ -66,7 +66,11 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "exusiai.dev/roguestats-backend/internal/model"
+  - "exusiai.dev/roguestats-backend/internal/ent"
+  - "exusiai.dev/roguestats-backend/internal/ent/event"
+  - "exusiai.dev/roguestats-backend/internal/ent/research"
+  - "exusiai.dev/roguestats-backend/internal/ent/user"
+  - "exusiai.dev/roguestats-backend/internal/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -83,8 +87,11 @@ models:
     model:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
-  User:
-    extraFields:
-      Credential:
-        description: "User's encrypted credential"
-        type: string
+  Node:
+    model:
+      - exusiai.dev/roguestats-backend/internal/ent.Noder
+  # User:
+  #   extraFields:
+  #     Credential:
+  #       description: "User's encrypted credential"
+  #       type: string

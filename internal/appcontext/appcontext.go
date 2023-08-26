@@ -3,9 +3,8 @@ package appcontext
 import (
 	"context"
 
+	"exusiai.dev/roguestats-backend/internal/ent"
 	"github.com/gofiber/fiber/v2"
-
-	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 var (
@@ -15,19 +14,19 @@ var (
 
 // type ctxKey string
 
-func CurrentUser(ctx context.Context) *model.User {
+func CurrentUser(ctx context.Context) *ent.User {
 	v := ctx.Value(ctxKeyCurrentUser)
 	if v == nil {
 		return nil
 	}
-	u, ok := v.(*model.User)
+	u, ok := v.(*ent.User)
 	if !ok {
 		return nil
 	}
 	return u
 }
 
-func WithCurrentUser(ctx context.Context, user *model.User) context.Context {
+func WithCurrentUser(ctx context.Context, user *ent.User) context.Context {
 	return context.WithValue(ctx, ctxKeyCurrentUser, user)
 }
 

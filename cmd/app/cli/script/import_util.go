@@ -6,9 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/machinebox/graphql"
-
 	"exusiai.dev/roguestats-backend/internal/model"
+	"github.com/machinebox/graphql"
 )
 
 func ReadCSVFile(filePath string) [][]string {
@@ -35,10 +34,10 @@ func PostEvent(content map[string]interface{}, researchID string) {
 	  }`,
 	)
 	userAgent := "cli"
-	newEvent := model.NewEvent{
+	newEvent := model.CreateEventInput{
 		Content:    content,
 		ResearchID: researchID,
-		UserAgent:  &userAgent,
+		UserAgent:  userAgent,
 	}
 	req.Var("newEvent", newEvent)
 	// req.Header.Set("Authorization", "")

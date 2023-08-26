@@ -14,8 +14,6 @@ import (
 
 type Directive struct {
 	fx.In
-
-	User User
 }
 
 // Admin directive is used to check if the current user is an admin.

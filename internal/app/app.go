@@ -8,7 +8,6 @@ import (
 	"exusiai.dev/roguestats-backend/internal/controller"
 	"exusiai.dev/roguestats-backend/internal/infra"
 	"exusiai.dev/roguestats-backend/internal/middleware"
-	"exusiai.dev/roguestats-backend/internal/repo"
 	"exusiai.dev/roguestats-backend/internal/server"
 	"exusiai.dev/roguestats-backend/internal/service"
 	"exusiai.dev/roguestats-backend/internal/x/logger"
@@ -31,7 +30,6 @@ func New(ctx appenv.Ctx, additionalOpts ...fx.Option) *fx.App {
 		middleware.Module(),
 		controller.Module(),
 		infra.Module(),
-		repo.Module(),
 		service.Module(),
 		server.Module(),
 	}

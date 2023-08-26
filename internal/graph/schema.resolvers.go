@@ -7,60 +7,70 @@ package graph
 import (
 	"context"
 
-	"exusiai.dev/roguestats-backend/internal/cursorutils"
+	"entgo.io/contrib/entgql"
+	"exusiai.dev/roguestats-backend/internal/ent"
 	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 // Login is the resolver for the login field.
-func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.User, error) {
+func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*ent.User, error) {
 	return r.AuthService.AuthByLoginInput(ctx, input)
 }
 
 // CreateEvent is the resolver for the createEvent field.
-func (r *mutationResolver) CreateEvent(ctx context.Context, input model.NewEvent) (*model.Event, error) {
-	return r.EventService.CreateEventFromInput(ctx, &input)
+func (r *mutationResolver) CreateEvent(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
+	return r.EventService.CreateEventFromInput(ctx, input)
 }
 
 // CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*ent.User, error) {
 	return r.AuthService.CreateUser(ctx, input)
 }
 
-// Me is the resolver for the `me` field.
-func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
+// Me is the resolver for the me field.
+func (r *queryResolver) Me(ctx context.Context) (*ent.User, error) {
 	return r.AuthService.CurrentUser(ctx)
 }
 
-// Research is the resolver for the research field.
-func (r *queryResolver) Research(ctx context.Context, id string) (*model.Research, error) {
-	return r.ResearchService.GetResearchByID(ctx, id)
+// Node is the resolver for the node field.
+func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) {
+	return r.Ent.Noder(ctx, id)
 }
 
-// Researches is the resolver for the researches field.
-func (r *queryResolver) Researches(ctx context.Context) ([]*model.Research, error) {
-	return r.ResearchService.GetAllResearch(ctx)
-}
-
-// Events is the resolver for the events field.
-func (r *queryResolver) Events(ctx context.Context, first *int, after *string, researchID *string, userID *string) (*model.EventsConnection, error) {
-	var decodedCursor string
-	var err error
-	if after != nil {
-		decodedCursor, err = cursorutils.DecodeCursor(*after)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return r.EventService.GetPaginatedEvents(ctx, *researchID, *first, decodedCursor)
+// Nodes is the resolver for the nodes field.
+func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, error) {
+	return r.Ent.Noders(ctx, ids)
 }
 
 // GroupCount is the resolver for the groupCount field.
 func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
-	groupCountResult, err := r.EventService.CalculateStats(ctx, input.ResearchID, input.FilterInput, input.ResultMappingInput)
-	if err != nil {
-		return nil, err
-	}
-	return groupCountResult, nil
+	return r.EventService.CalculateStats(ctx, input.ResearchID, input.FilterInput, input.ResultMappingInput)
+}
+
+// Event is the resolver for the event field.
+func (r *queryResolver) Event(ctx context.Context, id string) (*ent.Event, error) {
+	return r.Ent.Event.Get(ctx, id)
+}
+
+// Events is the resolver for the events field.
+func (r *queryResolver) Events(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.EventOrder) (*ent.EventConnection, error) {
+	return r.Ent.Event.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithEventOrder(orderBy),
+		)
+}
+
+// Research is the resolver for the research field.
+func (r *queryResolver) Research(ctx context.Context, id string) (*ent.Research, error) {
+	return r.Ent.Research.Get(ctx, id)
+}
+
+// Researches is the resolver for the researches field.
+func (r *queryResolver) Researches(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.ResearchOrder) (*ent.ResearchConnection, error) {
+	return r.Ent.Research.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithResearchOrder(orderBy),
+		)
 }
 
 // Mutation returns MutationResolver implementation.

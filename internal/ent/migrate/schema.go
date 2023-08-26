@@ -11,7 +11,7 @@ var (
 	// EventsColumns holds the columns for the "events" table.
 	EventsColumns = []*schema.Column{
 		{Name: "event_id", Type: field.TypeString, Unique: true},
-		{Name: "created_at", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_agent", Type: field.TypeString},
 		{Name: "content", Type: field.TypeJSON},
 		{Name: "research_id", Type: field.TypeString, Nullable: true},
@@ -27,13 +27,35 @@ var (
 				Symbol:     "events_researches_events",
 				Columns:    []*schema.Column{EventsColumns[4]},
 				RefColumns: []*schema.Column{ResearchesColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "events_users_events",
 				Columns:    []*schema.Column{EventsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "event_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{EventsColumns[1]},
+			},
+			{
+				Name:    "event_user_agent",
+				Unique:  false,
+				Columns: []*schema.Column{EventsColumns[2]},
+			},
+			{
+				Name:    "event_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{EventsColumns[5]},
+			},
+			{
+				Name:    "event_research_id",
+				Unique:  false,
+				Columns: []*schema.Column{EventsColumns[4]},
 			},
 		},
 	}

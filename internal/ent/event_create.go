@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -22,8 +23,16 @@ type EventCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (ec *EventCreate) SetCreatedAt(s string) *EventCreate {
-	ec.mutation.SetCreatedAt(s)
+func (ec *EventCreate) SetCreatedAt(t time.Time) *EventCreate {
+	ec.mutation.SetCreatedAt(t)
+	return ec
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ec *EventCreate) SetNillableCreatedAt(t *time.Time) *EventCreate {
+	if t != nil {
+		ec.SetCreatedAt(*t)
+	}
 	return ec
 }
 
@@ -42,6 +51,14 @@ func (ec *EventCreate) SetContent(m map[string]interface{}) *EventCreate {
 // SetID sets the "id" field.
 func (ec *EventCreate) SetID(s string) *EventCreate {
 	ec.mutation.SetID(s)
+	return ec
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableID(s *string) *EventCreate {
+	if s != nil {
+		ec.SetID(*s)
+	}
 	return ec
 }
 
@@ -90,6 +107,7 @@ func (ec *EventCreate) Mutation() *EventMutation {
 
 // Save creates the Event in the database.
 func (ec *EventCreate) Save(ctx context.Context) (*Event, error) {
+	ec.defaults()
 	return withHooks(ctx, ec.sqlSave, ec.mutation, ec.hooks)
 }
 
@@ -112,6 +130,18 @@ func (ec *EventCreate) Exec(ctx context.Context) error {
 func (ec *EventCreate) ExecX(ctx context.Context) {
 	if err := ec.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ec *EventCreate) defaults() {
+	if _, ok := ec.mutation.CreatedAt(); !ok {
+		v := event.DefaultCreatedAt()
+		ec.mutation.SetCreatedAt(v)
+	}
+	if _, ok := ec.mutation.ID(); !ok {
+		v := event.DefaultID()
+		ec.mutation.SetID(v)
 	}
 }
 
@@ -162,7 +192,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := ec.mutation.CreatedAt(); ok {
-		_spec.SetField(event.FieldCreatedAt, field.TypeString, value)
+		_spec.SetField(event.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := ec.mutation.UserAgent(); ok {
@@ -224,6 +254,7 @@ func (ecb *EventCreateBulk) Save(ctx context.Context) ([]*Event, error) {
 	for i := range ecb.builders {
 		func(i int, root context.Context) {
 			builder := ecb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*EventMutation)
 				if !ok {

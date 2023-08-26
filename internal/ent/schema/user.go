@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
@@ -17,7 +18,11 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").StorageKey("user_id").Unique().DefaultFunc(entid.NewGenerator("usr")).Immutable().StructTag(`json:"id"`),
+		field.String("id").
+			StorageKey("user_id").
+			Unique().
+			DefaultFunc(entid.NewGenerator("usr")).
+			Immutable(),
 		field.String("name").MaxLen(64),
 		field.String("email").Unique().Immutable(),
 		field.String("credential").MaxLen(64),
@@ -32,5 +37,12 @@ func (User) Edges() []ent.Edge {
 			Required().
 			StorageKey(edge.Column("user_id")).
 			Annotations(entsql.OnDelete(entsql.NoAction)),
+	}
+}
+
+// Annotations of the User.
+func (User) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		// entgql.Mutations(entgql.MutationCreate()),
 	}
 }

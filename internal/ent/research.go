@@ -34,6 +34,10 @@ type ResearchEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+
+	namedEvents map[string][]*Event
 }
 
 // EventsOrErr returns the Events value or an error if the edge
@@ -137,6 +141,30 @@ func (r *Research) String() string {
 	builder.WriteString(fmt.Sprintf("%v", r.Schema))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (r *Research) NamedEvents(name string) ([]*Event, error) {
+	if r.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := r.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (r *Research) appendNamedEvents(name string, edges ...*Event) {
+	if r.Edges.namedEvents == nil {
+		r.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		r.Edges.namedEvents[name] = []*Event{}
+	} else {
+		r.Edges.namedEvents[name] = append(r.Edges.namedEvents[name], edges...)
+	}
 }
 
 // Researches is a parsable slice of Research.

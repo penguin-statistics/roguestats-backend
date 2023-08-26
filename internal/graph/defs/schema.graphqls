@@ -1,48 +1,23 @@
-### Scalars ###
-
+"""
+The builtin Map type
+"""
 scalar Map
+
+"""
+Define a Relay Cursor type:
+https://relay.dev/graphql/connections.htm#sec-Cursor
+"""
+scalar Cursor
 scalar Time
 scalar Any
 
-### Directives ###
-
-directive @admin on FIELD_DEFINITION
-directive @private(userIdFieldName: String = "userId") on FIELD_DEFINITION
-
-### Interfaces ###
-
-interface Node {
-  id: ID!
-}
-
-### Queries ###
-
-type User implements Node {
-  id: ID! @goTag(key: "bun", value: "user_id")
-  name: String!
-  email: String @private(userIdFieldName: "id")
-  attributes: Map
-}
-
 type Event implements Node {
-  id: ID! @goTag(key: "bun", value: "event_id")
-  researchId: ID! @goTag(key: "bun", value: "research_id")
-  content: Map!
-  userId: ID! @goTag(key: "bun", value: "user_id")
+  id: ID!
   createdAt: Time!
-  userAgent: String
-}
-
-type Research implements Node {
-  id: ID! @goTag(key: "bun", value: "research_id")
-  name: String!
-  schema: Map!
-}
-
-type Topic implements Node {
-  id: ID! @goTag(key: "bun", value: "topic_id")
-  filterInput: String!
-  resultMappingInput: String!
+  userAgent: String!
+  content: Map!
+  user: User
+  research: Research
 }
 
 type CategoryCount {
@@ -61,49 +36,268 @@ input GroupCountInput {
   resultMappingInput: String!
 }
 
-type EventsConnection {
-  edges: [EventsEdge!]!
+"""
+A connection to a list of items.
+"""
+type EventConnection {
+  """
+  A list of edges.
+  """
+  edges: [EventEdge!]!
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
 }
 
-type EventsEdge {
+"""
+An edge in a connection.
+"""
+type EventEdge {
+  """
+  The item at the end of the edge.
+  """
   node: Event!
-  cursor: ID!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 
+"""
+Ordering options for Event connections
+"""
+input EventOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Events.
+  """
+  field: EventOrderField!
+}
+
+"""
+Properties by which Event connections can be ordered.
+"""
+enum EventOrderField {
+  ID
+  CREATED_AT
+}
+
+"""
+An object with an ID.
+Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
+"""
+interface Node
+  @goModel(model: "exusiai.dev/roguestats-backend/internal/ent.Noder") {
+  """
+  The id of the object.
+  """
+  id: ID!
+}
+
+"""
+Possible directions in which to order a list of items when provided an `orderBy` argument.
+"""
+enum OrderDirection {
+  """
+  Specifies an ascending order for a given `orderBy` argument.
+  """
+  ASC
+  """
+  Specifies a descending order for a given `orderBy` argument.
+  """
+  DESC
+}
+
+"""
+Information about pagination in a connection.
+https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo
+"""
 type PageInfo {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
-  startCursor: ID!
-  endCursor: ID!
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: Cursor
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: Cursor
+}
+
+type Research implements Node {
+  id: ID!
+  name: String!
+  schema: Map!
+}
+
+"""
+A connection to a list of items.
+"""
+type ResearchConnection {
+  """
+  A list of edges.
+  """
+  edges: [ResearchEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type ResearchEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Research!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Ordering options for Research connections
+"""
+input ResearchOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Researches.
+  """
+  field: ResearchOrderField!
+}
+
+"""
+Properties by which Research connections can be ordered.
+"""
+enum ResearchOrderField {
+  ID
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String! @private(userIdFieldName: "id")
+  credential: String!
+  attributes: Map
 }
 
 type Query {
-  me: User!
-  research(id: ID!): Research!
-  researches: [Research!]!
-  events(
-    first: Int = 10
-    after: ID
+  """
+  Returns the current authenticated user.
+  If the user is not authenticated, this returns null.
+  """
+  me: User
 
-    researchId: ID
-    userId: ID
-  ): EventsConnection!
+  """
+  Fetches an object given its ID.
+  """
+  node(
+    """
+    ID of the object.
+    """
+    id: ID!
+  ): Node
+
+  """
+  Lookup nodes by a list of IDs.
+  """
+  nodes(
+    """
+    The list of node IDs.
+    """
+    ids: [ID!]!
+  ): [Node]!
+
   groupCount(input: GroupCountInput!): GroupCountResult!
+
+  event(id: ID!): Event
+
+  events(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Events returned from the connection.
+    """
+    orderBy: EventOrder
+  ): EventConnection!
+
+  research(id: ID!): Research
+
+  researches(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Researches returned from the connection.
+    """
+    orderBy: ResearchOrder
+  ): ResearchConnection!
 }
 
-### Mutations ###
-
-input LoginInput {
-  email: String!
-  password: String!
-  turnstileResponse: String!
-}
-
-input NewEvent {
+input CreateEventInput {
+  userAgent: String!
   content: Map!
-  researchId: String!
-  userAgent: String
+  researchID: ID!
 }
 
 input CreateUserInput {
@@ -112,27 +306,26 @@ input CreateUserInput {
   attributes: Map
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+  turnstileResponse: String!
+}
+
 type Mutation {
   login(input: LoginInput!): User!
-  createEvent(input: NewEvent!): Event!
+  createEvent(input: CreateEventInput!): Event!
 
   createUser(input: CreateUserInput!): User! @admin
 }
 
-### gqlgen Directives ###
-
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(
   model: String
   models: [String!]
 ) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
-
-directive @goField(
-  forceResolver: Boolean
-  name: String
-  omittable: Boolean
-) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
-
-directive @goTag(
-  key: String!
-  value: String
-) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+directive @admin on FIELD_DEFINITION
+directive @private(userIdFieldName: String = "userId") on FIELD_DEFINITION

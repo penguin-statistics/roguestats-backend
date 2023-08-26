@@ -3,6 +3,8 @@
 package event
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"exusiai.dev/roguestats-backend/internal/ent/predicate"
@@ -64,7 +66,7 @@ func IDContainsFold(id string) predicate.Event {
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v string) predicate.Event {
+func CreatedAt(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldCreatedAt, v))
 }
 
@@ -74,68 +76,43 @@ func UserAgent(v string) predicate.Event {
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v string) predicate.Event {
+func CreatedAtEQ(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v string) predicate.Event {
+func CreatedAtNEQ(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...string) predicate.Event {
+func CreatedAtIn(vs ...time.Time) predicate.Event {
 	return predicate.Event(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...string) predicate.Event {
+func CreatedAtNotIn(vs ...time.Time) predicate.Event {
 	return predicate.Event(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v string) predicate.Event {
+func CreatedAtGT(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldGT(FieldCreatedAt, v))
 }
 
 // CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v string) predicate.Event {
+func CreatedAtGTE(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldGTE(FieldCreatedAt, v))
 }
 
 // CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v string) predicate.Event {
+func CreatedAtLT(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldLT(FieldCreatedAt, v))
 }
 
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v string) predicate.Event {
+func CreatedAtLTE(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// CreatedAtContains applies the Contains predicate on the "created_at" field.
-func CreatedAtContains(v string) predicate.Event {
-	return predicate.Event(sql.FieldContains(FieldCreatedAt, v))
-}
-
-// CreatedAtHasPrefix applies the HasPrefix predicate on the "created_at" field.
-func CreatedAtHasPrefix(v string) predicate.Event {
-	return predicate.Event(sql.FieldHasPrefix(FieldCreatedAt, v))
-}
-
-// CreatedAtHasSuffix applies the HasSuffix predicate on the "created_at" field.
-func CreatedAtHasSuffix(v string) predicate.Event {
-	return predicate.Event(sql.FieldHasSuffix(FieldCreatedAt, v))
-}
-
-// CreatedAtEqualFold applies the EqualFold predicate on the "created_at" field.
-func CreatedAtEqualFold(v string) predicate.Event {
-	return predicate.Event(sql.FieldEqualFold(FieldCreatedAt, v))
-}
-
-// CreatedAtContainsFold applies the ContainsFold predicate on the "created_at" field.
-func CreatedAtContainsFold(v string) predicate.Event {
-	return predicate.Event(sql.FieldContainsFold(FieldCreatedAt, v))
 }
 
 // UserAgentEQ applies the EQ predicate on the "user_agent" field.
