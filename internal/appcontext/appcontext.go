@@ -8,14 +8,14 @@ import (
 )
 
 var (
-	ctxKeyCurrentUser = "currentUser"
-	ctxKeyFiberCtx    = "fiberCtx"
+	CtxKeyCurrentUser ctxKey = "currentUser"
+	CtxKeyFiberCtx    ctxKey = "fiberCtx"
 )
 
-// type ctxKey string
+type ctxKey string
 
 func CurrentUser(ctx context.Context) *ent.User {
-	v := ctx.Value(ctxKeyCurrentUser)
+	v := ctx.Value(CtxKeyCurrentUser)
 	if v == nil {
 		return nil
 	}
@@ -27,11 +27,11 @@ func CurrentUser(ctx context.Context) *ent.User {
 }
 
 func WithCurrentUser(ctx context.Context, user *ent.User) context.Context {
-	return context.WithValue(ctx, ctxKeyCurrentUser, user)
+	return context.WithValue(ctx, CtxKeyCurrentUser, user)
 }
 
 func FiberCtx(ctx context.Context) *fiber.Ctx {
-	v := ctx.Value(ctxKeyFiberCtx)
+	v := ctx.Value(CtxKeyFiberCtx)
 	if v == nil {
 		return nil
 	}
@@ -43,5 +43,5 @@ func FiberCtx(ctx context.Context) *fiber.Ctx {
 }
 
 func WithFiberCtx(ctx context.Context, fiberCtx *fiber.Ctx) context.Context {
-	return context.WithValue(ctx, ctxKeyFiberCtx, fiberCtx)
+	return context.WithValue(ctx, CtxKeyFiberCtx, fiberCtx)
 }

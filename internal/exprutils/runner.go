@@ -47,7 +47,7 @@ func (e ExprRunner) PrepareEnv(event *ent.Event) map[string]interface{} {
 }
 
 func (e ExprRunner) RunCode(code string, env map[string]interface{}) (interface{}, error) {
-	program, err := expr.Compile(code, expr.Env(env))
+	program, err := expr.Compile(code)
 	if err != nil {
 		return nil, err
 	}

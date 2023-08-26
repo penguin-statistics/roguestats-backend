@@ -3,14 +3,14 @@ package middleware
 import (
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
+	"exusiai.dev/roguestats-backend/internal/appcontext"
 	"exusiai.dev/roguestats-backend/internal/service"
 )
 
- type Middleware struct {
+type Middleware struct {
 	fx.In
 
 	Auth service.Auth
@@ -26,21 +26,19 @@ func (m Middleware) CurrentUser() func(ctx *fiber.Ctx) error {
 
 		user, err := m.Auth.AuthByToken(ctx.Context(), strings.TrimPrefix(token, "Bearer "))
 		if err != nil {
-			spew.Dump(err)
 			return fiber.NewError(fiber.StatusUnauthorized, "invalid token")
 		}
 
-		ctx.Context().SetUserValue("currentUser", user)
+		ctx.Context().SetUserValue(appcontext.CtxKeyCurrentUser, user)
 
 		return ctx.Next()
 	}
 }
 
 func (m Middleware) InjectFiberCtx() func(ctx *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		// inject fiber context into *fasthttp.RequestCtx
-		ctx := c.Context()
-		ctx.SetUserValue("fiberCtx", c)
-		return c.Next()
+		ctx.Context().SetUserValue(appcontext.CtxKeyFiberCtx, ctx)
+		return ctx.Next()
 	}
 }

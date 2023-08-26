@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/fx"
@@ -130,7 +129,7 @@ func (s Auth) CurrentUser(ctx context.Context) (*ent.User, error) {
 }
 
 func (s Auth) SetUserToken(ctx context.Context, user *ent.User) error {
-	fiberCtx := ctx.Value("fiberCtx").(*fiber.Ctx)
+	fiberCtx := appcontext.FiberCtx(ctx)
 
 	token, err := s.JWT.Sign(user.ID)
 	if err != nil {

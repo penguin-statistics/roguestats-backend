@@ -39,7 +39,9 @@ func (Event) Fields() []ent.Field {
 // Edges of the Event.
 func (Event) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("events").Unique(),
+		edge.From("user", User.Type).
+			Ref("events").
+			Unique(),
 		edge.From("research", Research.Type).Ref("events").Unique(),
 	}
 }
