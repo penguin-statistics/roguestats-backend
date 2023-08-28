@@ -36,7 +36,7 @@ func (Research) Fields() []ent.Field {
 func (Research) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("events", Event.Type).
-			// Required().
+			Required().
 			Annotations(entsql.OnDelete(entsql.NoAction)),
 	}
 }
