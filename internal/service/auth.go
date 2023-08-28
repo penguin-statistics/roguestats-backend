@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+	passwordvalidator "github.com/wagslane/go-password-validator"
 	"go.uber.org/fx"
 	"golang.org/x/crypto/bcrypt"
 
@@ -182,12 +183,17 @@ func (s Auth) RequestPasswordReset(ctx context.Context, input model.RequestPassw
 func (s Auth) ResetPassword(ctx context.Context, input model.ResetPasswordInput) (bool, error) {
 	cmd := s.Redis.Get(ctx, rediskey.ResetToken(input.Token))
 	if cmd.Err() != nil {
-		return false, gqlerror.Errorf("invalid password reset token: is it expired?")
+		return false, gqlerror.Errorf("invalid password reset token: the token is either expired, invalid or has been used")
 	}
 
 	user, err := s.Ent.User.Query().
-		Where(user.ID(cmd.String())).
+		Where(user.ID(cmd.Val())).
 		First(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	err = passwordvalidator.Validate(input.Password, 60)
 	if err != nil {
 		return false, err
 	}
@@ -201,6 +207,10 @@ func (s Auth) ResetPassword(ctx context.Context, input model.ResetPasswordInput)
 		SetCredential(string(hashedPassword)).
 		Save(ctx)
 	if err != nil {
+		return false, err
+	}
+
+	if s.Redis.Del(ctx, rediskey.ResetToken(input.Token)).Err() != nil {
 		return false, err
 	}
 
