@@ -47,10 +47,12 @@ func (Event) Edges() []ent.Edge {
 		edge.From("user", User.Type).
 			Ref("events").
 			Field("user_id").
+			Required().
 			Unique(),
 		edge.From("research", Research.Type).
 			Ref("events").
 			Field("research_id").
+			Required().
 			Unique(),
 	}
 }

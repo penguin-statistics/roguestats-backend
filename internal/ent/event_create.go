@@ -36,6 +36,18 @@ func (ec *EventCreate) SetNillableCreatedAt(t *time.Time) *EventCreate {
 	return ec
 }
 
+// SetUserID sets the "user_id" field.
+func (ec *EventCreate) SetUserID(s string) *EventCreate {
+	ec.mutation.SetUserID(s)
+	return ec
+}
+
+// SetResearchID sets the "research_id" field.
+func (ec *EventCreate) SetResearchID(s string) *EventCreate {
+	ec.mutation.SetResearchID(s)
+	return ec
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (ec *EventCreate) SetUserAgent(s string) *EventCreate {
 	ec.mutation.SetUserAgent(s)
@@ -62,37 +74,9 @@ func (ec *EventCreate) SetNillableID(s *string) *EventCreate {
 	return ec
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (ec *EventCreate) SetUserID(id string) *EventCreate {
-	ec.mutation.SetUserID(id)
-	return ec
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ec *EventCreate) SetNillableUserID(id *string) *EventCreate {
-	if id != nil {
-		ec = ec.SetUserID(*id)
-	}
-	return ec
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (ec *EventCreate) SetUser(u *User) *EventCreate {
 	return ec.SetUserID(u.ID)
-}
-
-// SetResearchID sets the "research" edge to the Research entity by ID.
-func (ec *EventCreate) SetResearchID(id string) *EventCreate {
-	ec.mutation.SetResearchID(id)
-	return ec
-}
-
-// SetNillableResearchID sets the "research" edge to the Research entity by ID if the given value is not nil.
-func (ec *EventCreate) SetNillableResearchID(id *string) *EventCreate {
-	if id != nil {
-		ec = ec.SetResearchID(*id)
-	}
-	return ec
 }
 
 // SetResearch sets the "research" edge to the Research entity.
@@ -150,11 +134,23 @@ func (ec *EventCreate) check() error {
 	if _, ok := ec.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Event.created_at"`)}
 	}
+	if _, ok := ec.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Event.user_id"`)}
+	}
+	if _, ok := ec.mutation.ResearchID(); !ok {
+		return &ValidationError{Name: "research_id", err: errors.New(`ent: missing required field "Event.research_id"`)}
+	}
 	if _, ok := ec.mutation.UserAgent(); !ok {
 		return &ValidationError{Name: "user_agent", err: errors.New(`ent: missing required field "Event.user_agent"`)}
 	}
 	if _, ok := ec.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Event.content"`)}
+	}
+	if _, ok := ec.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Event.user"`)}
+	}
+	if _, ok := ec.mutation.ResearchID(); !ok {
+		return &ValidationError{Name: "research", err: errors.New(`ent: missing required edge "Event.research"`)}
 	}
 	return nil
 }
@@ -217,7 +213,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_events = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := ec.mutation.ResearchIDs(); len(nodes) > 0 {
@@ -234,7 +230,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.research_events = &nodes[0]
+		_node.ResearchID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

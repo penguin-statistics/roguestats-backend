@@ -430,7 +430,9 @@ func (rq *ResearchQuery) loadEvents(ctx context.Context, query *EventQuery, node
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(event.FieldResearchID)
+	}
 	query.Where(predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(research.EventsColumn), fks...))
 	}))
@@ -439,13 +441,10 @@ func (rq *ResearchQuery) loadEvents(ctx context.Context, query *EventQuery, node
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.research_events
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "research_events" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.ResearchID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "research_events" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "research_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

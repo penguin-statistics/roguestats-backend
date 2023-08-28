@@ -190,6 +190,78 @@ func (m *EventMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetUserID sets the "user_id" field.
+func (m *EventMutation) SetUserID(s string) {
+	m.user = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *EventMutation) UserID() (r string, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *EventMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetResearchID sets the "research_id" field.
+func (m *EventMutation) SetResearchID(s string) {
+	m.research = &s
+}
+
+// ResearchID returns the value of the "research_id" field in the mutation.
+func (m *EventMutation) ResearchID() (r string, exists bool) {
+	v := m.research
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResearchID returns the old "research_id" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldResearchID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldResearchID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldResearchID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResearchID: %w", err)
+	}
+	return oldValue.ResearchID, nil
+}
+
+// ResetResearchID resets all changes to the "research_id" field.
+func (m *EventMutation) ResetResearchID() {
+	m.research = nil
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (m *EventMutation) SetUserAgent(s string) {
 	m.user_agent = &s
@@ -262,11 +334,6 @@ func (m *EventMutation) ResetContent() {
 	m.content = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *EventMutation) SetUserID(id string) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *EventMutation) ClearUser() {
 	m.cleareduser = true
@@ -275,14 +342,6 @@ func (m *EventMutation) ClearUser() {
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *EventMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *EventMutation) UserID() (id string, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -301,11 +360,6 @@ func (m *EventMutation) ResetUser() {
 	m.cleareduser = false
 }
 
-// SetResearchID sets the "research" edge to the Research entity by id.
-func (m *EventMutation) SetResearchID(id string) {
-	m.research = &id
-}
-
 // ClearResearch clears the "research" edge to the Research entity.
 func (m *EventMutation) ClearResearch() {
 	m.clearedresearch = true
@@ -314,14 +368,6 @@ func (m *EventMutation) ClearResearch() {
 // ResearchCleared reports if the "research" edge to the Research entity was cleared.
 func (m *EventMutation) ResearchCleared() bool {
 	return m.clearedresearch
-}
-
-// ResearchID returns the "research" edge ID in the mutation.
-func (m *EventMutation) ResearchID() (id string, exists bool) {
-	if m.research != nil {
-		return *m.research, true
-	}
-	return
 }
 
 // ResearchIDs returns the "research" edge IDs in the mutation.
@@ -374,9 +420,15 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
 	if m.created_at != nil {
 		fields = append(fields, event.FieldCreatedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, event.FieldUserID)
+	}
+	if m.research != nil {
+		fields = append(fields, event.FieldResearchID)
 	}
 	if m.user_agent != nil {
 		fields = append(fields, event.FieldUserAgent)
@@ -394,6 +446,10 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case event.FieldCreatedAt:
 		return m.CreatedAt()
+	case event.FieldUserID:
+		return m.UserID()
+	case event.FieldResearchID:
+		return m.ResearchID()
 	case event.FieldUserAgent:
 		return m.UserAgent()
 	case event.FieldContent:
@@ -409,6 +465,10 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 	switch name {
 	case event.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case event.FieldUserID:
+		return m.OldUserID(ctx)
+	case event.FieldResearchID:
+		return m.OldResearchID(ctx)
 	case event.FieldUserAgent:
 		return m.OldUserAgent(ctx)
 	case event.FieldContent:
@@ -428,6 +488,20 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case event.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case event.FieldResearchID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResearchID(v)
 		return nil
 	case event.FieldUserAgent:
 		v, ok := value.(string)
@@ -494,6 +568,12 @@ func (m *EventMutation) ResetField(name string) error {
 	switch name {
 	case event.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case event.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case event.FieldResearchID:
+		m.ResetResearchID()
 		return nil
 	case event.FieldUserAgent:
 		m.ResetUserAgent()

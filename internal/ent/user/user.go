@@ -32,7 +32,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "event" package.
 	EventsInverseTable = "events"
 	// EventsColumn is the table column denoting the events relation/edge.
-	EventsColumn = "user_events"
+	EventsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.

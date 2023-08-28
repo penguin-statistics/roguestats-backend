@@ -34,7 +34,7 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("events", Event.Type).
-			Required().
+			// Required().
 			Annotations(entsql.OnDelete(entsql.NoAction)),
 	}
 }
