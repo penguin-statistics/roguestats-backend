@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
@@ -44,11 +43,7 @@ func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEvent
 	}
 
 	// validate event json
-	schema, err := json.Marshal(research.Schema)
-	if err != nil {
-		return nil, err
-	}
-	sch, err := jsonschema.CompileString("schema.json", string(schema))
+	sch, err := jsonschema.CompileString("schema.json", string(research.Schema))
 	if err != nil {
 		return nil, err
 	}

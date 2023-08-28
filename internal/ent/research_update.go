@@ -35,8 +35,8 @@ func (ru *ResearchUpdate) SetName(s string) *ResearchUpdate {
 }
 
 // SetSchema sets the "schema" field.
-func (ru *ResearchUpdate) SetSchema(m map[string]interface{}) *ResearchUpdate {
-	ru.mutation.SetSchema(m)
+func (ru *ResearchUpdate) SetSchema(b []byte) *ResearchUpdate {
+	ru.mutation.SetSchema(b)
 	return ru
 }
 
@@ -134,7 +134,7 @@ func (ru *ResearchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(research.FieldName, field.TypeString, value)
 	}
 	if value, ok := ru.mutation.Schema(); ok {
-		_spec.SetField(research.FieldSchema, field.TypeJSON, value)
+		_spec.SetField(research.FieldSchema, field.TypeBytes, value)
 	}
 	if ru.mutation.EventsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -208,8 +208,8 @@ func (ruo *ResearchUpdateOne) SetName(s string) *ResearchUpdateOne {
 }
 
 // SetSchema sets the "schema" field.
-func (ruo *ResearchUpdateOne) SetSchema(m map[string]interface{}) *ResearchUpdateOne {
-	ruo.mutation.SetSchema(m)
+func (ruo *ResearchUpdateOne) SetSchema(b []byte) *ResearchUpdateOne {
+	ruo.mutation.SetSchema(b)
 	return ruo
 }
 
@@ -337,7 +337,7 @@ func (ruo *ResearchUpdateOne) sqlSave(ctx context.Context) (_node *Research, err
 		_spec.SetField(research.FieldName, field.TypeString, value)
 	}
 	if value, ok := ruo.mutation.Schema(); ok {
-		_spec.SetField(research.FieldSchema, field.TypeJSON, value)
+		_spec.SetField(research.FieldSchema, field.TypeBytes, value)
 	}
 	if ruo.mutation.EventsCleared() {
 		edge := &sqlgraph.EdgeSpec{

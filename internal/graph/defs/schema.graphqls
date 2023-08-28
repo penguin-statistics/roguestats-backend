@@ -143,7 +143,7 @@ type PageInfo {
 type Research implements Node {
   id: ID!
   name: String!
-  schema: Map!
+  schema: Any!
 }
 
 """

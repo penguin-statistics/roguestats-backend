@@ -23,6 +23,7 @@ require (
 	github.com/rs/zerolog v1.30.0
 	github.com/urfave/cli/v2 v2.25.7
 	github.com/vektah/gqlparser/v2 v2.5.8
+	github.com/wagslane/go-password-validator v0.3.0
 	go.uber.org/fx v1.20.0
 	golang.org/x/crypto v0.12.0
 	gopkg.in/guregu/null.v4 v4.0.0
@@ -31,6 +32,7 @@ require (
 require (
 	ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
+	github.com/ake-persson/mapslice-json v0.0.0-20210720081907-22c8edf57807 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -41,7 +43,6 @@ require (
 	github.com/matryer/is v1.4.1 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/wagslane/go-password-validator v0.3.0 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect

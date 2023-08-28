@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -20,7 +19,7 @@ type Research struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Schema holds the value of the "schema" field.
-	Schema map[string]interface{} `json:"schema,omitempty"`
+	Schema []byte `json:"schema,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResearchQuery when eager-loading is set.
 	Edges        ResearchEdges `json:"edges"`
@@ -88,10 +87,8 @@ func (r *Research) assignValues(columns []string, values []any) error {
 		case research.FieldSchema:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field schema", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &r.Schema); err != nil {
-					return fmt.Errorf("unmarshal field schema: %w", err)
-				}
+			} else if value != nil {
+				r.Schema = *value
 			}
 		default:
 			r.selectValues.Set(columns[i], values[i])

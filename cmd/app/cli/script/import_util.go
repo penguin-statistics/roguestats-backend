@@ -29,9 +29,9 @@ func PostEvent(content map[string]any, researchID string) {
 	req := graphql.NewRequest(`
 	mutation CreateEvent($input: CreateEventInput!) {
 		createEvent(input: $input) {
-		  content
+			content
 		}
-	  }`,
+	}`,
 	)
 	userAgent := "cli"
 	input := model.CreateEventInput{
@@ -40,7 +40,7 @@ func PostEvent(content map[string]any, researchID string) {
 		UserAgent:  userAgent,
 	}
 	req.Var("input", input)
-	req.Header.Set("Authorization", "Bearer eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJyb2d1ZXN0YXRzIiwiZXhwIjoxNjk0MjA0MjY1LCJpYXQiOjE2OTI5OTQ2NjUsImlzcyI6InJvZ3Vlc3RhdHMvdjAuMC4wIiwibmJmIjoxNjkyOTk0NjY1LCJzdWIiOiIwMWg4cTVlYnJuNWV0aG0xcDZ6anhyOWVmdyJ9.AHlIYrx7tKj6nnXO4MYRd_0mXqzOVWPyG6FHidPitfI2IbrtZI3-lXA-bZP_nl0Op7d4TgzacdYwJPDgYGLoZcznAfopT-ahoHmDZrflhrK-Soo8ji7OZENjOIH5VetkkTaKl9zuqdAivds4DQPefSYngsn5vqzIgIZhaoR8nJoaq6MT")
+	req.Header.Set("Authorization", "Bearer <token>")
 	ctx := context.Background()
 	var respData any
 	if err := client.Run(ctx, req, &respData); err != nil {

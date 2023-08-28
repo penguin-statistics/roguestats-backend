@@ -68,6 +68,11 @@ func Name(v string) predicate.Research {
 	return predicate.Research(sql.FieldEQ(FieldName, v))
 }
 
+// Schema applies equality check predicate on the "schema" field. It's identical to SchemaEQ.
+func Schema(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldEQ(FieldSchema, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Research {
 	return predicate.Research(sql.FieldEQ(FieldName, v))
@@ -131,6 +136,46 @@ func NameEqualFold(v string) predicate.Research {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Research {
 	return predicate.Research(sql.FieldContainsFold(FieldName, v))
+}
+
+// SchemaEQ applies the EQ predicate on the "schema" field.
+func SchemaEQ(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldEQ(FieldSchema, v))
+}
+
+// SchemaNEQ applies the NEQ predicate on the "schema" field.
+func SchemaNEQ(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldNEQ(FieldSchema, v))
+}
+
+// SchemaIn applies the In predicate on the "schema" field.
+func SchemaIn(vs ...[]byte) predicate.Research {
+	return predicate.Research(sql.FieldIn(FieldSchema, vs...))
+}
+
+// SchemaNotIn applies the NotIn predicate on the "schema" field.
+func SchemaNotIn(vs ...[]byte) predicate.Research {
+	return predicate.Research(sql.FieldNotIn(FieldSchema, vs...))
+}
+
+// SchemaGT applies the GT predicate on the "schema" field.
+func SchemaGT(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldGT(FieldSchema, v))
+}
+
+// SchemaGTE applies the GTE predicate on the "schema" field.
+func SchemaGTE(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldGTE(FieldSchema, v))
+}
+
+// SchemaLT applies the LT predicate on the "schema" field.
+func SchemaLT(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldLT(FieldSchema, v))
+}
+
+// SchemaLTE applies the LTE predicate on the "schema" field.
+func SchemaLTE(v []byte) predicate.Research {
+	return predicate.Research(sql.FieldLTE(FieldSchema, v))
 }
 
 // HasEvents applies the HasEdge predicate on the "events" edge.

@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"encoding/json"
 
 	"entgo.io/contrib/entgql"
 	"exusiai.dev/roguestats-backend/internal/ent"
@@ -83,11 +84,20 @@ func (r *queryResolver) Researches(ctx context.Context, after *entgql.Cursor[str
 		)
 }
 
+// Schema is the resolver for the schema field.
+func (r *researchResolver) Schema(ctx context.Context, obj *ent.Research) (interface{}, error) {
+	return json.RawMessage(obj.Schema), nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Research returns ResearchResolver implementation.
+func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type researchResolver struct{ *Resolver }

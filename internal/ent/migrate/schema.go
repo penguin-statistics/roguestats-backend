@@ -63,7 +63,7 @@ var (
 	ResearchesColumns = []*schema.Column{
 		{Name: "research_id", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString, Size: 64},
-		{Name: "schema", Type: field.TypeJSON},
+		{Name: "schema", Type: field.TypeBytes},
 	}
 	// ResearchesTable holds the schema information for the "researches" table.
 	ResearchesTable = &schema.Table{

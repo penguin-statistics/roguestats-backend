@@ -28,7 +28,7 @@ func (Research) Fields() []ent.Field {
 				entgql.OrderField("ID"),
 			),
 		field.String("name").MaxLen(64),
-		field.JSON("schema", map[string]any{}),
+		field.Bytes("schema"),
 	}
 }
 
