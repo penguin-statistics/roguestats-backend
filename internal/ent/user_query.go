@@ -430,6 +430,7 @@ func (uq *UserQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	query.Where(predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.EventsColumn), fks...))
 	}))
@@ -438,10 +439,13 @@ func (uq *UserQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.ID
-		node, ok := nodeids[fk]
+		fk := n.user_events
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_events" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_events" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -28,8 +28,10 @@ type Event struct {
 	Content map[string]interface{} `json:"content,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EventQuery when eager-loading is set.
-	Edges        EventEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges           EventEdges `json:"edges"`
+	research_events *string
+	user_events     *string
+	selectValues    sql.SelectValues
 }
 
 // EventEdges holds the relations/edges for other nodes in the graph.
@@ -82,6 +84,10 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case event.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
+		case event.ForeignKeys[0]: // research_events
+			values[i] = new(sql.NullString)
+		case event.ForeignKeys[1]: // user_events
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -122,6 +128,20 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &e.Content); err != nil {
 					return fmt.Errorf("unmarshal field content: %w", err)
 				}
+			}
+		case event.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field research_events", values[i])
+			} else if value.Valid {
+				e.research_events = new(string)
+				*e.research_events = value.String
+			}
+		case event.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_events", values[i])
+			} else if value.Valid {
+				e.user_events = new(string)
+				*e.user_events = value.String
 			}
 		default:
 			e.selectValues.Set(columns[i], values[i])
