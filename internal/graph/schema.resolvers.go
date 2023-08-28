@@ -22,6 +22,16 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input model.CreateEv
 	return r.EventService.CreateEventFromInput(ctx, input)
 }
 
+// RequestPasswordReset is the resolver for the requestPasswordReset field.
+func (r *mutationResolver) RequestPasswordReset(ctx context.Context, input model.RequestPasswordResetInput) (bool, error) {
+	return r.AuthService.RequestPasswordReset(ctx, input)
+}
+
+// ResetPassword is the resolver for the resetPassword field.
+func (r *mutationResolver) ResetPassword(ctx context.Context, input model.ResetPasswordInput) (bool, error) {
+	return r.AuthService.ResetPassword(ctx, input)
+}
+
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*ent.User, error) {
 	return r.AuthService.CreateUser(ctx, input)

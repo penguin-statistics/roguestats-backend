@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"time"
 
+	"github.com/dchest/uniuri"
 	"github.com/pkg/errors"
+	"github.com/redis/go-redis/v9"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/fx"
 	"golang.org/x/crypto/bcrypt"
@@ -17,6 +17,7 @@ import (
 	"exusiai.dev/roguestats-backend/internal/ent"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/x/rediskey"
 )
 
 type Auth struct {
@@ -24,6 +25,7 @@ type Auth struct {
 
 	Config      *appconfig.Config
 	Ent         *ent.Client
+	Redis       *redis.Client
 	JWT         JWT
 	Turnstile   Turnstile
 	MailService Mail
@@ -32,7 +34,7 @@ type Auth struct {
 func (s Auth) AuthByLoginInput(ctx context.Context, args model.LoginInput) (*ent.User, error) {
 	err := s.Turnstile.Verify(ctx, args.TurnstileResponse, "login")
 	if err != nil {
-		return nil, gqlerror.Errorf("captcha verification failed: invalid turnstile response")
+		return nil, err
 	}
 
 	user, err := s.Ent.User.Query().
@@ -73,12 +75,7 @@ func (s Auth) AuthByToken(ctx context.Context, token string) (*ent.User, error) 
 }
 
 func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*ent.User, error) {
-	var randomBytes [16]byte
-	_, err := rand.Read(randomBytes[:])
-	if err != nil {
-		return nil, err
-	}
-	randomString := base64.RawURLEncoding.EncodeToString(randomBytes[:])
+	randomString := uniuri.NewLen(24)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomString), 12)
 	if err != nil {
@@ -139,4 +136,73 @@ func (s Auth) SetUserToken(ctx context.Context, user *ent.User) error {
 	fiberCtx.Set("X-Penguin-RogueStats-Set-Token", token)
 
 	return nil
+}
+
+func (s Auth) RequestPasswordReset(ctx context.Context, input model.RequestPasswordResetInput) (bool, error) {
+	err := s.Turnstile.Verify(ctx, input.TurnstileResponse, "reset-password")
+	if err != nil {
+		return false, err
+	}
+	user, err := s.Ent.User.Query().
+		Where(user.Email(input.Email)).
+		First(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	resetToken := user.ID + "_" + uniuri.NewLen(32)
+
+	err = s.Redis.Set(ctx, rediskey.ResetToken(resetToken), user.ID, s.Config.PasswordResetTokenTTL).Err()
+	if err != nil {
+		return false, err
+	}
+
+	rendered, err := blob.RenderPair("password-reset", map[string]any{
+		"Username": user.Name,
+		"Token":    resetToken,
+		"TokenTTL": s.Config.PasswordResetTokenTTL.String(),
+	})
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.MailService.Send(&SendEmailRequest{
+		To:      []string{user.Email},
+		Subject: "你的 RogueStats 登录信息重置请求已就绪",
+		Html:    rendered.HTML,
+		Text:    rendered.Text,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (s Auth) ResetPassword(ctx context.Context, input model.ResetPasswordInput) (bool, error) {
+	cmd := s.Redis.Get(ctx, rediskey.ResetToken(input.Token))
+	if cmd.Err() != nil {
+		return false, gqlerror.Errorf("invalid password reset token: is it expired?")
+	}
+
+	user, err := s.Ent.User.Query().
+		Where(user.ID(cmd.String())).
+		First(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), 12)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.Ent.User.UpdateOneID(user.ID).
+		SetCredential(string(hashedPassword)).
+		Save(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

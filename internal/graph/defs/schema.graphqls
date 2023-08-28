@@ -10,6 +10,7 @@ https://relay.dev/graphql/connections.htm#sec-Cursor
 scalar Cursor
 scalar Time
 scalar Any
+scalar Void
 
 type Event implements Node {
   id: ID!
@@ -311,9 +312,21 @@ input LoginInput {
   turnstileResponse: String!
 }
 
+input RequestPasswordResetInput {
+  email: String!
+  turnstileResponse: String!
+}
+
+input ResetPasswordInput {
+  token: String!
+  password: String!
+}
+
 type Mutation {
   login(input: LoginInput!): User!
   createEvent(input: CreateEventInput!): Event!
+  requestPasswordReset(input: RequestPasswordResetInput!): Boolean!
+  resetPassword(input: ResetPasswordInput!): Boolean!
 
   createUser(input: CreateUserInput!): User! @admin
 }
