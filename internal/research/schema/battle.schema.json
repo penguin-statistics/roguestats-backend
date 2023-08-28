@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://rogue.penguin-stats.io/_/schema/research/battle",
-  "title": "作战节点",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -11,55 +10,68 @@
       "anyOf": [
         {
           "const": "rogue_3_band_1",
-          "title": "指挥分队"
+          "title": "指挥分队",
+          "alias": "zhihuifendui zhfd"
         },
         {
           "const": "rogue_3_band_2",
-          "title": "集群分队"
+          "title": "集群分队",
+          "alias": "jiqunfendui jqfd"
         },
         {
           "const": "rogue_3_band_3",
-          "title": "后勤分队"
+          "title": "后勤分队",
+          "alias": "houqinfendui hqfd"
         },
         {
           "const": "rogue_3_band_4",
-          "title": "矛头分队"
+          "title": "矛头分队",
+          "alias": "maotoufendui mtfd"
         },
         {
           "const": "rogue_3_band_5",
-          "title": "突击战术分队（近锋）"
+          "title": "突击战术分队（近锋）",
+          "alias": "tujizhanshuzhufenduijinfeng tjzszfdjf"
         },
         {
           "const": "rogue_3_band_6",
-          "title": "堡垒战术分队（重辅）"
+          "title": "堡垒战术分队（重辅）",
+          "alias": "baobupuleizhanshuzhufenduizhongchongfu bplzszfdzcf"
         },
         {
           "const": "rogue_3_band_7",
-          "title": "远程战术分队（狙医）"
+          "title": "远程战术分队（狙医）",
+          "alias": "yuanchengzhanshuzhufenduijuyi yczszfdjy"
         },
         {
           "const": "rogue_3_band_8",
-          "title": "破坏战术分队（术特）"
+          "title": "破坏战术分队（术特）",
+          "alias": "pohuaizhanshuzhufenduishuzhute phzszfdszt"
         },
         {
           "const": "rogue_3_band_9",
-          "title": "特训分队"
+          "title": "特训分队",
+          "alias": "texunfendui txfd"
         },
         {
           "const": "rogue_3_band_10",
-          "title": "高规格分队"
+          "title": "高规格分队",
+          "alias": "gaoguigefendui gggfd"
         },
         {
           "const": "rogue_3_band_11",
-          "title": "永恒狩猎分队"
+          "title": "永恒狩猎分队",
+          "alias": "yonghengshouliefendui yhslfd"
         },
         {
           "const": "rogue_3_band_12",
-          "title": "生活至上分队"
+          "title": "生活至上分队",
+          "alias": "shenghuozhishangfendui shzsfd"
         },
         {
           "const": "rogue_3_band_13",
-          "title": "科学主义分队"
+          "title": "科学主义分队",
+          "alias": "kexuezhuyifendui kxzyfd"
         }
       ]
     },
@@ -85,35 +97,43 @@
       "anyOf": [
         {
           "const": "BATTLE_NORMAL",
-          "title": "作战"
+          "title": "作战",
+          "alias": "zuozhan zz"
         },
         {
           "const": "BATTLE_ELITE",
-          "title": "紧急作战"
+          "title": "紧急作战",
+          "alias": "jinjizuozhan jjzz"
         },
         {
           "const": "BATTLE_BOSS",
-          "title": "险路恶敌"
+          "title": "险路恶敌",
+          "alias": "xianluewudi xlewd"
         },
         {
           "const": "INCIDENT",
-          "title": "不期而遇"
+          "title": "不期而遇",
+          "alias": "bufouqijieryu bfqjey"
         },
         {
           "const": "INCIDENT_RES3A",
-          "title": "不期而遇-黑色足迹"
+          "title": "不期而遇-黑色足迹",
+          "alias": "bufouqijieryuheisezuji bfqjeyhszj"
         },
         {
           "const": "INCIDENT_MIMIC_ENEMY",
-          "title": "不期而遇-鸭狗熊"
+          "title": "不期而遇-鸭狗熊",
+          "alias": "bufouqijieryuyagouxiong bfqjeyygx"
         },
         {
           "const": "SACRIFICE",
-          "title": "失与得"
+          "title": "失与得",
+          "alias": "shiyudedei syd"
         },
         {
           "const": "BATTLE_SHOP",
-          "title": "诡异行商"
+          "title": "诡异行商",
+          "alias": "guiyihangxingshang gyhxs"
         }
       ]
     },
@@ -163,75 +183,93 @@
           "anyOf": [
             {
               "const": "rogue_3_recruit_ticket_pioneer",
-              "title": "先锋"
+              "title": "先锋",
+              "alias": "xianfeng xf"
             },
             {
               "const": "rogue_3_recruit_ticket_warrior",
-              "title": "近卫"
+              "title": "近卫",
+              "alias": "jinwei jw"
             },
             {
               "const": "rogue_3_recruit_ticket_tank",
-              "title": "重装"
+              "title": "重装",
+              "alias": "zhongchongzhuang zcz"
             },
             {
               "const": "rogue_3_recruit_ticket_sniper",
-              "title": "狙击"
+              "title": "狙击",
+              "alias": "juji jj"
             },
             {
               "const": "rogue_3_recruit_ticket_caster",
-              "title": "术师"
+              "title": "术师",
+              "alias": "shuzhushi szs"
             },
             {
               "const": "rogue_3_recruit_ticket_support",
-              "title": "辅助"
+              "title": "辅助",
+              "alias": "fuzhuchu fzc"
             },
             {
               "const": "rogue_3_recruit_ticket_medic",
-              "title": "医疗"
+              "title": "医疗",
+              "alias": "yiliao yl"
             },
             {
               "const": "rogue_3_recruit_ticket_special",
-              "title": "特种"
+              "title": "特种",
+              "alias": "tezhongchong tzc"
             },
             {
               "const": "rogue_3_recruit_ticket_double_1",
-              "title": "突击协议（近锋）"
+              "title": "突击协议（近锋）",
+              "alias": "tujixieyijinfeng tjxyjf"
             },
             {
               "const": "rogue_3_recruit_ticket_double_2",
-              "title": "堡垒协议（重辅）"
+              "title": "堡垒协议（重辅）",
+              "alias": "baobupuleixieyizhongchongfu bplxyzcf"
             },
             {
               "const": "rogue_3_recruit_ticket_double_3",
-              "title": "远程协议（狙医）"
+              "title": "远程协议（狙医）",
+              "alias": "yuanchengxieyijuyi ycxyjy"
             },
             {
               "const": "rogue_3_recruit_ticket_double_4",
-              "title": "破坏协议（术特）"
+              "title": "破坏协议（术特）",
+              "alias": "pohuaixieyishuzhute phxyszt"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_melee",
-              "title": "前线统合"
+              "title": "前线统合",
+              "alias": "qianxiantonghege qxthg"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_ranged",
-              "title": "后方协调"
+              "title": "后方协调",
+              "alias": "houfangxietiaodiaozhou hfxtdz"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_melee_discount",
-              "title": "前线统合资深"
+              "title": "前线统合资深",
+              "alias": "qianxiantonghegezishen qxthgzs"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_ranged_discount",
-              "title": "后方协调资深"
+              "title": "后方协调资深",
+              "alias": "houfangxietiaodiaozhouzishen hfxtdzzs"
             },
             {
               "const": "rogue_3_recruit_ticket_all",
-              "title": "高级人事调度函"
+              "title": "高级人事调度函",
+              "alias": "gaojirenshitiaodiaozhoududuohan gjrstdzdh"
             },
             {
               "const": "rogue_3_recruit_ticket_all_discount",
-              "title": "高级人事资深"
+              "title": "高级人事资深",
+              "alias": "gaojirenshizishen gjrszs"
             }
           ]
         }
@@ -248,147 +286,183 @@
         "anyOf": [
           {
             "const": "rogue_3_totem_R_L1",
-            "title": "黜人"
+            "title": "黜人",
+            "alias": "churen cr"
           },
           {
             "const": "rogue_3_totem_R_L2",
-            "title": "猎手"
+            "title": "猎手",
+            "alias": "lieshou ls"
           },
           {
             "const": "rogue_3_totem_R_L3",
-            "title": "战士"
+            "title": "战士",
+            "alias": "zhanshi zs"
           },
           {
             "const": "rogue_3_totem_R_L4",
-            "title": "萨满"
+            "title": "萨满",
+            "alias": "saman sm"
           },
           {
             "const": "rogue_3_totem_R_L5",
-            "title": "雪祀"
+            "title": "雪祀",
+            "alias": "xuesi xs"
           },
           {
             "const": "rogue_3_totem_R_L6",
-            "title": "英雄"
+            "title": "英雄",
+            "alias": "yingxiong yx"
           },
           {
             "const": "rogue_3_totem_R_E1",
-            "title": "歌唱"
+            "title": "歌唱",
+            "alias": "gechang gc"
           },
           {
             "const": "rogue_3_totem_R_E2",
-            "title": "沉默"
+            "title": "沉默",
+            "alias": "chenmo cm"
           },
           {
             "const": "rogue_3_totem_R_E3",
-            "title": "朗诵"
+            "title": "朗诵",
+            "alias": "langsong ls"
           },
           {
             "const": "rogue_3_totem_R_E4",
-            "title": "辩论"
+            "title": "辩论",
+            "alias": "bianlun bl"
           },
           {
             "const": "rogue_3_totem_R_E5",
-            "title": "慰藉"
+            "title": "慰藉",
+            "alias": "weijieji wj"
           },
           {
             "const": "rogue_3_totem_R_E6",
-            "title": "告解"
+            "title": "告解",
+            "alias": "gaojiexie gjx"
           },
           {
             "const": "rogue_3_totem_G_L1",
-            "title": "树冠"
+            "title": "树冠",
+            "alias": "shuguan sg"
           },
           {
             "const": "rogue_3_totem_G_L2",
-            "title": "水面"
+            "title": "水面",
+            "alias": "shuimian sm"
           },
           {
             "const": "rogue_3_totem_G_L3",
-            "title": "眼睛"
+            "title": "眼睛",
+            "alias": "yanjing yj"
           },
           {
             "const": "rogue_3_totem_G_L4",
-            "title": "拱门"
+            "title": "拱门",
+            "alias": "gongmen gm"
           },
           {
             "const": "rogue_3_totem_G_L5",
-            "title": "光芒"
+            "title": "光芒",
+            "alias": "guangmang gm"
           },
           {
             "const": "rogue_3_totem_G_L6",
-            "title": "大地"
+            "title": "大地",
+            "alias": "dadaitaidide dtd"
           },
           {
             "const": "rogue_3_totem_G_E1",
-            "title": "喜悦"
+            "title": "喜悦",
+            "alias": "xiyue xy"
           },
           {
             "const": "rogue_3_totem_G_E2",
-            "title": "惊讶"
+            "title": "惊讶",
+            "alias": "jingya jy"
           },
           {
             "const": "rogue_3_totem_G_E3",
-            "title": "愤怒"
+            "title": "愤怒",
+            "alias": "fennu fn"
           },
           {
             "const": "rogue_3_totem_G_E4",
-            "title": "疑惑"
+            "title": "疑惑",
+            "alias": "yinihuo ynh"
           },
           {
             "const": "rogue_3_totem_G_E5",
-            "title": "憧憬"
+            "title": "憧憬",
+            "alias": "chongjing cj"
           },
           {
             "const": "rogue_3_totem_G_E6",
-            "title": "爱恋"
+            "title": "爱恋",
+            "alias": "ailian al"
           },
           {
             "const": "rogue_3_totem_B_L1",
-            "title": "源石"
+            "title": "源石",
+            "alias": "yuanshidan ysd"
           },
           {
             "const": "rogue_3_totem_B_L2",
-            "title": "乔木"
+            "title": "乔木",
+            "alias": "qiaomu qm"
           },
           {
             "const": "rogue_3_totem_B_L3",
-            "title": "砂石"
+            "title": "砂石",
+            "alias": "shashidan ssd"
           },
           {
             "const": "rogue_3_totem_B_L4",
-            "title": "灌木"
+            "title": "灌木",
+            "alias": "guanmu gm"
           },
           {
             "const": "rogue_3_totem_B_L5",
-            "title": "兽类"
+            "title": "兽类",
+            "alias": "shoulei sl"
           },
           {
             "const": "rogue_3_totem_B_L6",
-            "title": "人类"
+            "title": "人类",
+            "alias": "renlei rl"
           },
           {
             "const": "rogue_3_totem_B_E1",
-            "title": "巡视"
+            "title": "巡视",
+            "alias": "xunshi xs"
           },
           {
             "const": "rogue_3_totem_B_E2",
-            "title": "筑巢"
+            "title": "筑巢",
+            "alias": "zhuchao zc"
           },
           {
             "const": "rogue_3_totem_B_E3",
-            "title": "捕猎"
+            "title": "捕猎",
+            "alias": "bulie bl"
           },
           {
             "const": "rogue_3_totem_B_E4",
-            "title": "掠夺"
+            "title": "掠夺",
+            "alias": "lveduo ld"
           },
           {
             "const": "rogue_3_totem_B_E5",
-            "title": "繁衍"
+            "title": "繁衍",
+            "alias": "fanpoyan fpy"
           },
           {
             "const": "rogue_3_totem_B_E6",
-            "title": "迁徙"
+            "title": "迁徙",
+            "alias": "qianxi qx"
           }
         ]
       }

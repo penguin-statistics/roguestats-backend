@@ -44,6 +44,10 @@ func (e *EventQuery) collectField(ctx context.Context, opCtx *graphql.OperationC
 				return err
 			}
 			e.withUser = query
+			if _, ok := fieldSeen[event.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, event.FieldUserID)
+				fieldSeen[event.FieldUserID] = struct{}{}
+			}
 		case "research":
 			var (
 				alias = field.Alias
@@ -54,10 +58,24 @@ func (e *EventQuery) collectField(ctx context.Context, opCtx *graphql.OperationC
 				return err
 			}
 			e.withResearch = query
+			if _, ok := fieldSeen[event.FieldResearchID]; !ok {
+				selectedFields = append(selectedFields, event.FieldResearchID)
+				fieldSeen[event.FieldResearchID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[event.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, event.FieldCreatedAt)
 				fieldSeen[event.FieldCreatedAt] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[event.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, event.FieldUserID)
+				fieldSeen[event.FieldUserID] = struct{}{}
+			}
+		case "researchID":
+			if _, ok := fieldSeen[event.FieldResearchID]; !ok {
+				selectedFields = append(selectedFields, event.FieldResearchID)
+				fieldSeen[event.FieldResearchID] = struct{}{}
 			}
 		case "userAgent":
 			if _, ok := fieldSeen[event.FieldUserAgent]; !ok {

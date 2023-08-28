@@ -135,9 +135,6 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "credential", err: fmt.Errorf(`ent: validator failed for field "User.credential": %w`, err)}
 		}
 	}
-	if len(uc.mutation.EventsIDs()) == 0 {
-		return &ValidationError{Name: "events", err: errors.New(`ent: missing required edge "User.events"`)}
-	}
 	return nil
 }
 

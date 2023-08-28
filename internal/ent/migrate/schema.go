@@ -14,8 +14,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_agent", Type: field.TypeString},
 		{Name: "content", Type: field.TypeJSON},
-		{Name: "research_events", Type: field.TypeString, Nullable: true},
-		{Name: "user_events", Type: field.TypeString, Nullable: true},
+		{Name: "research_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
 	}
 	// EventsTable holds the schema information for the "events" table.
 	EventsTable = &schema.Table{
@@ -48,12 +48,12 @@ var (
 				Columns: []*schema.Column{EventsColumns[2]},
 			},
 			{
-				Name:    "event_user_events",
+				Name:    "event_user_id",
 				Unique:  false,
 				Columns: []*schema.Column{EventsColumns[5]},
 			},
 			{
-				Name:    "event_research_events",
+				Name:    "event_research_id",
 				Unique:  false,
 				Columns: []*schema.Column{EventsColumns[4]},
 			},

@@ -29,6 +29,18 @@ func (eu *EventUpdate) Where(ps ...predicate.Event) *EventUpdate {
 	return eu
 }
 
+// SetUserID sets the "user_id" field.
+func (eu *EventUpdate) SetUserID(s string) *EventUpdate {
+	eu.mutation.SetUserID(s)
+	return eu
+}
+
+// SetResearchID sets the "research_id" field.
+func (eu *EventUpdate) SetResearchID(s string) *EventUpdate {
+	eu.mutation.SetResearchID(s)
+	return eu
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (eu *EventUpdate) SetUserAgent(s string) *EventUpdate {
 	eu.mutation.SetUserAgent(s)
@@ -41,37 +53,9 @@ func (eu *EventUpdate) SetContent(m map[string]interface{}) *EventUpdate {
 	return eu
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (eu *EventUpdate) SetUserID(id string) *EventUpdate {
-	eu.mutation.SetUserID(id)
-	return eu
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (eu *EventUpdate) SetNillableUserID(id *string) *EventUpdate {
-	if id != nil {
-		eu = eu.SetUserID(*id)
-	}
-	return eu
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (eu *EventUpdate) SetUser(u *User) *EventUpdate {
 	return eu.SetUserID(u.ID)
-}
-
-// SetResearchID sets the "research" edge to the Research entity by ID.
-func (eu *EventUpdate) SetResearchID(id string) *EventUpdate {
-	eu.mutation.SetResearchID(id)
-	return eu
-}
-
-// SetNillableResearchID sets the "research" edge to the Research entity by ID if the given value is not nil.
-func (eu *EventUpdate) SetNillableResearchID(id *string) *EventUpdate {
-	if id != nil {
-		eu = eu.SetResearchID(*id)
-	}
-	return eu
 }
 
 // SetResearch sets the "research" edge to the Research entity.
@@ -123,7 +107,21 @@ func (eu *EventUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (eu *EventUpdate) check() error {
+	if _, ok := eu.mutation.UserID(); eu.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Event.user"`)
+	}
+	if _, ok := eu.mutation.ResearchID(); eu.mutation.ResearchCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Event.research"`)
+	}
+	return nil
+}
+
 func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := eu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(event.Table, event.Columns, sqlgraph.NewFieldSpec(event.FieldID, field.TypeString))
 	if ps := eu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -216,6 +214,18 @@ type EventUpdateOne struct {
 	mutation *EventMutation
 }
 
+// SetUserID sets the "user_id" field.
+func (euo *EventUpdateOne) SetUserID(s string) *EventUpdateOne {
+	euo.mutation.SetUserID(s)
+	return euo
+}
+
+// SetResearchID sets the "research_id" field.
+func (euo *EventUpdateOne) SetResearchID(s string) *EventUpdateOne {
+	euo.mutation.SetResearchID(s)
+	return euo
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (euo *EventUpdateOne) SetUserAgent(s string) *EventUpdateOne {
 	euo.mutation.SetUserAgent(s)
@@ -228,37 +238,9 @@ func (euo *EventUpdateOne) SetContent(m map[string]interface{}) *EventUpdateOne 
 	return euo
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (euo *EventUpdateOne) SetUserID(id string) *EventUpdateOne {
-	euo.mutation.SetUserID(id)
-	return euo
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (euo *EventUpdateOne) SetNillableUserID(id *string) *EventUpdateOne {
-	if id != nil {
-		euo = euo.SetUserID(*id)
-	}
-	return euo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (euo *EventUpdateOne) SetUser(u *User) *EventUpdateOne {
 	return euo.SetUserID(u.ID)
-}
-
-// SetResearchID sets the "research" edge to the Research entity by ID.
-func (euo *EventUpdateOne) SetResearchID(id string) *EventUpdateOne {
-	euo.mutation.SetResearchID(id)
-	return euo
-}
-
-// SetNillableResearchID sets the "research" edge to the Research entity by ID if the given value is not nil.
-func (euo *EventUpdateOne) SetNillableResearchID(id *string) *EventUpdateOne {
-	if id != nil {
-		euo = euo.SetResearchID(*id)
-	}
-	return euo
 }
 
 // SetResearch sets the "research" edge to the Research entity.
@@ -323,7 +305,21 @@ func (euo *EventUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (euo *EventUpdateOne) check() error {
+	if _, ok := euo.mutation.UserID(); euo.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Event.user"`)
+	}
+	if _, ok := euo.mutation.ResearchID(); euo.mutation.ResearchCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Event.research"`)
+	}
+	return nil
+}
+
 func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error) {
+	if err := euo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(event.Table, event.Columns, sqlgraph.NewFieldSpec(event.FieldID, field.TypeString))
 	id, ok := euo.mutation.ID()
 	if !ok {

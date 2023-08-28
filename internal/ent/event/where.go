@@ -70,6 +70,16 @@ func CreatedAt(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldCreatedAt, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldUserID, v))
+}
+
+// ResearchID applies equality check predicate on the "research_id" field. It's identical to ResearchIDEQ.
+func ResearchID(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldResearchID, v))
+}
+
 // UserAgent applies equality check predicate on the "user_agent" field. It's identical to UserAgentEQ.
 func UserAgent(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldUserAgent, v))
@@ -113,6 +123,136 @@ func CreatedAtLT(v time.Time) predicate.Event {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldUserID, v))
+}
+
+// UserIDContains applies the Contains predicate on the "user_id" field.
+func UserIDContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldUserID, v))
+}
+
+// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
+func UserIDHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldUserID, v))
+}
+
+// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
+func UserIDHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldUserID, v))
+}
+
+// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
+func UserIDEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldUserID, v))
+}
+
+// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
+func UserIDContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldUserID, v))
+}
+
+// ResearchIDEQ applies the EQ predicate on the "research_id" field.
+func ResearchIDEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldResearchID, v))
+}
+
+// ResearchIDNEQ applies the NEQ predicate on the "research_id" field.
+func ResearchIDNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldResearchID, v))
+}
+
+// ResearchIDIn applies the In predicate on the "research_id" field.
+func ResearchIDIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldResearchID, vs...))
+}
+
+// ResearchIDNotIn applies the NotIn predicate on the "research_id" field.
+func ResearchIDNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldResearchID, vs...))
+}
+
+// ResearchIDGT applies the GT predicate on the "research_id" field.
+func ResearchIDGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldResearchID, v))
+}
+
+// ResearchIDGTE applies the GTE predicate on the "research_id" field.
+func ResearchIDGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldResearchID, v))
+}
+
+// ResearchIDLT applies the LT predicate on the "research_id" field.
+func ResearchIDLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldResearchID, v))
+}
+
+// ResearchIDLTE applies the LTE predicate on the "research_id" field.
+func ResearchIDLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldResearchID, v))
+}
+
+// ResearchIDContains applies the Contains predicate on the "research_id" field.
+func ResearchIDContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldResearchID, v))
+}
+
+// ResearchIDHasPrefix applies the HasPrefix predicate on the "research_id" field.
+func ResearchIDHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldResearchID, v))
+}
+
+// ResearchIDHasSuffix applies the HasSuffix predicate on the "research_id" field.
+func ResearchIDHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldResearchID, v))
+}
+
+// ResearchIDEqualFold applies the EqualFold predicate on the "research_id" field.
+func ResearchIDEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldResearchID, v))
+}
+
+// ResearchIDContainsFold applies the ContainsFold predicate on the "research_id" field.
+func ResearchIDContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldResearchID, v))
 }
 
 // UserAgentEQ applies the EQ predicate on the "user_agent" field.

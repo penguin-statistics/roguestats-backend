@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://rogue.penguin-stats.io/_/schema/research/incident",
-  "title": "不期而遇",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -27,115 +26,143 @@
       "anyOf": [
         {
           "const": "ro3_res1",
-          "title": "吉兆"
+          "title": "吉兆",
+          "alias": "jizhao jz"
         },
         {
           "const": "ro3_res2",
-          "title": "雨！"
+          "title": "雨！",
+          "alias": "yu y"
         },
         {
           "const": "ro3_res3",
-          "title": "随到随取"
+          "title": "随到随取",
+          "alias": "suidaosuiqu sdsq"
         },
         {
           "const": "ro3_res4",
-          "title": "定期维护"
+          "title": "定期维护",
+          "alias": "dingqijiweihu dqjwh"
         },
         {
           "const": "ro3_res5",
-          "title": "昏黑之室"
+          "title": "昏黑之室",
+          "alias": "hunheizhishi hhzs"
         },
         {
           "const": "ro3_res2a",
-          "title": "疗愈仪式"
+          "title": "疗愈仪式",
+          "alias": "liaoyuyishi lyys"
         },
         {
           "const": "ro3_res3a",
-          "title": "黑色足迹"
+          "title": "黑色足迹",
+          "alias": "heisezuji hszj"
         },
         {
           "const": "ro3_res5a",
-          "title": "不冻河"
+          "title": "不冻河",
+          "alias": "bufoudonghe bfdh"
         },
         {
           "const": "ro3_rec1",
-          "title": "野外生存专家"
+          "title": "野外生存专家",
+          "alias": "yewaishengcunzhuanjiajie ywsczj"
         },
         {
           "const": "ro3_rec2",
-          "title": "在地公共信号放大站756号"
+          "title": "在地公共信号放大站756号",
+          "alias": "zaididegonggongxinshenhaofangdadaitaizhan756hao zdggxshfdtz756h"
         },
         {
           "const": "ro3_relic1",
-          "title": "特里蒙旅行社特派团"
+          "title": "特里蒙旅行社特派团",
+          "alias": "telimenglvhangxingshetepaituan tlmlhxstpt"
         },
         {
           "const": "ro3_relic2",
-          "title": "在地公共移动站N6号"
+          "title": "在地公共移动站N6号",
+          "alias": "zaididegonggongyidongzhanN6hao zdggydzN6h"
         },
         {
           "const": "ro3_spring",
-          "title": "度假胜地"
+          "title": "度假胜地",
+          "alias": "duduojiashengdide djsd"
         },
         {
           "const": "ro3_height",
-          "title": "负伤的主树"
+          "title": "负伤的主树",
+          "alias": "fushangdedizhushu fsdzs"
         },
         {
           "const": "ro3_pick1",
-          "title": "不见群山"
+          "title": "不见群山",
+          "alias": "bufoujianxianqunshan bfjxqs"
         },
         {
           "const": "ro3_pick2",
-          "title": "远见所向"
+          "title": "远见所向",
+          "alias": "yuanjianxiansuoxiang yjxsx"
         },
         {
           "const": "ro3_normal1",
-          "title": "萨米之语"
+          "title": "萨米之语",
+          "alias": "samizhiyu smzy"
         },
         {
           "const": "ro3_normal2",
-          "title": "乌萨斯"
+          "title": "乌萨斯",
+          "alias": "wusasi wss"
         },
         {
           "const": "ro3_normal3",
-          "title": "无用之物"
+          "title": "无用之物",
+          "alias": "wuyongzhiwu wyzw"
         },
         {
           "const": "ro3_bat1",
-          "title": "沼泽里的抽泣声"
+          "title": "沼泽里的抽泣声",
+          "alias": "zhaozeshilidedichouqisheng zzsldcqs"
         },
         {
           "const": "ro3_bat2",
-          "title": "有利可图"
+          "title": "有利可图",
+          "alias": "youliketu ylkt"
         },
         {
           "const": "ro3_bat3",
-          "title": "随行人员"
+          "title": "随行人员",
+          "alias": "suihangxingrenyuanyun shxry"
         },
         {
           "const": "ro3_bat4",
-          "title": "邪恶计划鸭"
+          "title": "邪恶计划鸭",
+          "alias": "xieyayeyuxuewujihuaya xyewjhy"
         },
         {
           "const": "ro3_bat5",
-          "title": "百里连营"
+          "title": "百里连营",
+          "alias": "baililianying blly"
         },
         {
           "const": "ro3_bat6",
-          "title": "请君入戏"
+          "title": "请君入戏",
+          "alias": "qingjunruxihu qjrxh"
         },
         {
           "const": "ro3_bat7",
-          "title": "北风女巫"
+          "title": "北风女巫",
+          "alias": "beifengnvruwu bfnrw"
         },
         {
           "const": "ro3_bat8",
-          "title": "时刻警惕"
+          "title": "时刻警惕",
+          "alias": "shikejingti skjt"
         },
         {
           "const": "ro3_bat9",
-          "title": "猜疑链"
+          "title": "猜疑链",
+          "alias": "caiyinilian cynl"
         }
       ]
     }

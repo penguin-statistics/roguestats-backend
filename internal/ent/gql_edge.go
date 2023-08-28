@@ -13,7 +13,7 @@ func (e *Event) User(ctx context.Context) (*User, error) {
 	if IsNotLoaded(err) {
 		result, err = e.QueryUser().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (e *Event) Research(ctx context.Context) (*Research, error) {
@@ -21,7 +21,7 @@ func (e *Event) Research(ctx context.Context) (*Research, error) {
 	if IsNotLoaded(err) {
 		result, err = e.QueryResearch().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (r *Research) Events(ctx context.Context) (result []*Event, err error) {

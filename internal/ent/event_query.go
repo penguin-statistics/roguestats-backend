@@ -25,7 +25,6 @@ type EventQuery struct {
 	predicates   []predicate.Event
 	withUser     *UserQuery
 	withResearch *ResearchQuery
-	withFKs      bool
 	modifiers    []func(*sql.Selector)
 	loadTotal    []func(context.Context, []*Event) error
 	// intermediate query (i.e. traversal path).
@@ -407,19 +406,12 @@ func (eq *EventQuery) prepareQuery(ctx context.Context) error {
 func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event, error) {
 	var (
 		nodes       = []*Event{}
-		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
 		loadedTypes = [2]bool{
 			eq.withUser != nil,
 			eq.withResearch != nil,
 		}
 	)
-	if eq.withUser != nil || eq.withResearch != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, event.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Event).scanValues(nil, columns)
 	}
@@ -465,10 +457,7 @@ func (eq *EventQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*E
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Event)
 	for i := range nodes {
-		if nodes[i].user_events == nil {
-			continue
-		}
-		fk := *nodes[i].user_events
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -485,7 +474,7 @@ func (eq *EventQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*E
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_events" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -497,10 +486,7 @@ func (eq *EventQuery) loadResearch(ctx context.Context, query *ResearchQuery, no
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Event)
 	for i := range nodes {
-		if nodes[i].research_events == nil {
-			continue
-		}
-		fk := *nodes[i].research_events
+		fk := nodes[i].ResearchID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -517,7 +503,7 @@ func (eq *EventQuery) loadResearch(ctx context.Context, query *ResearchQuery, no
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "research_events" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "research_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -553,6 +539,12 @@ func (eq *EventQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != event.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if eq.withUser != nil {
+			_spec.Node.AddColumnOnce(event.FieldUserID)
+		}
+		if eq.withResearch != nil {
+			_spec.Node.AddColumnOnce(event.FieldResearchID)
 		}
 	}
 	if ps := eq.predicates; len(ps) > 0 {

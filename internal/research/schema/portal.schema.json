@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://rogue.penguin-stats.io/_/schema/research/portal",
-  "title": "Portal",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -24,51 +23,63 @@
       "anyOf": [
         {
           "const": "battle_3-2",
-          "title": "战斗：3-2"
+          "title": "战斗：3-2",
+          "alias": "zhandou32 zd32"
         },
         {
           "const": "battle_2-3",
-          "title": "战斗：2-3"
+          "title": "战斗：2-3",
+          "alias": "zhandou23 zd23"
         },
         {
           "const": "battle_3-3",
-          "title": "战斗：3-3"
+          "title": "战斗：3-3",
+          "alias": "zhandou33 zd33"
         },
         {
           "const": "event_2-2-2",
-          "title": "事件：2-2-2"
+          "title": "事件：2-2-2",
+          "alias": "shijian222 sj222"
         },
         {
           "const": "event_3-3",
-          "title": "事件：3-3"
+          "title": "事件：3-3",
+          "alias": "shijian33 sj33"
         },
         {
           "const": "event_2-2",
-          "title": "事件：2-2"
+          "title": "事件：2-2",
+          "alias": "shijian22 sj22"
         },
         {
           "const": "event_2-3-2",
-          "title": "事件：2-3-2"
+          "title": "事件：2-3-2",
+          "alias": "shijian232 sj232"
         },
         {
           "const": "mixed_2-2-1",
-          "title": "混合：2-2-1"
+          "title": "混合：2-2-1",
+          "alias": "hunhege221 hhg221"
         },
         {
           "const": "mixed_2-3-1",
-          "title": "混合：2-3-1"
+          "title": "混合：2-3-1",
+          "alias": "hunhege231 hhg231"
         },
         {
           "const": "mixed_2-3-2",
-          "title": "混合：2-3-2"
+          "title": "混合：2-3-2",
+          "alias": "hunhege232 hhg232"
         },
         {
           "const": "mixed_2-2-2",
-          "title": "混合：2-2-2"
+          "title": "混合：2-2-2",
+          "alias": "hunhege222 hhg222"
         },
         {
           "const": "mixed_3-1",
-          "title": "混合：3-1"
+          "title": "混合：3-1",
+          "alias": "hunhege31 hhg31"
         }
       ]
     },
@@ -78,35 +89,43 @@
       "anyOf": [
         {
           "const": "variation_1",
-          "title": "己方生命攻击提升，出现国度"
+          "title": "己方生命攻击提升，出现国度",
+          "alias": "jifangshengminggongjitidishengchuxianguoduduo jfsmgjtdscxgd"
         },
         {
           "const": "variation_2",
-          "title": "攻击下降，距离2伤害提升"
+          "title": "攻击下降，距离2伤害提升",
+          "alias": "gongjixiajiangxiangjuli2shanghaitidisheng gjxjxjl2shtds"
         },
         {
           "const": "variation_3",
-          "title": "同时部署人数、再部署减少"
+          "title": "同时部署人数、再部署减少",
+          "alias": "tongshibushurenshushuozaibushujianshao tsbsrszbsjs"
         },
         {
           "const": "variation_4",
-          "title": "技力消耗降低，专注失调"
+          "title": "技力消耗降低，专注失调",
+          "alias": "jilixiaohaojiangxiangdizhuanzhushitiaodiaozhou jlxhjxdzzstdz"
         },
         {
           "const": "variation_5",
-          "title": "敌方移速下降，重量防御法抗提升"
+          "title": "敌方移速下降，重量防御法抗提升",
+          "alias": "difangyisuxiajiangxiangzhongchongliangfangyufakangtidisheng dfysxjxzclfyfktds"
         },
         {
           "const": "variation_6",
-          "title": "生命上限提升，会掉更多血"
+          "title": "生命上限提升，会掉更多血",
+          "alias": "shengmingshangxiantidishenghuikuaidiaogengduoxiexue smsxtdshkdgdx"
         },
         {
           "const": "variation_shop",
-          "title": "立即获得一笔资金，暗藏低价商品"
+          "title": "立即获得一笔资金，暗藏低价商品",
+          "alias": "lijihuodedeiyibizijinancangzangdijiajieshangpin ljhdybzjaczdjsp"
         },
         {
           "const": "variation_shelter",
-          "title": "每前进一步都能获得希望"
+          "title": "每前进一步都能获得希望",
+          "alias": "meiqianjinyibududounengnaihuodedeixiwang mqjybdnhdxw"
         }
       ]
     }

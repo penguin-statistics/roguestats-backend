@@ -115,9 +115,6 @@ func (rc *ResearchCreate) check() error {
 	if _, ok := rc.mutation.Schema(); !ok {
 		return &ValidationError{Name: "schema", err: errors.New(`ent: missing required field "Research.schema"`)}
 	}
-	if len(rc.mutation.EventsIDs()) == 0 {
-		return &ValidationError{Name: "events", err: errors.New(`ent: missing required edge "Research.events"`)}
-	}
 	return nil
 }
 
