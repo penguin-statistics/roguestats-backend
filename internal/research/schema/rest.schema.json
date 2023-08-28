@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://rogue.penguin-stats.io/_/schema/research/rest",
-  "title": "安全屋",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -25,27 +24,33 @@
         "anyOf": [
           {
             "const": "ro3_rest_1",
-            "title": "稍事休息"
+            "title": "稍事休息",
+            "alias": "shaoshixiuxuxi ssxx"
           },
           {
             "const": "ro3_rest_2",
-            "title": "强化训练"
+            "title": "强化训练",
+            "alias": "qiangjianghuaxunlian qjhxl"
           },
           {
             "const": "ro3_rest_3",
-            "title": "鼓舞士气"
+            "title": "鼓舞士气",
+            "alias": "guwushiqi gwsq"
           },
           {
             "const": "ro3_rest_4",
-            "title": "重整编制"
+            "title": "重整编制",
+            "alias": "zhongchongzhengbianzhi zczbz"
           },
           {
             "const": "ro3_rest_5",
-            "title": "维护设备"
+            "title": "维护设备",
+            "alias": "weihushebei whsb"
           },
           {
             "const": "ro3_rest_6",
-            "title": "求得启示"
+            "title": "求得启示",
+            "alias": "qiudedeiqishi qdqs"
           }
         ]
       },
