@@ -7,89 +7,61 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
-	"strings"
-	"time"
 
-	"github.com/oklog/ulid/v2"
 	"github.com/pkg/errors"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/fx"
 
-	"exusiai.dev/roguestats-backend/internal/cursorutils"
+	"exusiai.dev/roguestats-backend/internal/ent"
+	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/exprutils"
 	"exusiai.dev/roguestats-backend/internal/model"
-	"exusiai.dev/roguestats-backend/internal/repo"
 )
 
 type Event struct {
 	fx.In
 
-	EventRepo       repo.Event
-	ResearchService Research
-	AuthService     Auth
+	Ent         *ent.Client
+	AuthService Auth
 }
 
-func (s Event) CreateEvent(ctx context.Context, event *model.Event) error {
-	return s.EventRepo.CreateEvent(ctx, event)
-}
+func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
+	client := ent.FromContext(ctx)
 
-func (s Event) GetEvent(ctx context.Context, eventID string) (*model.Event, error) {
-	return s.EventRepo.GetEvent(ctx, eventID)
-}
-
-func (s Event) GetEvents(ctx context.Context) ([]*model.Event, error) {
-	return s.EventRepo.GetEvents(ctx)
-}
-
-func (s Event) GetEventsByResearchID(ctx context.Context, researchID string) ([]*model.Event, error) {
-	return s.EventRepo.GetEventsByResearchID(ctx, researchID)
-}
-
-func (s Event) CreateEventFromInput(ctx context.Context, input *model.NewEvent) (*model.Event, error) {
-	event, err := s.convertFromEventInputToEvent(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-	err = s.CreateEvent(ctx, event)
-	if err != nil {
-		return nil, err
-	}
-	return event, nil
-}
-
-func (s Event) GetPaginatedEvents(ctx context.Context, researchID string, first int, after string) (*model.EventsConnection, error) {
-	events, err := s.EventRepo.GetPaginatedEventsByResearchID(ctx, researchID, first+1, after)
+	user, err := s.AuthService.CurrentUser(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	hasNextPage := len(events) > first
-	hasPreviousPage := after != ""
-	if len(events) > first {
-		events = events[:len(events)-1]
+	// get schema from research
+	research, err := client.Research.Get(ctx, input.ResearchID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("research not found")
+		}
+		return nil, err
 	}
 
-	eventsConnection := &model.EventsConnection{
-		Edges: make([]*model.EventsEdge, 0, len(events)),
-		PageInfo: &model.PageInfo{
-			HasNextPage:     &hasNextPage,
-			HasPreviousPage: &hasPreviousPage,
-		},
+	// validate event json
+	schema, err := json.Marshal(research.Schema)
+	if err != nil {
+		return nil, err
 	}
-	for _, event := range events {
-		eventsConnection.Edges = append(eventsConnection.Edges, &model.EventsEdge{
-			Node:   event,
-			Cursor: cursorutils.EncodeCursor(event.ID),
-		})
+	sch, err := jsonschema.CompileString("schema.json", string(schema))
+	if err != nil {
+		return nil, err
 	}
-
-	// decide StartCursor and EndCursor
-	if len(events) > 0 {
-		eventsConnection.PageInfo.StartCursor = cursorutils.EncodeCursor(events[0].ID)
-		eventsConnection.PageInfo.EndCursor = cursorutils.EncodeCursor(events[len(events)-1].ID)
+	if err = sch.Validate(input.Content); err != nil {
+		return nil, err
 	}
 
-	return eventsConnection, nil
+	return client.Event.Create().
+		SetContent(input.Content).
+		SetUserAgent(input.UserAgent).
+		SetResearchID(input.ResearchID).
+		SetUserID(user.ID).
+		Save(ctx)
 }
 
 /**
@@ -104,7 +76,7 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
 		return nil, err
 	}
 
-	categoryCountMap := make(map[interface{}]int)
+	categoryCountMap := make(map[any]int)
 
 	totalCount := 0
 	for _, event := range filteredEvents {
@@ -147,8 +119,10 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
  * In the future, we should implement a filter that can be translated into a SQL query.
  * @param {string} filterInput For current implementation, we use expr
  */
-func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filterInput string) ([]*model.Event, error) {
-	events, err := s.GetEventsByResearchID(ctx, researchID)
+func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filterInput string) ([]*ent.Event, error) {
+	events, err := s.Ent.Event.Query().
+		Where(event.HasResearchWith(research.ID(researchID))).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +130,7 @@ func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filte
 		return events, nil
 	}
 	exprRunner := exprutils.GetExprRunner()
-	filteredEvents := make([]*model.Event, 0)
+	filteredEvents := make([]*ent.Event, 0)
 	for _, event := range events {
 		output, err := exprRunner.RunCode(filterInput, exprRunner.PrepareEnv(event))
 		if err != nil {
@@ -172,7 +146,7 @@ func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filte
 	return filteredEvents, nil
 }
 
-func (s Event) mapEventToResult(event *model.Event, resultMappingInput string) ([]interface{}, error) {
+func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]any, error) {
 	exprRunner := exprutils.GetExprRunner()
 	output, err := exprRunner.RunCode(resultMappingInput, exprRunner.PrepareEnv(event))
 	if err != nil {
@@ -182,9 +156,9 @@ func (s Event) mapEventToResult(event *model.Event, resultMappingInput string) (
 		return nil, nil
 	}
 
-	mappedResults := make([]interface{}, 0)
+	mappedResults := make([]any, 0)
 	if isArray(output) {
-		mappedResults = output.([]interface{})
+		mappedResults = output.([]any)
 	} else {
 		mappedResults = append(mappedResults, output)
 	}
@@ -198,46 +172,7 @@ func (s Event) mapEventToResult(event *model.Event, resultMappingInput string) (
 	return mappedResults, nil
 }
 
-func (s Event) convertFromEventInputToEvent(ctx context.Context, input *model.NewEvent) (*model.Event, error) {
-	user, err := s.AuthService.CurrentUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// get schema from research
-	research, err := s.ResearchService.GetResearchByID(ctx, input.ResearchID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.New("research not found")
-		}
-		return nil, err
-	}
-
-	// validate event json
-	schema, err := json.Marshal(research.Schema)
-	if err != nil {
-		return nil, err
-	}
-	sch, err := jsonschema.CompileString("schema.json", string(schema))
-	if err != nil {
-		return nil, err
-	}
-	if err = sch.Validate(input.Content); err != nil {
-		return nil, err
-	}
-
-	event := &model.Event{
-		ID:         strings.ToLower(ulid.Make().String()),
-		ResearchID: input.ResearchID,
-		Content:    input.Content,
-		UserID:     user.ID,
-		CreatedAt:  time.Now(),
-		UserAgent:  input.UserAgent,
-	}
-	return event, nil
-}
-
-func isHashable(v interface{}) bool {
+func isHashable(v any) bool {
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Slice, reflect.Map, reflect.Func:
 		return false
@@ -246,7 +181,7 @@ func isHashable(v interface{}) bool {
 	}
 }
 
-func isArray(input interface{}) bool {
+func isArray(input any) bool {
 	kind := reflect.TypeOf(input).Kind()
 	return kind == reflect.Array || kind == reflect.Slice
 }

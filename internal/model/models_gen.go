@@ -2,46 +2,21 @@
 
 package model
 
-import (
-	"time"
-)
-
-type Node interface {
-	IsNode()
-	GetID() string
-}
-
 type CategoryCount struct {
 	Category interface{} `json:"category"`
 	Count    int         `json:"count"`
+}
+
+type CreateEventInput struct {
+	UserAgent  string                 `json:"userAgent"`
+	Content    map[string]interface{} `json:"content"`
+	ResearchID string                 `json:"researchID"`
 }
 
 type CreateUserInput struct {
 	Name       string                 `json:"name"`
 	Email      string                 `json:"email"`
 	Attributes map[string]interface{} `json:"attributes,omitempty"`
-}
-
-type Event struct {
-	ID         string                 `json:"id" bun:"event_id"`
-	ResearchID string                 `json:"researchId" bun:"research_id"`
-	Content    map[string]interface{} `json:"content"`
-	UserID     string                 `json:"userId" bun:"user_id"`
-	CreatedAt  time.Time              `json:"createdAt"`
-	UserAgent  *string                `json:"userAgent,omitempty"`
-}
-
-func (Event) IsNode()            {}
-func (this Event) GetID() string { return this.ID }
-
-type EventsConnection struct {
-	Edges    []*EventsEdge `json:"edges"`
-	PageInfo *PageInfo     `json:"pageInfo"`
-}
-
-type EventsEdge struct {
-	Node   *Event `json:"node"`
-	Cursor string `json:"cursor"`
 }
 
 type GroupCountInput struct {
@@ -54,54 +29,3 @@ type GroupCountResult struct {
 	Results []*CategoryCount `json:"results"`
 	Total   int              `json:"total"`
 }
-
-type LoginInput struct {
-	Email             string `json:"email"`
-	Password          string `json:"password"`
-	TurnstileResponse string `json:"turnstileResponse"`
-}
-
-type NewEvent struct {
-	Content    map[string]interface{} `json:"content"`
-	ResearchID string                 `json:"researchId"`
-	UserAgent  *string                `json:"userAgent,omitempty"`
-}
-
-type PageInfo struct {
-	HasNextPage     *bool  `json:"hasNextPage,omitempty"`
-	HasPreviousPage *bool  `json:"hasPreviousPage,omitempty"`
-	StartCursor     string `json:"startCursor"`
-	EndCursor       string `json:"endCursor"`
-}
-
-type Research struct {
-	ID     string                 `json:"id" bun:"research_id"`
-	Name   string                 `json:"name"`
-	Schema map[string]interface{} `json:"schema"`
-	Event  *Event                 `json:"event" bun:"-"`
-	Events *EventsConnection      `json:"events,omitempty" bun:"-"`
-}
-
-func (Research) IsNode()            {}
-func (this Research) GetID() string { return this.ID }
-
-type Topic struct {
-	ID                 string `json:"id" bun:"topic_id"`
-	FilterInput        string `json:"filterInput"`
-	ResultMappingInput string `json:"resultMappingInput"`
-}
-
-func (Topic) IsNode()            {}
-func (this Topic) GetID() string { return this.ID }
-
-type User struct {
-	ID         string                 `json:"id" bun:"user_id"`
-	Name       string                 `json:"name"`
-	Email      *string                `json:"email,omitempty"`
-	Attributes map[string]interface{} `json:"attributes,omitempty"`
-	// User's encrypted credential
-	Credential string `json:"-"`
-}
-
-func (User) IsNode()            {}
-func (this User) GetID() string { return this.ID }

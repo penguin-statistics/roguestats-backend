@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
+	"exusiai.dev/roguestats-backend/internal/appcontext"
 	"exusiai.dev/roguestats-backend/internal/service"
 )
 
@@ -17,8 +18,9 @@ type Middleware struct {
 
 func (m Middleware) CurrentUser() func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		token := ctx.Get("Authorization")
+		token := ctx.Get(fiber.HeaderAuthorization)
 		if token == "" {
+			// some routes don't require authentication so we just skip them
 			return ctx.Next()
 		}
 
@@ -27,8 +29,16 @@ func (m Middleware) CurrentUser() func(ctx *fiber.Ctx) error {
 			return fiber.NewError(fiber.StatusUnauthorized, "invalid token")
 		}
 
-		ctx.Context().SetUserValue("currentUser", user)
+		ctx.Context().SetUserValue(appcontext.CtxKeyCurrentUser, user)
 
+		return ctx.Next()
+	}
+}
+
+func (m Middleware) InjectFiberCtx() func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		// inject fiber context into *fasthttp.RequestCtx
+		ctx.Context().SetUserValue(appcontext.CtxKeyFiberCtx, ctx)
 		return ctx.Next()
 	}
 }

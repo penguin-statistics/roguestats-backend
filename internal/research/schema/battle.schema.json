@@ -1,6 +1,6 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://penguin-stats.io/roguestats/battle.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://rogue.penguin-stats.io/_/schema/research/battle",
   "title": "作战节点",
   "type": "object",
   "additionalProperties": false,
@@ -152,7 +152,7 @@
       "title": "掉落招募券",
       "description": "若藏品有电台，请留空不填；一个【招募券掉落框】内若为二选一，请同时选择两项；如果没有第二个【招募券掉落框】，第二个请留空",
       "type": "array",
-      "minItems": 2,
+      "minItems": 0,
       "maxItems": 2,
       "items": {
         "type": "array",
@@ -241,7 +241,7 @@
       "title": "掉落密文板",
       "description": "若藏品有伶牙毁林者，请留空不填；请同时把两个选项都选上",
       "type": "array",
-      "minItems": 0,
+      "minItems": 1,
       "maxItems": 3,
       "uniqueItems": true,
       "items": {

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"gopkg.in/guregu/null.v3"
+	"gopkg.in/guregu/null.v4"
 )
 
 type ColumnHandler struct {
@@ -18,8 +18,10 @@ type ColumnHandler struct {
 	layoutMap        map[string]string
 }
 
-var columnHandlerInstance *ColumnHandler
-var columnHanlderOnce sync.Once
+var (
+	columnHandlerInstance *ColumnHandler
+	columnHanlderOnce     sync.Once
+)
 
 func GetColumnHandler() *ColumnHandler {
 	columnHanlderOnce.Do(func() {

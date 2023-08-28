@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/fx"
@@ -15,27 +14,30 @@ import (
 	"exusiai.dev/roguestats-backend/internal/app/appconfig"
 	"exusiai.dev/roguestats-backend/internal/appcontext"
 	"exusiai.dev/roguestats-backend/internal/blob"
+	"exusiai.dev/roguestats-backend/internal/ent"
+	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"exusiai.dev/roguestats-backend/internal/model"
-	"exusiai.dev/roguestats-backend/internal/repo"
 )
 
 type Auth struct {
 	fx.In
 
 	Config      *appconfig.Config
-	UserRepo    repo.User
+	Ent         *ent.Client
 	JWT         JWT
 	Turnstile   Turnstile
 	MailService Mail
 }
 
-func (s Auth) AuthByLoginInput(ctx context.Context, args model.LoginInput) (*model.User, error) {
+func (s Auth) AuthByLoginInput(ctx context.Context, args model.LoginInput) (*ent.User, error) {
 	err := s.Turnstile.Verify(ctx, args.TurnstileResponse, "login")
 	if err != nil {
 		return nil, gqlerror.Errorf("captcha verification failed: invalid turnstile response")
 	}
 
-	user, err := s.UserRepo.GetUserByEmail(ctx, args.Email)
+	user, err := s.Ent.User.Query().
+		Where(user.Email(args.Email)).
+		First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +55,7 @@ func (s Auth) AuthByLoginInput(ctx context.Context, args model.LoginInput) (*mod
 	return user, err
 }
 
-func (s Auth) AuthByToken(ctx context.Context, token string) (*model.User, error) {
+func (s Auth) AuthByToken(ctx context.Context, token string) (*ent.User, error) {
 	userId, expireAt, err := s.JWT.Verify(token)
 	if err != nil {
 		return nil, err
@@ -61,41 +63,41 @@ func (s Auth) AuthByToken(ctx context.Context, token string) (*model.User, error
 
 	// auto renew token
 	if time.Until(expireAt) < s.Config.JWTAutoRenewalTime {
-		err = s.SetUserToken(ctx, &model.User{ID: userId})
+		err = s.SetUserToken(ctx, &ent.User{ID: userId})
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return s.UserRepo.GetUserByID(ctx, userId)
+	return s.Ent.User.Get(ctx, userId)
 }
 
-func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*model.User, error) {
-	var randomBytes [32]byte
+func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*ent.User, error) {
+	var randomBytes [16]byte
 	_, err := rand.Read(randomBytes[:])
 	if err != nil {
 		return nil, err
 	}
 	randomString := base64.RawURLEncoding.EncodeToString(randomBytes[:])
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomString), 14)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomString), 12)
 	if err != nil {
 		return nil, err
 	}
 
-	user := &model.User{
-		Name:       args.Name,
-		Email:      &args.Email,
-		Attributes: args.Attributes,
-		Credential: string(hashedPassword),
-	}
+	client := ent.FromContext(ctx)
 
-	err = s.UserRepo.CreateUser(ctx, user)
+	user, err := client.User.Create().
+		SetName(args.Name).
+		SetEmail(args.Email).
+		SetAttributes(args.Attributes).
+		SetCredential(string(hashedPassword)).
+		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	rendered, err := blob.RenderPair("password-generated", map[string]interface{}{
+	rendered, err := blob.RenderPair("password-generated", map[string]any{
 		"Username": user.Name,
 		"Email":    user.Email,
 		"Password": randomString,
@@ -105,7 +107,7 @@ func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*mode
 	}
 
 	_, err = s.MailService.Send(&SendEmailRequest{
-		To:      []string{*user.Email},
+		To:      []string{user.Email},
 		Subject: "你的 RogueStats 登录信息已准备就绪",
 		Html:    rendered.HTML,
 		Text:    rendered.Text,
@@ -117,7 +119,7 @@ func (s Auth) CreateUser(ctx context.Context, args model.CreateUserInput) (*mode
 	return user, err
 }
 
-func (s Auth) CurrentUser(ctx context.Context) (*model.User, error) {
+func (s Auth) CurrentUser(ctx context.Context) (*ent.User, error) {
 	user := appcontext.CurrentUser(ctx)
 	if user != nil {
 		return user, nil
@@ -126,8 +128,8 @@ func (s Auth) CurrentUser(ctx context.Context) (*model.User, error) {
 	return nil, errors.New("you are not logged in")
 }
 
-func (s Auth) SetUserToken(ctx context.Context, user *model.User) error {
-	fiberCtx := ctx.Value("fiberCtx").(*fiber.Ctx)
+func (s Auth) SetUserToken(ctx context.Context, user *ent.User) error {
+	fiberCtx := appcontext.FiberCtx(ctx)
 
 	token, err := s.JWT.Sign(user.ID)
 	if err != nil {

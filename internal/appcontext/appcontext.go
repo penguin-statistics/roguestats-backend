@@ -3,36 +3,35 @@ package appcontext
 import (
 	"context"
 
+	"exusiai.dev/roguestats-backend/internal/ent"
 	"github.com/gofiber/fiber/v2"
-
-	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 var (
-	ctxKeyCurrentUser = "currentUser"
-	ctxKeyFiberCtx    = "fiberCtx"
+	CtxKeyCurrentUser ctxKey = "currentUser"
+	CtxKeyFiberCtx    ctxKey = "fiberCtx"
 )
 
-// type ctxKey string
+type ctxKey string
 
-func CurrentUser(ctx context.Context) *model.User {
-	v := ctx.Value(ctxKeyCurrentUser)
+func CurrentUser(ctx context.Context) *ent.User {
+	v := ctx.Value(CtxKeyCurrentUser)
 	if v == nil {
 		return nil
 	}
-	u, ok := v.(*model.User)
+	u, ok := v.(*ent.User)
 	if !ok {
 		return nil
 	}
 	return u
 }
 
-func WithCurrentUser(ctx context.Context, user *model.User) context.Context {
-	return context.WithValue(ctx, ctxKeyCurrentUser, user)
+func WithCurrentUser(ctx context.Context, user *ent.User) context.Context {
+	return context.WithValue(ctx, CtxKeyCurrentUser, user)
 }
 
 func FiberCtx(ctx context.Context) *fiber.Ctx {
-	v := ctx.Value(ctxKeyFiberCtx)
+	v := ctx.Value(CtxKeyFiberCtx)
 	if v == nil {
 		return nil
 	}
@@ -44,5 +43,5 @@ func FiberCtx(ctx context.Context) *fiber.Ctx {
 }
 
 func WithFiberCtx(ctx context.Context, fiberCtx *fiber.Ctx) context.Context {
-	return context.WithValue(ctx, ctxKeyFiberCtx, fiberCtx)
+	return context.WithValue(ctx, CtxKeyFiberCtx, fiberCtx)
 }

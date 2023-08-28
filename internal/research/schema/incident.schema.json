@@ -1,6 +1,6 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://penguin-stats.io/roguestats/incident.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://rogue.penguin-stats.io/_/schema/research/incident",
   "title": "不期而遇",
   "type": "object",
   "additionalProperties": false,

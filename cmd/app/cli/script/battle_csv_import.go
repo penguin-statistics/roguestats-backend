@@ -29,8 +29,8 @@ func (c *BattleCSVImport) Run() error {
 	return nil
 }
 
-func (c *BattleCSVImport) convertRowToContent(row []string) map[string]interface{} {
-	content := make(map[string]interface{})
+func (c *BattleCSVImport) convertRowToContent(row []string) map[string]any {
+	content := make(map[string]any)
 	columnHandler := GetColumnHandler()
 
 	band := columnHandler.HandleBand(strings.TrimSpace(row[1]))

@@ -29,8 +29,8 @@ func (c *PortalCSVImport) Run() error {
 	return nil
 }
 
-func (c *PortalCSVImport) convertRowToContent(row []string) map[string]interface{} {
-	content := make(map[string]interface{})
+func (c *PortalCSVImport) convertRowToContent(row []string) map[string]any {
+	content := make(map[string]any)
 	columnHandler := GetColumnHandler()
 
 	grade := columnHandler.HandleInt(strings.TrimSpace(row[1]))

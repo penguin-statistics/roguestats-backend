@@ -1,9 +1,9 @@
 package graph
 
 import (
-	"github.com/uptrace/bun"
 	"go.uber.org/fx"
 
+	"exusiai.dev/roguestats-backend/internal/ent"
 	"exusiai.dev/roguestats-backend/internal/service"
 )
 
@@ -20,9 +20,7 @@ type Resolver struct {
 type ResolverDeps struct {
 	fx.In
 
-	DB              *bun.DB
-	AuthService     service.Auth
-	UserService     service.User
-	EventService    service.Event
-	ResearchService service.Research
+	Ent          *ent.Client
+	AuthService  service.Auth
+	EventService service.Event
 }
