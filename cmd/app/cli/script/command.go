@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"exusiai.dev/roguestats-backend/cmd/app/cli/script/syncschema"
+	"exusiai.dev/roguestats-backend/cmd/app/cli/script/userimport"
 	"github.com/urfave/cli/v2"
 )
 
@@ -50,6 +51,7 @@ func Command() *cli.Command {
 				},
 			},
 			syncschema.Command(),
+			userimport.Command(),
 		},
 	}
 }
