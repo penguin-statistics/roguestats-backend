@@ -25,12 +25,12 @@
           {
             "const": "ro3_rest_1",
             "title": "稍事休息",
-            "alias": "shaoshixiuxuxi ssxx"
+            "alias": "shaoshixiuxi shaoshixuxi ssxx"
           },
           {
             "const": "ro3_rest_2",
             "title": "强化训练",
-            "alias": "qiangjianghuaxunlian qjhxl"
+            "alias": "qianghuaxunlian jianghuaxunlian qhxl jhxl"
           },
           {
             "const": "ro3_rest_3",
@@ -40,7 +40,7 @@
           {
             "const": "ro3_rest_4",
             "title": "重整编制",
-            "alias": "zhongchongzhengbianzhi zczbz"
+            "alias": "zhongzhengbianzhi chongzhengbianzhi zzbz czbz"
           },
           {
             "const": "ro3_rest_5",
@@ -50,7 +50,7 @@
           {
             "const": "ro3_rest_6",
             "title": "求得启示",
-            "alias": "qiudedeiqishi qdqs"
+            "alias": "qiudeqishi qiudeiqishi qdqs"
           }
         ]
       },
