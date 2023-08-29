@@ -299,7 +299,7 @@
       "title": "掉落密文板",
       "description": "若藏品有伶牙毁林者，请留空不填；请同时把两个选项都选上",
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "maxItems": 3,
       "uniqueItems": true,
       "items": {
