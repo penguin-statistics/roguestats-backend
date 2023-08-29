@@ -29,3 +29,13 @@ type GroupCountResult struct {
 	Results []*CategoryCount `json:"results"`
 	Total   int              `json:"total"`
 }
+
+type RequestPasswordResetInput struct {
+	Email             string `json:"email"`
+	TurnstileResponse string `json:"turnstileResponse"`
+}
+
+type ResetPasswordInput struct {
+	Token    string `json:"token"`
+	Password string `json:"password"`
+}

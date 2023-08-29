@@ -174,9 +174,29 @@
       "type": "array",
       "minItems": 0,
       "maxItems": 2,
+      "x-nullableArray": {
+        "options": [
+          {
+            "value": "not_reporting",
+            "label": "不汇报此数据项、或藏品有电台"
+          },
+          {
+            "value": "reporting_0",
+            "label": "未掉落招募券"
+          },
+          {
+            "value": "reporting_1",
+            "label": "掉落了招募券：仅有 1 个「掉落框」"
+          },
+          {
+            "value": "reporting_2",
+            "label": "掉落了招募券：有 2 个「掉落框」"
+          }
+        ]
+      },
       "items": {
         "type": "array",
-        "minItems": 0,
+        "minItems": 1,
         "maxItems": 2,
         "uniqueItems": true,
         "items": {
@@ -279,7 +299,7 @@
       "title": "掉落密文板",
       "description": "若藏品有伶牙毁林者，请留空不填；请同时把两个选项都选上",
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "maxItems": 3,
       "uniqueItems": true,
       "items": {

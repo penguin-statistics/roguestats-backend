@@ -27,8 +27,8 @@ func (rc *ResearchCreate) SetName(s string) *ResearchCreate {
 }
 
 // SetSchema sets the "schema" field.
-func (rc *ResearchCreate) SetSchema(m map[string]interface{}) *ResearchCreate {
-	rc.mutation.SetSchema(m)
+func (rc *ResearchCreate) SetSchema(b []byte) *ResearchCreate {
+	rc.mutation.SetSchema(b)
 	return rc
 }
 
@@ -155,7 +155,7 @@ func (rc *ResearchCreate) createSpec() (*Research, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := rc.mutation.Schema(); ok {
-		_spec.SetField(research.FieldSchema, field.TypeJSON, value)
+		_spec.SetField(research.FieldSchema, field.TypeBytes, value)
 		_node.Schema = value
 	}
 	if nodes := rc.mutation.EventsIDs(); len(nodes) > 0 {

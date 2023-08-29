@@ -7,5 +7,5 @@ import (
 )
 
 func Module() fx.Option {
-	return fx.Module("infra", db.Module(), fx.Provide(Resend))
+	return fx.Module("infra", db.Module(), fx.Provide(Resend), fx.Provide(Redis))
 }

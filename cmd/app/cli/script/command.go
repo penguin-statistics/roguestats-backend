@@ -3,6 +3,7 @@ package script
 import (
 	"log"
 
+	"exusiai.dev/roguestats-backend/cmd/app/cli/script/syncschema"
 	"github.com/urfave/cli/v2"
 )
 
@@ -48,6 +49,7 @@ func Command() *cli.Command {
 					return nil
 				},
 			},
+			syncschema.Command(),
 		},
 	}
 }

@@ -4,17 +4,17 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "floor": {
-      "title": "层数",
-      "type": "integer",
-      "maximum": 6,
-      "minimum": 1
-    },
     "grade": {
       "title": "难度",
       "type": "integer",
       "maximum": 15,
       "minimum": 0
+    },
+    "floor": {
+      "title": "层数",
+      "type": "integer",
+      "maximum": 6,
+      "minimum": 1
     },
     "layout": {
       "title": "节点布局",

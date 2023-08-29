@@ -11,6 +11,9 @@ type ConfigSpec struct {
 	// DatabaseURL is the URL to the PostgreSQL database.
 	DatabaseURL string `split_words:"true" required:"true"`
 
+	// RedisURL is the URL to the Redis database.
+	RedisURL string `split_words:"true" required:"true"`
+
 	// ServiceListenAddress is the address that the Fiber HTTP server will listen on.
 	ServiceListenAddress string `split_words:"true" required:"true" default:":3000"`
 
@@ -39,6 +42,9 @@ type ConfigSpec struct {
 
 	// ResendApiKey is the API key used to send emails via Resend.
 	ResendApiKey string `split_words:"true" required:"true"`
+
+	// PasswordResetTokenTTL is the time to live of the password reset token.
+	PasswordResetTokenTTL time.Duration `split_words:"true" required:"true" default:"1h"`
 }
 
 type Config struct {

@@ -684,7 +684,7 @@ type ResearchMutation struct {
 	typ           string
 	id            *string
 	name          *string
-	schema        *map[string]interface{}
+	schema        *[]byte
 	clearedFields map[string]struct{}
 	events        map[string]struct{}
 	removedevents map[string]struct{}
@@ -835,12 +835,12 @@ func (m *ResearchMutation) ResetName() {
 }
 
 // SetSchema sets the "schema" field.
-func (m *ResearchMutation) SetSchema(value map[string]interface{}) {
-	m.schema = &value
+func (m *ResearchMutation) SetSchema(b []byte) {
+	m.schema = &b
 }
 
 // Schema returns the value of the "schema" field in the mutation.
-func (m *ResearchMutation) Schema() (r map[string]interface{}, exists bool) {
+func (m *ResearchMutation) Schema() (r []byte, exists bool) {
 	v := m.schema
 	if v == nil {
 		return
@@ -851,7 +851,7 @@ func (m *ResearchMutation) Schema() (r map[string]interface{}, exists bool) {
 // OldSchema returns the old "schema" field's value of the Research entity.
 // If the Research object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ResearchMutation) OldSchema(ctx context.Context) (v map[string]interface{}, err error) {
+func (m *ResearchMutation) OldSchema(ctx context.Context) (v []byte, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSchema is only allowed on UpdateOne operations")
 	}
@@ -1007,7 +1007,7 @@ func (m *ResearchMutation) SetField(name string, value ent.Value) error {
 		m.SetName(v)
 		return nil
 	case research.FieldSchema:
-		v, ok := value.(map[string]interface{})
+		v, ok := value.([]byte)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"encoding/json"
 
 	"entgo.io/contrib/entgql"
 	"exusiai.dev/roguestats-backend/internal/ent"
@@ -20,6 +21,16 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 // CreateEvent is the resolver for the createEvent field.
 func (r *mutationResolver) CreateEvent(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
 	return r.EventService.CreateEventFromInput(ctx, input)
+}
+
+// RequestPasswordReset is the resolver for the requestPasswordReset field.
+func (r *mutationResolver) RequestPasswordReset(ctx context.Context, input model.RequestPasswordResetInput) (bool, error) {
+	return r.AuthService.RequestPasswordReset(ctx, input)
+}
+
+// ResetPassword is the resolver for the resetPassword field.
+func (r *mutationResolver) ResetPassword(ctx context.Context, input model.ResetPasswordInput) (bool, error) {
+	return r.AuthService.ResetPassword(ctx, input)
 }
 
 // CreateUser is the resolver for the createUser field.
@@ -73,11 +84,20 @@ func (r *queryResolver) Researches(ctx context.Context, after *entgql.Cursor[str
 		)
 }
 
+// Schema is the resolver for the schema field.
+func (r *researchResolver) Schema(ctx context.Context, obj *ent.Research) (interface{}, error) {
+	return json.RawMessage(obj.Schema), nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Research returns ResearchResolver implementation.
+func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type researchResolver struct{ *Resolver }
