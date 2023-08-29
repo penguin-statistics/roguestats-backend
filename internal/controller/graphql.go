@@ -25,7 +25,7 @@ type GraphQL struct {
 	ResolverDeps     graph.ResolverDeps
 	Middleware       middleware.Middleware
 	DirectiveService service.Directive
-	Ent 			*ent.Client
+	Ent              *ent.Client
 	Route            fiber.Router `name:"root"`
 }
 
@@ -35,8 +35,9 @@ func RegisterGraphQL(c GraphQL) {
 			ResolverDeps: c.ResolverDeps,
 		},
 	}
-	graphConfig.Directives.Private = c.DirectiveService.Private
 	graphConfig.Directives.Admin = c.DirectiveService.Admin
+	graphConfig.Directives.Authenticated = c.DirectiveService.Authenticated
+	graphConfig.Directives.Private = c.DirectiveService.Private
 
 	srv := handler.New(graph.NewExecutableSchema(graphConfig))
 

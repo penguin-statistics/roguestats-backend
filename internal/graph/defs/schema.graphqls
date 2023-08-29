@@ -324,9 +324,10 @@ input ResetPasswordInput {
 
 type Mutation {
   login(input: LoginInput!): User!
-  createEvent(input: CreateEventInput!): Event!
   requestPasswordReset(input: RequestPasswordResetInput!): Boolean!
   resetPassword(input: ResetPasswordInput!): Boolean!
+
+  createEvent(input: CreateEventInput!): Event! @authenticated
 
   createUser(input: CreateUserInput!): User! @admin
 }
@@ -339,5 +340,7 @@ directive @goModel(
   model: String
   models: [String!]
 ) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+
 directive @admin on FIELD_DEFINITION
+directive @authenticated on FIELD_DEFINITION
 directive @private(userIdFieldName: String = "userId") on FIELD_DEFINITION

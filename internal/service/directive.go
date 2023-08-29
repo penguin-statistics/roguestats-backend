@@ -31,6 +31,15 @@ func (s Directive) Admin(ctx context.Context, obj any, next graphql.Resolver) (r
 	return nil, gqlerror.Errorf("You must be an admin to access this resource")
 }
 
+func (s Directive) Authenticated(ctx context.Context, obj any, next graphql.Resolver) (res any, err error) {
+	currentUser := appcontext.CurrentUser(ctx)
+	if currentUser == nil {
+		return nil, gqlerror.Errorf("You must be logged in to access this resource")
+	}
+
+	return next(ctx)
+}
+
 // Private directive is used to check if the current user is the owner of the object.
 // if not, return null for the field.
 func (s Directive) Private(ctx context.Context, obj any, next graphql.Resolver, userIDFieldName *string) (res any, err error) {
