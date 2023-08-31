@@ -4,8 +4,6 @@ package ent
 
 import (
 	"context"
-
-	"github.com/99designs/gqlgen/graphql"
 )
 
 func (e *Event) User(ctx context.Context) (*User, error) {
@@ -20,30 +18,6 @@ func (e *Event) Research(ctx context.Context) (*Research, error) {
 	result, err := e.Edges.ResearchOrErr()
 	if IsNotLoaded(err) {
 		result, err = e.QueryResearch().Only(ctx)
-	}
-	return result, err
-}
-
-func (r *Research) Events(ctx context.Context) (result []*Event, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = r.NamedEvents(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = r.Edges.EventsOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = r.QueryEvents().All(ctx)
-	}
-	return result, err
-}
-
-func (u *User) Events(ctx context.Context) (result []*Event, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedEvents(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = u.Edges.EventsOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = u.QueryEvents().All(ctx)
 	}
 	return result, err
 }

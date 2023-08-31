@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
 	"exusiai.dev/roguestats-backend/internal/x/entid"
 )
 
@@ -34,9 +35,18 @@ func (Event) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("CREATED_AT"),
 			),
-		field.String("user_id"),
-		field.String("research_id"),
-		field.String("user_agent"),
+		field.String("user_id").
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("research_id").
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("user_agent").
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
 		field.JSON("content", map[string]any{}),
 	}
 }

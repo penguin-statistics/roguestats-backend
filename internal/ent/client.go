@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/metric"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 )
@@ -26,6 +27,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// Metric is the client for interacting with the Metric builders.
+	Metric *MetricClient
 	// Research is the client for interacting with the Research builders.
 	Research *ResearchClient
 	// User is the client for interacting with the User builders.
@@ -44,6 +47,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Event = NewEventClient(c.config)
+	c.Metric = NewMetricClient(c.config)
 	c.Research = NewResearchClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -129,6 +133,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:      ctx,
 		config:   cfg,
 		Event:    NewEventClient(cfg),
+		Metric:   NewMetricClient(cfg),
 		Research: NewResearchClient(cfg),
 		User:     NewUserClient(cfg),
 	}, nil
@@ -151,6 +156,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:      ctx,
 		config:   cfg,
 		Event:    NewEventClient(cfg),
+		Metric:   NewMetricClient(cfg),
 		Research: NewResearchClient(cfg),
 		User:     NewUserClient(cfg),
 	}, nil
@@ -182,6 +188,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Event.Use(hooks...)
+	c.Metric.Use(hooks...)
 	c.Research.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -190,6 +197,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Event.Intercept(interceptors...)
+	c.Metric.Intercept(interceptors...)
 	c.Research.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -199,6 +207,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *EventMutation:
 		return c.Event.mutate(ctx, m)
+	case *MetricMutation:
+		return c.Metric.mutate(ctx, m)
 	case *ResearchMutation:
 		return c.Research.mutate(ctx, m)
 	case *UserMutation:
@@ -355,6 +365,140 @@ func (c *EventClient) mutate(ctx context.Context, m *EventMutation) (Value, erro
 		return (&EventDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Event mutation op: %q", m.Op())
+	}
+}
+
+// MetricClient is a client for the Metric schema.
+type MetricClient struct {
+	config
+}
+
+// NewMetricClient returns a client for the Metric from the given config.
+func NewMetricClient(c config) *MetricClient {
+	return &MetricClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `metric.Hooks(f(g(h())))`.
+func (c *MetricClient) Use(hooks ...Hook) {
+	c.hooks.Metric = append(c.hooks.Metric, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `metric.Intercept(f(g(h())))`.
+func (c *MetricClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Metric = append(c.inters.Metric, interceptors...)
+}
+
+// Create returns a builder for creating a Metric entity.
+func (c *MetricClient) Create() *MetricCreate {
+	mutation := newMetricMutation(c.config, OpCreate)
+	return &MetricCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Metric entities.
+func (c *MetricClient) CreateBulk(builders ...*MetricCreate) *MetricCreateBulk {
+	return &MetricCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Metric.
+func (c *MetricClient) Update() *MetricUpdate {
+	mutation := newMetricMutation(c.config, OpUpdate)
+	return &MetricUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MetricClient) UpdateOne(m *Metric) *MetricUpdateOne {
+	mutation := newMetricMutation(c.config, OpUpdateOne, withMetric(m))
+	return &MetricUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MetricClient) UpdateOneID(id string) *MetricUpdateOne {
+	mutation := newMetricMutation(c.config, OpUpdateOne, withMetricID(id))
+	return &MetricUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Metric.
+func (c *MetricClient) Delete() *MetricDelete {
+	mutation := newMetricMutation(c.config, OpDelete)
+	return &MetricDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MetricClient) DeleteOne(m *Metric) *MetricDeleteOne {
+	return c.DeleteOneID(m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MetricClient) DeleteOneID(id string) *MetricDeleteOne {
+	builder := c.Delete().Where(metric.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MetricDeleteOne{builder}
+}
+
+// Query returns a query builder for Metric.
+func (c *MetricClient) Query() *MetricQuery {
+	return &MetricQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMetric},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Metric entity by its id.
+func (c *MetricClient) Get(ctx context.Context, id string) (*Metric, error) {
+	return c.Query().Where(metric.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MetricClient) GetX(ctx context.Context, id string) *Metric {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEvents queries the events edge of a Metric.
+func (c *MetricClient) QueryEvents(m *Metric) *EventQuery {
+	query := (&EventClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(metric.Table, metric.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, metric.EventsTable, metric.EventsColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MetricClient) Hooks() []Hook {
+	return c.hooks.Metric
+}
+
+// Interceptors returns the client interceptors.
+func (c *MetricClient) Interceptors() []Interceptor {
+	return c.inters.Metric
+}
+
+func (c *MetricClient) mutate(ctx context.Context, m *MetricMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MetricCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MetricUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MetricUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MetricDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Metric mutation op: %q", m.Op())
 	}
 }
 
@@ -629,9 +773,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Event, Research, User []ent.Hook
+		Event, Metric, Research, User []ent.Hook
 	}
 	inters struct {
-		Event, Research, User []ent.Interceptor
+		Event, Metric, Research, User []ent.Interceptor
 	}
 )

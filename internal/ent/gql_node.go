@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/metric"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"github.com/99designs/gqlgen/graphql"
@@ -23,6 +24,11 @@ var eventImplementors = []string{"Event", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Event) IsNode() {}
+
+var metricImplementors = []string{"Metric", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Metric) IsNode() {}
 
 var researchImplementors = []string{"Research", "Node"}
 
@@ -96,6 +102,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.Event.Query().
 			Where(event.ID(id))
 		query, err := query.CollectFields(ctx, eventImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case metric.Table:
+		query := c.Metric.Query().
+			Where(metric.ID(id))
+		query, err := query.CollectFields(ctx, metricImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -205,6 +223,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Event.Query().
 			Where(event.IDIn(ids...))
 		query, err := query.CollectFields(ctx, eventImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case metric.Table:
+		query := c.Metric.Query().
+			Where(metric.IDIn(ids...))
+		query, err := query.CollectFields(ctx, metricImplementors...)
 		if err != nil {
 			return nil, err
 		}

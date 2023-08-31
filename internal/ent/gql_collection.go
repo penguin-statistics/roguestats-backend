@@ -8,6 +8,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect/sql"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/metric"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"github.com/99designs/gqlgen/graphql"
@@ -144,6 +145,108 @@ func newEventPaginateArgs(rv map[string]any) *eventPaginateArgs {
 			}
 		}
 	}
+	if v, ok := rv[whereField].(*EventWhereInput); ok {
+		args.opts = append(args.opts, WithEventFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (m *MetricQuery) CollectFields(ctx context.Context, satisfies ...string) (*MetricQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return m, nil
+	}
+	if err := m.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (m *MetricQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(metric.Columns))
+		selectedFields = []string{metric.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "name":
+			if _, ok := fieldSeen[metric.FieldName]; !ok {
+				selectedFields = append(selectedFields, metric.FieldName)
+				fieldSeen[metric.FieldName] = struct{}{}
+			}
+		case "filter":
+			if _, ok := fieldSeen[metric.FieldFilter]; !ok {
+				selectedFields = append(selectedFields, metric.FieldFilter)
+				fieldSeen[metric.FieldFilter] = struct{}{}
+			}
+		case "mapping":
+			if _, ok := fieldSeen[metric.FieldMapping]; !ok {
+				selectedFields = append(selectedFields, metric.FieldMapping)
+				fieldSeen[metric.FieldMapping] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		m.Select(selectedFields...)
+	}
+	return nil
+}
+
+type metricPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []MetricPaginateOption
+}
+
+func newMetricPaginateArgs(rv map[string]any) *metricPaginateArgs {
+	args := &metricPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &MetricOrder{Field: &MetricOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithMetricOrder(order))
+			}
+		case *MetricOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithMetricOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*MetricWhereInput); ok {
+		args.opts = append(args.opts, WithMetricFilter(v.Filter))
+	}
 	return args
 }
 
@@ -168,18 +271,6 @@ func (r *ResearchQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "events":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&EventClient{config: r.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, mayAddCondition(satisfies, eventImplementors)...); err != nil {
-				return err
-			}
-			r.WithNamedEvents(alias, func(wq *EventQuery) {
-				*wq = *query
-			})
 		case "name":
 			if _, ok := fieldSeen[research.FieldName]; !ok {
 				selectedFields = append(selectedFields, research.FieldName)
@@ -247,6 +338,9 @@ func newResearchPaginateArgs(rv map[string]any) *researchPaginateArgs {
 			}
 		}
 	}
+	if v, ok := rv[whereField].(*ResearchWhereInput); ok {
+		args.opts = append(args.opts, WithResearchFilter(v.Filter))
+	}
 	return args
 }
 
@@ -271,18 +365,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "events":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&EventClient{config: u.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, mayAddCondition(satisfies, eventImplementors)...); err != nil {
-				return err
-			}
-			u.WithNamedEvents(alias, func(wq *EventQuery) {
-				*wq = *query
-			})
 		case "name":
 			if _, ok := fieldSeen[user.FieldName]; !ok {
 				selectedFields = append(selectedFields, user.FieldName)
@@ -292,11 +374,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if _, ok := fieldSeen[user.FieldEmail]; !ok {
 				selectedFields = append(selectedFields, user.FieldEmail)
 				fieldSeen[user.FieldEmail] = struct{}{}
-			}
-		case "credential":
-			if _, ok := fieldSeen[user.FieldCredential]; !ok {
-				selectedFields = append(selectedFields, user.FieldCredential)
-				fieldSeen[user.FieldCredential] = struct{}{}
 			}
 		case "attributes":
 			if _, ok := fieldSeen[user.FieldAttributes]; !ok {
@@ -337,6 +414,9 @@ func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserWhereInput); ok {
+		args.opts = append(args.opts, WithUserFilter(v.Filter))
 	}
 	return args
 }

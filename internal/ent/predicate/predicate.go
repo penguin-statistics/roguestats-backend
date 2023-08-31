@@ -9,6 +9,9 @@ import (
 // Event is the predicate function for event builders.
 type Event func(*sql.Selector)
 
+// Metric is the predicate function for metric builders.
+type Metric func(*sql.Selector)
+
 // Research is the predicate function for research builders.
 type Research func(*sql.Selector)
 

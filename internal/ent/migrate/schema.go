@@ -14,6 +14,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_agent", Type: field.TypeString},
 		{Name: "content", Type: field.TypeJSON},
+		{Name: "metric_events", Type: field.TypeString, Nullable: true},
 		{Name: "research_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -24,14 +25,20 @@ var (
 		PrimaryKey: []*schema.Column{EventsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "events_researches_events",
+				Symbol:     "events_metrics_events",
 				Columns:    []*schema.Column{EventsColumns[4]},
+				RefColumns: []*schema.Column{MetricsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "events_researches_events",
+				Columns:    []*schema.Column{EventsColumns[5]},
 				RefColumns: []*schema.Column{ResearchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[5]},
+				Columns:    []*schema.Column{EventsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -50,14 +57,27 @@ var (
 			{
 				Name:    "event_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{EventsColumns[5]},
+				Columns: []*schema.Column{EventsColumns[6]},
 			},
 			{
 				Name:    "event_research_id",
 				Unique:  false,
-				Columns: []*schema.Column{EventsColumns[4]},
+				Columns: []*schema.Column{EventsColumns[5]},
 			},
 		},
+	}
+	// MetricsColumns holds the columns for the "metrics" table.
+	MetricsColumns = []*schema.Column{
+		{Name: "Metric_id", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString, Size: 64},
+		{Name: "filter", Type: field.TypeJSON},
+		{Name: "mapping", Type: field.TypeString},
+	}
+	// MetricsTable holds the schema information for the "metrics" table.
+	MetricsTable = &schema.Table{
+		Name:       "metrics",
+		Columns:    MetricsColumns,
+		PrimaryKey: []*schema.Column{MetricsColumns[0]},
 	}
 	// ResearchesColumns holds the columns for the "researches" table.
 	ResearchesColumns = []*schema.Column{
@@ -88,12 +108,14 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EventsTable,
+		MetricsTable,
 		ResearchesTable,
 		UsersTable,
 	}
 )
 
 func init() {
-	EventsTable.ForeignKeys[0].RefTable = ResearchesTable
-	EventsTable.ForeignKeys[1].RefTable = UsersTable
+	EventsTable.ForeignKeys[0].RefTable = MetricsTable
+	EventsTable.ForeignKeys[1].RefTable = ResearchesTable
+	EventsTable.ForeignKeys[2].RefTable = UsersTable
 }

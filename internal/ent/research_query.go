@@ -430,6 +430,7 @@ func (rq *ResearchQuery) loadEvents(ctx context.Context, query *EventQuery, node
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(event.FieldResearchID)
 	}

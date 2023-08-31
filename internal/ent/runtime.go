@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/metric"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/schema"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
@@ -25,6 +26,16 @@ func init() {
 	eventDescID := eventFields[0].Descriptor()
 	// event.DefaultID holds the default value on creation for the id field.
 	event.DefaultID = eventDescID.Default.(func() string)
+	metricFields := schema.Metric{}.Fields()
+	_ = metricFields
+	// metricDescName is the schema descriptor for name field.
+	metricDescName := metricFields[1].Descriptor()
+	// metric.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	metric.NameValidator = metricDescName.Validators[0].(func(string) error)
+	// metricDescID is the schema descriptor for id field.
+	metricDescID := metricFields[0].Descriptor()
+	// metric.DefaultID holds the default value on creation for the id field.
+	metric.DefaultID = metricDescID.Default.(func() string)
 	researchFields := schema.Research{}.Fields()
 	_ = researchFields
 	// researchDescName is the schema descriptor for name field.

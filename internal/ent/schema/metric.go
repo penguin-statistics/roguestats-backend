@@ -11,16 +11,16 @@ import (
 	"exusiai.dev/roguestats-backend/internal/x/entid"
 )
 
-// Research holds the schema definition for the Research entity.
-type Research struct {
+// Metric holds the schema definition for the Metric entity.
+type Metric struct {
 	ent.Schema
 }
 
-// Fields of the Research.
-func (Research) Fields() []ent.Field {
+// Fields of the Metric.
+func (Metric) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").
-			StorageKey("research_id").
+			StorageKey("Metric_id").
 			Unique().
 			DefaultFunc(entid.NewGenerator("rsc")).
 			Immutable().
@@ -28,15 +28,15 @@ func (Research) Fields() []ent.Field {
 				entgql.OrderField("ID"),
 			),
 		field.String("name").MaxLen(64),
-		field.Bytes("schema").
-			Annotations(
-				entgql.Type("Any"),
-			),
+		field.JSON("filter", map[string]any{}).
+			Comment("The jsonpb filter to apply to the events"),
+		field.String("mapping").
+			Comment("The mapping expr to apply to the events"),
 	}
 }
 
-// Edges of the Research.
-func (Research) Edges() []ent.Edge {
+// Edges of the Metric.
+func (Metric) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("events", Event.Type).
 			// Required().
@@ -47,8 +47,8 @@ func (Research) Edges() []ent.Edge {
 	}
 }
 
-// Annotations of the Research.
-func (Research) Annotations() []schema.Annotation {
+// Annotations of the Metric.
+func (Metric) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
 		entgql.QueryField(),

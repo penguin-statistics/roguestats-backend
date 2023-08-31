@@ -25,6 +25,7 @@ type EventQuery struct {
 	predicates   []predicate.Event
 	withUser     *UserQuery
 	withResearch *ResearchQuery
+	withFKs      bool
 	modifiers    []func(*sql.Selector)
 	loadTotal    []func(context.Context, []*Event) error
 	// intermediate query (i.e. traversal path).
@@ -406,12 +407,16 @@ func (eq *EventQuery) prepareQuery(ctx context.Context) error {
 func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event, error) {
 	var (
 		nodes       = []*Event{}
+		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
 		loadedTypes = [2]bool{
 			eq.withUser != nil,
 			eq.withResearch != nil,
 		}
 	)
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, event.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Event).scanValues(nil, columns)
 	}

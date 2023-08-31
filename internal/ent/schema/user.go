@@ -1,12 +1,14 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"exusiai.dev/roguestats-backend/internal/ent/schema/directives"
 	"exusiai.dev/roguestats-backend/internal/x/entid"
 )
 
@@ -23,10 +25,28 @@ func (User) Fields() []ent.Field {
 			Unique().
 			DefaultFunc(entid.NewGenerator("usr")).
 			Immutable(),
-		field.String("name").MaxLen(64),
-		field.String("email").Unique().Immutable(),
-		field.String("credential").MaxLen(64),
-		field.JSON("attributes", map[string]any{}).Optional(),
+		field.String("name").
+			MaxLen(64).
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("email").
+			Unique().
+			Immutable().
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+				entgql.Directives(directives.Private("id")),
+			),
+		field.String("credential").
+			MaxLen(64).
+			Annotations(
+				entgql.Skip(entgql.SkipAll),
+			),
+		field.JSON("attributes", map[string]any{}).
+			Optional().
+			Annotations(
+				entgql.Directives(directives.Private("id")),
+			),
 	}
 }
 
@@ -35,7 +55,10 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("events", Event.Type).
 			// Required().
-			Annotations(entsql.OnDelete(entsql.NoAction)),
+			Annotations(
+				entsql.OnDelete(entsql.NoAction),
+				entgql.Skip(entgql.SkipType),
+			),
 	}
 }
 

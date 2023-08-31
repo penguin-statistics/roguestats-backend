@@ -1,0 +1,180 @@
+package jsonpd
+
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/lib/pq"
+	"github.com/samber/lo"
+)
+
+type Primitive = any
+
+// Predicate is a map of string to any.
+// It can contain one and ONLY one of the following keys:
+// - $and: an array of Predicates
+// - $or: an array of Predicates
+// - $not: a Predicate
+// - (any key that does not start with $. this is to be the name of the field to be compared): another object layer, which contains:
+//   - a $ comparison operator (e.g. $eq, $ne, $gt, $ge, $lt, $le, $in, $contains)
+//   - a Primitive value, or an array of Primitive values (for $in)
+type Predicate map[string]any
+
+func Parse(jsonBytes []byte) (*Predicate, error) {
+	var predicate Predicate
+	err := json.Unmarshal(jsonBytes, &predicate)
+	if err != nil {
+		return nil, err
+	}
+	return &predicate, nil
+}
+
+func (p Predicate) SQL(column string) (string, error) {
+	return p.sql(column, "")
+}
+
+func primitiveSql(primitive Primitive) (string, error) {
+	var v string
+	switch primitive.(type) {
+	// values
+	case string:
+		v = fmt.Sprintf("%q", primitive.(string))
+	case int:
+		v = strconv.Itoa(primitive.(int))
+	case float64:
+		v = strconv.FormatFloat(primitive.(float64), 'f', -1, 64)
+	case bool:
+		v = strconv.FormatBool(primitive.(bool))
+	case nil:
+		v = "null"
+	// // arrays
+	// case []string:
+	// 	// build a string of the form ['a','b','c']
+	// 	var sb strings.Builder
+	// 	sb.WriteRune('[')
+	// 	for i, s := range primitive.([]string) {
+	// 		if i > 0 {
+	// 			sb.WriteRune(',')
+	// 		}
+	// 		sb.WriteString(fmt.Sprintf("%q", s))
+	// 	}
+	// 	sb.WriteRune(']')
+	// 	return sb.String(), nil
+	// case []int:
+	// 	// build a string of the form [1,2,3]
+	// 	var sb strings.Builder
+	// 	sb.WriteRune('[')
+	// 	for i, n := range primitive.([]int) {
+	// 		if i > 0 {
+	// 			sb.WriteRune(',')
+	// 		}
+	// 		sb.WriteString(strconv.Itoa(n))
+	// 	}
+	// 	sb.WriteRune(']')
+	// 	return sb.String(), nil
+	// case []float64:
+	// 	// build a string of the form [1.1,2.2,3.3]
+	// 	var sb strings.Builder
+	// 	sb.WriteRune('[')
+	// 	for i, n := range primitive.([]float64) {
+	// 		if i > 0 {
+	// 			sb.WriteRune(',')
+	// 		}
+	// 		sb.WriteString(strconv.FormatFloat(n, 'f', -1, 64))
+	// 	}
+	// 	sb.WriteRune(']')
+	// 	return sb.String(), nil
+	default:
+		return "", fmt.Errorf("unsupported primitive type: %T", primitive)
+	}
+	return pq.QuoteLiteral(v) + "::jsonb", nil
+}
+
+// sql recursively builds the SQL query from the predicate.
+// The SQL query is running on a PostgreSQL database against a JSONB column `column`.
+// The SQL query is returned as a string.
+// You should use the proper PostgreSQL JSONB operators to query the JSONB column.
+func (p Predicate) sql(column string, field string) (string, error) {
+	var sb strings.Builder
+	if len(p) == 0 {
+		return "", fmt.Errorf("empty predicate")
+	}
+	if len(p) > 1 {
+		return "", fmt.Errorf("predicate should contain only one key")
+	}
+
+	key := ""
+	value := any(nil)
+	for k, v := range p {
+		key = k
+		value = v
+	}
+
+	switch key {
+	case "$and", "$or":
+		joinClause := lo.Ternary(key == "$and", " AND ", " OR ")
+		predicates := value.([]any)
+		for i, predicate := range predicates {
+			if i > 0 {
+				sb.WriteString(joinClause)
+			}
+			subPredicate := Predicate(predicate.(map[string]any))
+			subSql, err := subPredicate.sql(column, "")
+			if err != nil {
+				return "", err
+			}
+			sb.WriteString(subSql)
+		}
+	case "$not":
+		subPredicate := Predicate(value.(map[string]any))
+		subSql, err := subPredicate.sql(column, "")
+		if err != nil {
+			return "", err
+		}
+		sb.WriteString("NOT (")
+		sb.WriteString(subSql)
+		sb.WriteRune(')')
+	case "$eq", "$ne", "$gt", "$ge", "$lt", "$le", "$in", "$contains":
+		if field == "" {
+			return "", fmt.Errorf("field is empty")
+		}
+		// build the SQL query for the comparison operator
+		// the value is a Primitive
+		primitive := Primitive(value)
+		primitiveSql, err := primitiveSql(primitive)
+		if err != nil {
+			return "", err
+		}
+		switch key {
+		case "$eq":
+			sb.WriteString(fmt.Sprintf("%s->'%s' = %s", column, field, primitiveSql))
+		case "$ne":
+			sb.WriteString(fmt.Sprintf("NOT (%s->'%s' = %s)", column, field, primitiveSql))
+		case "$gt":
+			sb.WriteString(fmt.Sprintf("%s->'%s' > %s", column, field, primitiveSql))
+		case "$ge":
+			sb.WriteString(fmt.Sprintf("%s->'%s' >= %s", column, field, primitiveSql))
+		case "$lt":
+			sb.WriteString(fmt.Sprintf("%s->'%s' < %s", column, field, primitiveSql))
+		case "$le":
+			sb.WriteString(fmt.Sprintf("%s->'%s' <= %s", column, field, primitiveSql))
+		case "$in":
+			sb.WriteString(fmt.Sprintf("%s->'%s' IN %s", column, field, primitiveSql))
+		case "$contains":
+			sb.WriteString(fmt.Sprintf("%s->'%s' @> %s", column, field, primitiveSql))
+		}
+	default:
+		// build the SQL query for the field
+		// the value is a Predicate
+		subPredicate := Predicate(value.(map[string]any))
+		subSql, err := subPredicate.sql(column, key)
+		if err != nil {
+			return "", err
+		}
+		sb.WriteString(subSql)
+	}
+
+	return sb.String(), nil
+}
