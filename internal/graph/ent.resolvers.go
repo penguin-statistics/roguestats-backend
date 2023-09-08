@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 
 	"entgo.io/contrib/entgql"
-
 	"exusiai.dev/roguestats-backend/internal/ent"
 )
 
@@ -64,8 +63,6 @@ func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
 // EventWhereInput returns EventWhereInputResolver implementation.
 func (r *Resolver) EventWhereInput() EventWhereInputResolver { return &eventWhereInputResolver{r} }
 
-type (
-	queryResolver           struct{ *Resolver }
-	researchResolver        struct{ *Resolver }
-	eventWhereInputResolver struct{ *Resolver }
-)
+type queryResolver struct{ *Resolver }
+type researchResolver struct{ *Resolver }
+type eventWhereInputResolver struct{ *Resolver }

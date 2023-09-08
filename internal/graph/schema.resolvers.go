@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"entgo.io/ent/dialect/sql"
-
 	"exusiai.dev/roguestats-backend/internal/ent"
 	"exusiai.dev/roguestats-backend/internal/ent/predicate"
 	"exusiai.dev/roguestats-backend/internal/model"
@@ -61,7 +60,7 @@ func (r *queryResolver) Research(ctx context.Context, id string) (*ent.Research,
 }
 
 // ContentJSONPredicate is the resolver for the contentJsonPredicate field.
-func (r *eventWhereInputResolver) ContentJSONPredicate(ctx context.Context, obj *ent.EventWhereInput, data map[string]any) error {
+func (r *eventWhereInputResolver) ContentJSONPredicate(ctx context.Context, obj *ent.EventWhereInput, data map[string]interface{}) error {
 	if obj == nil || data == nil {
 		return nil
 	}
