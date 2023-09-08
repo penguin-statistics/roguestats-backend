@@ -16,6 +16,7 @@ import (
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/exprutils"
 	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/x/jsonpd"
 )
 
 type Event struct {
@@ -60,13 +61,14 @@ func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEvent
 }
 
 /**
- * CalculateStats filters events by filterInput and maps every event to a result using resultMappingInput, then group by result and count
- * @param {string} filterInput can be jsonLogic or expr expression, depends on the filter implementation
+ * CalculateStats filters events by contentJsonPredicate and maps every event to a result using resultMappingInput, then group by result and count
+ * @param {string} researchID is the id of the research to calculate stats for
+ * @param {map[string]any} contentJsonPredicate is a jsonpd predicate
  * @param {string} resultMappingInput must be an expr expression
  */
-func (s Event) CalculateStats(ctx context.Context, researchID string, filterInput string, resultMappingInput string) (*model.GroupCountResult, error) {
+func (s Event) CalculateStats(ctx context.Context, researchID string, contentJsonPredicate map[string]any, resultMappingInput string) (*model.GroupCountResult, error) {
 	// filter events
-	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, filterInput)
+	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, contentJsonPredicate)
 	if err != nil {
 		return nil, err
 	}
@@ -114,31 +116,14 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
  * In the future, we should implement a filter that can be translated into a SQL query.
  * @param {string} filterInput For current implementation, we use expr
  */
-func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filterInput string) ([]*ent.Event, error) {
-	events, err := s.Ent.Event.Query().
-		Where(event.HasResearchWith(research.ID(researchID))).
-		All(ctx)
+func (s Event) getEventsWithFilter(ctx context.Context, researchID string, contentJsonPredicate map[string]any) ([]*ent.Event, error) {
+	contentPredicate, err := jsonpd.Predicate(contentJsonPredicate).EntEventPredicate("content")
 	if err != nil {
 		return nil, err
 	}
-	if filterInput == "" {
-		return events, nil
-	}
-	exprRunner := exprutils.GetExprRunner()
-	filteredEvents := make([]*ent.Event, 0)
-	for _, event := range events {
-		output, err := exprRunner.RunCode(filterInput, exprRunner.PrepareEnv(event))
-		if err != nil {
-			return nil, err
-		}
-		if output == nil {
-			continue
-		}
-		if output.(bool) {
-			filteredEvents = append(filteredEvents, event)
-		}
-	}
-	return filteredEvents, nil
+	return s.Ent.Event.Query().
+		Where(event.HasResearchWith(research.ID(researchID)), contentPredicate).
+		All(ctx)
 }
 
 func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]any, error) {

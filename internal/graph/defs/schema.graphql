@@ -13,16 +13,9 @@ type GroupCountResult {
 
 input GroupCountInput {
   researchId: ID!
-  filterInput: String!
+  contentJsonPredicate: Map
   resultMappingInput: String!
 }
-
-# type User implements Node {
-#   id: ID!
-#   name: String!
-#   email: String @private(userIdFieldName: "id")
-#   attributes: Map @private(userIdFieldName: "id")
-# }
 
 extend type Query {
   """

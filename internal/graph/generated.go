@@ -6358,7 +6358,7 @@ func (ec *executionContext) unmarshalInputGroupCountInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"researchId", "filterInput", "resultMappingInput"}
+	fieldsInOrder := [...]string{"researchId", "contentJsonPredicate", "resultMappingInput"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6374,15 +6374,15 @@ func (ec *executionContext) unmarshalInputGroupCountInput(ctx context.Context, o
 				return it, err
 			}
 			it.ResearchID = data
-		case "filterInput":
+		case "contentJsonPredicate":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterInput"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentJsonPredicate"))
+			data, err := ec.unmarshalOMap2map(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.FilterInput = data
+			it.ContentJSONPredicate = data
 		case "resultMappingInput":
 			var err error
 

@@ -8,6 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/lib/pq"
 	"github.com/samber/lo"
+
+	"exusiai.dev/roguestats-backend/internal/ent/predicate"
 )
 
 type Primitive = any
@@ -33,6 +35,18 @@ func Parse(jsonBytes []byte) (*Predicate, error) {
 
 func (p Predicate) SQL(column string) (string, error) {
 	return p.sql(column, "")
+}
+
+func (p Predicate) EntEventPredicate(column string) (predicate.Event, error) {
+	sqlStr, err := p.SQL(column)
+	if err != nil {
+		return nil, err
+	}
+	return predicate.Event(func(s *sql.Selector) {
+		s.Where((&sql.Predicate{}).Append(func(b *sql.Builder) {
+			b.WriteString(sqlStr)
+		}))
+	}), nil
 }
 
 func primitiveSql(primitive Primitive) (string, error) {

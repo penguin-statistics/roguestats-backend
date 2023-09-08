@@ -20,9 +20,9 @@ type CreateUserInput struct {
 }
 
 type GroupCountInput struct {
-	ResearchID         string `json:"researchId"`
-	FilterInput        string `json:"filterInput"`
-	ResultMappingInput string `json:"resultMappingInput"`
+	ResearchID           string                 `json:"researchId"`
+	ContentJSONPredicate map[string]interface{} `json:"contentJsonPredicate,omitempty"`
+	ResultMappingInput   string                 `json:"resultMappingInput"`
 }
 
 type GroupCountResult struct {

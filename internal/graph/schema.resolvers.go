@@ -7,9 +7,7 @@ package graph
 import (
 	"context"
 
-	"entgo.io/ent/dialect/sql"
 	"exusiai.dev/roguestats-backend/internal/ent"
-	"exusiai.dev/roguestats-backend/internal/ent/predicate"
 	"exusiai.dev/roguestats-backend/internal/model"
 	"exusiai.dev/roguestats-backend/internal/x/jsonpd"
 )
@@ -46,7 +44,7 @@ func (r *queryResolver) Me(ctx context.Context) (*ent.User, error) {
 
 // GroupCount is the resolver for the groupCount field.
 func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
-	return r.EventService.CalculateStats(ctx, input.ResearchID, input.FilterInput, input.ResultMappingInput)
+	return r.EventService.CalculateStats(ctx, input.ResearchID, input.ContentJSONPredicate, input.ResultMappingInput)
 }
 
 // Event is the resolver for the event field.
@@ -64,18 +62,11 @@ func (r *eventWhereInputResolver) ContentJSONPredicate(ctx context.Context, obj 
 	if obj == nil || data == nil {
 		return nil
 	}
-	sqlStr, err := jsonpd.Predicate(data).SQL("content")
+	pred, err := jsonpd.Predicate(data).EntEventPredicate("content")
 	if err != nil {
 		return err
 	}
-	// func(s *Selector) {
-	// 	s.Where(EQ(s.C(name), v))
-	// }
-	obj.AddPredicates(predicate.Event(func(s *sql.Selector) {
-		s.Where((&sql.Predicate{}).Append(func(b *sql.Builder) {
-			b.WriteString(sqlStr)
-		}))
-	}))
+	obj.AddPredicates(pred)
 	return nil
 }
 
