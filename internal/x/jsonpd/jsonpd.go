@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/lib/pq"
 	"github.com/samber/lo"
 )
@@ -97,7 +97,7 @@ func primitiveSql(primitive Primitive) (string, error) {
 // The SQL query is returned as a string.
 // You should use the proper PostgreSQL JSONB operators to query the JSONB column.
 func (p Predicate) sql(column string, field string) (string, error) {
-	var sb strings.Builder
+	var sb sql.Predicate
 	if len(p) == 0 {
 		return "", fmt.Errorf("empty predicate")
 	}
@@ -118,14 +118,16 @@ func (p Predicate) sql(column string, field string) (string, error) {
 		predicates := value.([]any)
 		for i, predicate := range predicates {
 			if i > 0 {
-				sb.WriteString(joinClause)
+				sb.S(joinClause)
 			}
 			subPredicate := Predicate(predicate.(map[string]any))
 			subSql, err := subPredicate.sql(column, "")
 			if err != nil {
 				return "", err
 			}
-			sb.WriteString(subSql)
+			sb.Wrap(func(b *sql.Builder) {
+				b.WriteString(subSql)
+			})
 		}
 	case "$not":
 		subPredicate := Predicate(value.(map[string]any))
@@ -135,7 +137,7 @@ func (p Predicate) sql(column string, field string) (string, error) {
 		}
 		sb.WriteString("NOT (")
 		sb.WriteString(subSql)
-		sb.WriteRune(')')
+		sb.WriteByte(')')
 	case "$eq", "$ne", "$gt", "$ge", "$lt", "$le", "$in", "$contains":
 		if field == "" {
 			return "", fmt.Errorf("field is empty")
@@ -147,23 +149,24 @@ func (p Predicate) sql(column string, field string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		fieldSel := pq.QuoteIdentifier(column) + "->" + pq.QuoteLiteral(field)
 		switch key {
 		case "$eq":
-			sb.WriteString(fmt.Sprintf("%s->'%s' = %s", column, field, primitiveSql))
+			sb.S(fieldSel).S("=").S(primitiveSql)
 		case "$ne":
-			sb.WriteString(fmt.Sprintf("NOT (%s->'%s' = %s)", column, field, primitiveSql))
+			sb.S(fieldSel).S("<>").S(primitiveSql)
 		case "$gt":
-			sb.WriteString(fmt.Sprintf("%s->'%s' > %s", column, field, primitiveSql))
+			sb.S(fieldSel).S(">").S(primitiveSql)
 		case "$ge":
-			sb.WriteString(fmt.Sprintf("%s->'%s' >= %s", column, field, primitiveSql))
+			sb.S(fieldSel).S(">=").S(primitiveSql)
 		case "$lt":
-			sb.WriteString(fmt.Sprintf("%s->'%s' < %s", column, field, primitiveSql))
+			sb.S(fieldSel).S("<").S(primitiveSql)
 		case "$le":
-			sb.WriteString(fmt.Sprintf("%s->'%s' <= %s", column, field, primitiveSql))
+			sb.S(fieldSel).S("<=").S(primitiveSql)
 		case "$in":
-			sb.WriteString(fmt.Sprintf("%s->'%s' IN %s", column, field, primitiveSql))
+			sb.S(fieldSel).S("IN").S(primitiveSql)
 		case "$contains":
-			sb.WriteString(fmt.Sprintf("%s->'%s' @> %s", column, field, primitiveSql))
+			sb.S(fieldSel).S("@>").S(primitiveSql)
 		}
 	default:
 		// build the SQL query for the field

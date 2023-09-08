@@ -15,15 +15,19 @@ func TestJsonPD(t *testing.T) {
 	testCases := []testCase{
 		{
 			`{"$and":[{"field1":{"$eq":"value"}},{"field2":{"$eq":"value"}}]}`,
-			`column->'field1' = '"value"'::jsonb AND column->'field2' = '"value"'::jsonb`,
+			`("column"->'field1'='"value"'::jsonb) AND ("column"->'field2'='"value"'::jsonb)`,
 		},
 		{
 			`{"$or":[{"field1":{"$eq":"value"}},{"$not":{"field2":{"$eq":"value"}}}]}`,
-			`column->'field1' = '"value"'::jsonb OR NOT (column->'field2' = '"value"'::jsonb)`,
+			`("column"->'field1'='"value"'::jsonb) OR (NOT ("column"->'field2'='"value"'::jsonb))`,
 		},
 		{
 			`{"$and":[{"arrayfield":{"$contains":"value"}}]}`,
-			`column->'arrayfield' @> '"value"'::jsonb`,
+			`("column"->'arrayfield'@>'"value"'::jsonb)`,
+		},
+		{
+			`{"$and":[{"'; SELECT 1;--":{"$contains":"value"}}]}`,
+			`("column"->'''; SELECT 1;--'@>'"value"'::jsonb)`,
 		},
 	}
 
