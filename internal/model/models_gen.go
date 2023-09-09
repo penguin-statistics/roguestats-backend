@@ -2,6 +2,10 @@
 
 package model
 
+import (
+	"exusiai.dev/roguestats-backend/internal/ent"
+)
+
 type CategoryCount struct {
 	Category interface{} `json:"category"`
 	Count    int         `json:"count"`
@@ -20,9 +24,9 @@ type CreateUserInput struct {
 }
 
 type GroupCountInput struct {
-	ResearchID           string                 `json:"researchId"`
-	ContentJSONPredicate map[string]interface{} `json:"contentJsonPredicate,omitempty"`
-	ResultMappingInput   string                 `json:"resultMappingInput"`
+	ResearchID         string               `json:"researchId"`
+	Where              *ent.EventWhereInput `json:"where,omitempty"`
+	ResultMappingInput string               `json:"resultMappingInput"`
 }
 
 type GroupCountResult struct {

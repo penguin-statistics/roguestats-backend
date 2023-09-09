@@ -1,5 +1,4 @@
-schema:
-  - "../../internal/graph/defs/*.graphql"
+schema: "../../internal/graph/defs/*.graphql"
 generates:
   ../../schema.graphql:
     plugins:

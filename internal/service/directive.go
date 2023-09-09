@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"reflect"
+	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/rs/zerolog/log"
@@ -62,7 +63,7 @@ func (s Directive) Private(ctx context.Context, obj any, next graphql.Resolver, 
 	val := reflect.ValueOf(obj).Elem()
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
-		thisFieldName := val.Type().Field(i).Tag.Get("json")
+		thisFieldName := strings.TrimSuffix(val.Type().Field(i).Tag.Get("json"), ",omitempty")
 		if thisFieldName == fieldName {
 			found = field
 			break

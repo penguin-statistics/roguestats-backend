@@ -143,6 +143,6 @@ debug/
 **/logs/
 
 .env
-__debug_bin
+__debug_bin*
 
 node_modules

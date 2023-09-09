@@ -16,7 +16,6 @@ import (
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/exprutils"
 	"exusiai.dev/roguestats-backend/internal/model"
-	"exusiai.dev/roguestats-backend/internal/x/jsonpd"
 )
 
 type Event struct {
@@ -63,19 +62,19 @@ func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEvent
 /**
  * CalculateStats filters events by contentJsonPredicate and maps every event to a result using resultMappingInput, then group by result and count
  * @param {string} researchID is the id of the research to calculate stats for
- * @param {map[string]any} contentJsonPredicate is a jsonpd predicate
+ * @param {*ent.EventWhereInput} eventWhere is the filter to apply to events
  * @param {string} resultMappingInput must be an expr expression
  */
-func (s Event) CalculateStats(ctx context.Context, researchID string, contentJsonPredicate map[string]any, resultMappingInput string) (*model.GroupCountResult, error) {
+func (s Event) CalculateStats(ctx context.Context, researchID string, eventWhere *ent.EventWhereInput, resultMappingInput string) (*model.GroupCountResult, error) {
 	// filter events
-	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, contentJsonPredicate)
+	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, eventWhere)
 	if err != nil {
 		return nil, err
 	}
 
 	categoryCountMap := make(map[any]int)
 
-	totalCount := 0
+	totalCount := len(filteredEvents)
 	for _, event := range filteredEvents {
 		// map event to result
 		results, err := s.mapEventToResult(event, resultMappingInput)
@@ -85,7 +84,6 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, contentJso
 		if results == nil {
 			continue
 		}
-		totalCount++
 		// group by result and count
 		for _, result := range results {
 			categoryCountMap[result]++
@@ -93,7 +91,7 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, contentJso
 	}
 
 	// convert map into array
-	results := make([]*model.CategoryCount, 0)
+	results := make([]*model.CategoryCount, 0, len(categoryCountMap))
 	for category, count := range categoryCountMap {
 		results = append(results, &model.CategoryCount{
 			Category: category,
@@ -104,26 +102,20 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, contentJso
 		return results[i].Count > results[j].Count
 	})
 
-	groupCountResult := &model.GroupCountResult{
+	return &model.GroupCountResult{
 		Results: results,
 		Total:   totalCount,
-	}
-	return groupCountResult, nil
+	}, nil
 }
 
-/**
- * GetEventsWithFilter filters events by filterInput. For current implementation, we query the database for all events and filter them in memory.
- * In the future, we should implement a filter that can be translated into a SQL query.
- * @param {string} filterInput For current implementation, we use expr
- */
-func (s Event) getEventsWithFilter(ctx context.Context, researchID string, contentJsonPredicate map[string]any) ([]*ent.Event, error) {
-	contentPredicate, err := jsonpd.Predicate(contentJsonPredicate).EntEventPredicate("content")
+func (s Event) getEventsWithFilter(ctx context.Context, researchID string, eventWhere *ent.EventWhereInput) ([]*ent.Event, error) {
+	q := s.Ent.Event.Query().
+		Where(event.HasResearchWith(research.ID(researchID)))
+	qq, err := eventWhere.Filter(q)
 	if err != nil {
 		return nil, err
 	}
-	return s.Ent.Event.Query().
-		Where(event.HasResearchWith(research.ID(researchID)), contentPredicate).
-		All(ctx)
+	return qq.All(ctx)
 }
 
 func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]any, error) {

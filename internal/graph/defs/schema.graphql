@@ -13,7 +13,7 @@ type GroupCountResult {
 
 input GroupCountInput {
   researchId: ID!
-  contentJsonPredicate: Map
+  where: EventWhereInput
   resultMappingInput: String!
 }
 

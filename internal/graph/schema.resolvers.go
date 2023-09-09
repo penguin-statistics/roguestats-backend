@@ -44,7 +44,7 @@ func (r *queryResolver) Me(ctx context.Context) (*ent.User, error) {
 
 // GroupCount is the resolver for the groupCount field.
 func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
-	return r.EventService.CalculateStats(ctx, input.ResearchID, input.ContentJSONPredicate, input.ResultMappingInput)
+	return r.EventService.CalculateStats(ctx, input.ResearchID, input.Where, input.ResultMappingInput)
 }
 
 // Event is the resolver for the event field.
