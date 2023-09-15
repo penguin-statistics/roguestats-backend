@@ -69,6 +69,7 @@ func Run(c *cli.Context, d SyncSchemaCommandDeps) error {
 		// Update the research schema.
 		log.Info().Str("id", id).Msg("updating research schema")
 		_, err = research.Update().
+			SetName(name).
 			SetSchema(jsonBytes).
 			Save(c.Context)
 		if err != nil {
