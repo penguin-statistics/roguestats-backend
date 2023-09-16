@@ -30,6 +30,7 @@ input CreateEventInput {
   content: Map!
   researchID: ID!
   userAgent: String!
+  userID: ID!
 }
 
 input CreateUserInput {

@@ -16,6 +16,7 @@ type ColumnHandler struct {
 	incidentTypeMap  map[string]string
 	variationMap     map[string]string
 	layoutMap        map[string]string
+	userMap          map[string]string
 }
 
 var (
@@ -33,6 +34,7 @@ func GetColumnHandler() *ColumnHandler {
 			incidentTypeMap:  initIncidentTypeMap(),
 			variationMap:     initVariaionMap(),
 			layoutMap:        initLayoutMap(),
+			userMap:          initUserMap(),
 		}
 	})
 	return columnHandlerInstance
@@ -76,9 +78,15 @@ func (c ColumnHandler) HandleRecruitTickets(input1 string, input2 string) [][]st
 	if input1 == "" {
 		return nil
 	}
-	tickets := make([][]string, 2)
-	tickets[0] = c.handleRecruitTicketsHelper(input1)
-	tickets[1] = c.handleRecruitTicketsHelper(input2)
+	tickets := make([][]string, 0)
+	oneTickets := c.handleRecruitTicketsHelper(input1)
+	if len(oneTickets) > 0 {
+		tickets = append(tickets, oneTickets)
+	}
+	oneTickets = c.handleRecruitTicketsHelper(input2)
+	if len(oneTickets) > 0 {
+		tickets = append(tickets, oneTickets)
+	}
 	return tickets
 }
 
@@ -154,6 +162,14 @@ func (c ColumnHandler) HandleVariation(input string) string {
 
 func (c ColumnHandler) HandleLayout(input string) string {
 	val, ok := c.layoutMap[input]
+	if !ok {
+		return ""
+	}
+	return val
+}
+
+func (c ColumnHandler) HandleUser(input string) string {
+	val, ok := c.userMap[input]
 	if !ok {
 		return ""
 	}
@@ -326,5 +342,23 @@ func initLayoutMap() map[string]string {
 		"混合c：2-3-2":          "mixed_2-3-2",
 		"混合d：2-2-2":          "mixed_2-2-2",
 		"混合e：3-1":            "mixed_3-1",
+	}
+}
+
+func initUserMap() map[string]string {
+	return map[string]string{
+		"红白":   "usr_01h8ygnyfd4fkx4sy9n4gpvy3b",
+		"斩喵":   "usr_01h8zjxfjr07h1wqg2vb41k4mn",
+		"天离":   "usr_01h8zjxppevh1hzrbmdjc1hfmz",
+		"麻薯":   "usr_01h8zjxzt4mkgx8ah0qnb13x91",
+		"锅":    "usr_01h8zjy2s1vg1xt8esv6b4qe7k",
+		"孔明亲":  "usr_01h8zjxr8r34d0hdk6deyt8xz7",
+		"黒沢":   "usr_01h8zjxn3p5qc9zeevptc8tm8c",
+		"里雪":   "usr_01h8zjxhtzg4a5nxh1tfwrde72",
+		"fl":   "usr_01h8zjxsqzxwysrbpqnaxv7g5q",
+		"一抹晚烟": "usr_01haeckmx4a73g86a87ma8x507",
+		"月咏千空": "usr_01haecnyjxxta7b5p4r8c9e271",
+		"大世落幕": "usr_01haecp3rzvwsg2hpg3v09n4wb",
+		"莫邪":   "usr_01haecp914w7ea81h27htkg6pc",
 	}
 }

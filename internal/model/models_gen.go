@@ -15,6 +15,7 @@ type CreateEventInput struct {
 	UserAgent  string                 `json:"userAgent"`
 	Content    map[string]interface{} `json:"content"`
 	ResearchID string                 `json:"researchID"`
+	UserID     string                 `json:"userID"`
 }
 
 type CreateUserInput struct {

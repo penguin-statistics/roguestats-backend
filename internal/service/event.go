@@ -28,11 +28,6 @@ type Event struct {
 func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
 	client := ent.FromContext(ctx)
 
-	user, err := s.AuthService.CurrentUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	// get schema from research
 	research, err := client.Research.Get(ctx, input.ResearchID)
 	if err != nil {
@@ -55,7 +50,7 @@ func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEvent
 		SetContent(input.Content).
 		SetUserAgent(input.UserAgent).
 		SetResearchID(input.ResearchID).
-		SetUserID(user.ID).
+		SetUserID(input.UserID).
 		Save(ctx)
 }
 

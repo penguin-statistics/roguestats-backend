@@ -21,9 +21,10 @@ func (c *PortalCSVImport) Run() error {
 	for _, row := range records {
 		log.Default().Printf("importing row '%s'\n", row)
 		content := c.convertRowToContent(row)
+		userID := c.getUserID(row)
 		log.Println(content)
-		if len(content) > 0 {
-			PostEvent(content, "portal")
+		if len(content) > 0 && userID != "" {
+			PostEvent(content, "rsc_01h8yfh5ycezqx0pkgw0t72wcg", userID)
 		}
 	}
 	return nil
@@ -54,4 +55,8 @@ func (c *PortalCSVImport) convertRowToContent(row []string) map[string]any {
 	}
 
 	return content
+}
+
+func (c *PortalCSVImport) getUserID(row []string) string {
+	return GetColumnHandler().HandleUser(strings.TrimSpace(row[5]))
 }

@@ -25,7 +25,7 @@ func ReadCSVFile(filePath string) [][]string {
 	return records
 }
 
-func PostEvent(content map[string]any, researchID string) {
+func PostEvent(content map[string]any, researchID string, userID string) {
 	client := graphql.NewClient("http://localhost:3500/graphql")
 	req := graphql.NewRequest(`
 	mutation CreateEvent($input: CreateEventInput!) {
@@ -39,6 +39,7 @@ func PostEvent(content map[string]any, researchID string) {
 		Content:    content,
 		ResearchID: researchID,
 		UserAgent:  userAgent,
+		UserID:     userID,
 	}
 	req.Var("input", input)
 	req.Header.Set("Authorization", "Bearer <token>")
