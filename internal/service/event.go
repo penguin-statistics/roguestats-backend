@@ -74,7 +74,7 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, eventWhere
 
 	categoryCountMap := make(map[any]int)
 
-	totalCount := len(filteredEvents)
+	totalCount := 0
 	for _, event := range filteredEvents {
 		// map event to result
 		results, err := s.mapEventToResult(event, resultMappingInput)
@@ -84,6 +84,7 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, eventWhere
 		if results == nil {
 			continue
 		}
+		totalCount++
 		// group by result and count
 		for _, result := range results {
 			categoryCountMap[result]++
