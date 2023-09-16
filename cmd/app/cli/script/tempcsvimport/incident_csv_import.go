@@ -1,21 +1,21 @@
-package script
+package tempcsvimport
 
 import (
 	"log"
 	"strings"
 )
 
-type RestCSVImport struct {
+type IncidentCSVImport struct {
 	path string
 }
 
-func NewRestCSVImport(path string) *RestCSVImport {
-	return &RestCSVImport{
+func NewIncidentCSVImport(path string) *IncidentCSVImport {
+	return &IncidentCSVImport{
 		path: path,
 	}
 }
 
-func (c *RestCSVImport) Run() error {
+func (c *IncidentCSVImport) Run() error {
 	records := ReadCSVFile(c.path)
 	records = records[1:]
 	for _, row := range records {
@@ -23,13 +23,13 @@ func (c *RestCSVImport) Run() error {
 		content := c.convertRowToContent(row)
 		log.Println(content)
 		if len(content) > 0 {
-			PostEvent(content, "rest")
+			PostEvent(content, "incident")
 		}
 	}
 	return nil
 }
 
-func (c *RestCSVImport) convertRowToContent(row []string) map[string]any {
+func (c *IncidentCSVImport) convertRowToContent(row []string) map[string]any {
 	content := make(map[string]any)
 	columnHandler := GetColumnHandler()
 
@@ -43,9 +43,14 @@ func (c *RestCSVImport) convertRowToContent(row []string) map[string]any {
 		content["floor"] = floor.Int64
 	}
 
-	restChoices := columnHandler.HandleRestChoices(strings.TrimSpace(row[3]))
-	if restChoices != nil {
-		content["restChoices"] = restChoices
+	isPortal := columnHandler.HandleBool(strings.TrimSpace(row[3]))
+	if isPortal.Valid {
+		content["isPortal"] = isPortal.Bool
+	}
+
+	incidentType := columnHandler.HandleIncidentType(strings.TrimSpace(row[4]))
+	if incidentType != "" {
+		content["incidentType"] = incidentType
 	}
 
 	return content

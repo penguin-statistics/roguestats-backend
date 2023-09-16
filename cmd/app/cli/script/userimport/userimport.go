@@ -5,13 +5,14 @@ import (
 	"encoding/csv"
 	"os"
 
-	"exusiai.dev/roguestats-backend/internal/ent"
-	"exusiai.dev/roguestats-backend/internal/model"
-	"exusiai.dev/roguestats-backend/internal/service"
 	"github.com/machinebox/graphql"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/fx"
+
+	"exusiai.dev/roguestats-backend/internal/ent"
+	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/service"
 )
 
 type UserImportCommandDeps struct {

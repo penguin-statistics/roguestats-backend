@@ -1,4 +1,4 @@
-package script
+package tempcsvimport
 
 import (
 	"context"
@@ -6,8 +6,9 @@ import (
 	"log"
 	"os"
 
-	"exusiai.dev/roguestats-backend/internal/model"
 	"github.com/machinebox/graphql"
+
+	"exusiai.dev/roguestats-backend/internal/model"
 )
 
 func ReadCSVFile(filePath string) [][]string {
