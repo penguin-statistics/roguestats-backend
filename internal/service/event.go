@@ -110,13 +110,13 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, eventWhere
 }
 
 func (s Event) getEventsWithFilter(ctx context.Context, researchID string, eventWhere *ent.EventWhereInput) ([]*ent.Event, error) {
-	q := s.Ent.Event.Query().
+	query := s.Ent.Event.Query().
 		Where(event.HasResearchWith(research.ID(researchID)))
-	qq, err := eventWhere.Filter(q)
+	wrappedQuery, err := eventWhere.Filter(query)
 	if err != nil {
 		return nil, err
 	}
-	return qq.All(ctx)
+	return wrappedQuery.All(ctx)
 }
 
 func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]any, error) {
