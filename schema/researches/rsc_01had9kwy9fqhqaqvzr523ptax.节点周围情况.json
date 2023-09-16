@@ -1,0 +1,80 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://rogue.penguin-stats.io/_/schema/research/node_surrounding",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "floor": {
+        "title": "层数",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 6
+      },
+      "nodeType": {
+        "title": "节点类型",
+        "type": "string",
+        "anyOf": [
+          {
+            "const": "INCIDENT",
+            "title": "不期而遇",
+            "alias": "bufouqijieryu bfqjey"
+          },
+          {
+            "const": "REST",
+            "title": "安全的角落",
+            "alias": "anquandejiaoluo aqdjl"
+          },
+          {
+            "const": "SACRIFICE",
+            "title": "失与得",
+            "alias": "shiyudedei syd"
+          },
+          {
+            "const": "EXPEDITION",
+            "title": "先行一步",
+            "alias": "xianxingyibu xxyb"
+          },
+          {
+            "const": "ENTERTAINMENT",
+            "title": "兴致盎然",
+            "alias": "xingzhiangran xzar"
+          },
+          {
+            "const": "WISH",
+            "title": "得偿所愿",
+            "alias": "dechangsuoyuan dcsy"
+          }
+        ]
+      },
+      "column": {
+        "title": "列数",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 8
+      },
+      "parentCount": {
+        "title": "前面连接数",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4
+      },
+      "childCount": {
+        "title": "后面连接数",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4
+      },
+      "siblingCount": {
+        "title": "上下通路数",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2
+      },
+      "rowCount": {
+        "title": "总行数",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 4
+      }
+    }
+  }
