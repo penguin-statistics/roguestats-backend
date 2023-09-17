@@ -46,7 +46,7 @@ func PostEvent(content map[string]any, researchID string, userID string) {
 	ctx := context.Background()
 	var respData any
 	if err := client.Run(ctx, req, &respData); err != nil {
-		log.Fatal(err)
+		log.Default().Println(err)
 	}
 	log.Println(respData)
 }
