@@ -30,11 +30,14 @@ type Research struct {
 type ResearchEdges struct {
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
+	// QueryPresets holds the value of the query_presets edge.
+	QueryPresets []*QueryPreset `json:"query_presets,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 
-	namedEvents map[string][]*Event
+	namedEvents       map[string][]*Event
+	namedQueryPresets map[string][]*QueryPreset
 }
 
 // EventsOrErr returns the Events value or an error if the edge
@@ -44,6 +47,15 @@ func (e ResearchEdges) EventsOrErr() ([]*Event, error) {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
+}
+
+// QueryPresetsOrErr returns the QueryPresets value or an error if the edge
+// was not loaded in eager-loading.
+func (e ResearchEdges) QueryPresetsOrErr() ([]*QueryPreset, error) {
+	if e.loadedTypes[1] {
+		return e.QueryPresets, nil
+	}
+	return nil, &NotLoadedError{edge: "query_presets"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -106,6 +118,11 @@ func (r *Research) QueryEvents() *EventQuery {
 	return NewResearchClient(r.config).QueryEvents(r)
 }
 
+// QueryQueryPresets queries the "query_presets" edge of the Research entity.
+func (r *Research) QueryQueryPresets() *QueryPresetQuery {
+	return NewResearchClient(r.config).QueryQueryPresets(r)
+}
+
 // Update returns a builder for updating this Research.
 // Note that you need to call Research.Unwrap() before calling this method if this Research
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -159,6 +176,30 @@ func (r *Research) appendNamedEvents(name string, edges ...*Event) {
 		r.Edges.namedEvents[name] = []*Event{}
 	} else {
 		r.Edges.namedEvents[name] = append(r.Edges.namedEvents[name], edges...)
+	}
+}
+
+// NamedQueryPresets returns the QueryPresets named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (r *Research) NamedQueryPresets(name string) ([]*QueryPreset, error) {
+	if r.Edges.namedQueryPresets == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := r.Edges.namedQueryPresets[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (r *Research) appendNamedQueryPresets(name string, edges ...*QueryPreset) {
+	if r.Edges.namedQueryPresets == nil {
+		r.Edges.namedQueryPresets = make(map[string][]*QueryPreset)
+	}
+	if len(edges) == 0 {
+		r.Edges.namedQueryPresets[name] = []*QueryPreset{}
+	} else {
+		r.Edges.namedQueryPresets[name] = append(r.Edges.namedQueryPresets[name], edges...)
 	}
 }
 

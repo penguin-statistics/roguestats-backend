@@ -8,7 +8,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect/sql"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
-	"exusiai.dev/roguestats-backend/internal/ent/metric"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"github.com/99designs/gqlgen/graphql"
@@ -152,40 +152,59 @@ func newEventPaginateArgs(rv map[string]any) *eventPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (m *MetricQuery) CollectFields(ctx context.Context, satisfies ...string) (*MetricQuery, error) {
+func (qp *QueryPresetQuery) CollectFields(ctx context.Context, satisfies ...string) (*QueryPresetQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return m, nil
+		return qp, nil
 	}
-	if err := m.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := qp.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return m, nil
+	return qp, nil
 }
 
-func (m *MetricQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (qp *QueryPresetQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(metric.Columns))
-		selectedFields = []string{metric.FieldID}
+		fieldSeen      = make(map[string]struct{}, len(querypreset.Columns))
+		selectedFields = []string{querypreset.FieldID}
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "name":
-			if _, ok := fieldSeen[metric.FieldName]; !ok {
-				selectedFields = append(selectedFields, metric.FieldName)
-				fieldSeen[metric.FieldName] = struct{}{}
+		case "research":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&ResearchClient{config: qp.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, mayAddCondition(satisfies, researchImplementors)...); err != nil {
+				return err
 			}
-		case "filter":
-			if _, ok := fieldSeen[metric.FieldFilter]; !ok {
-				selectedFields = append(selectedFields, metric.FieldFilter)
-				fieldSeen[metric.FieldFilter] = struct{}{}
+			qp.withResearch = query
+			if _, ok := fieldSeen[querypreset.FieldResearchID]; !ok {
+				selectedFields = append(selectedFields, querypreset.FieldResearchID)
+				fieldSeen[querypreset.FieldResearchID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[querypreset.FieldName]; !ok {
+				selectedFields = append(selectedFields, querypreset.FieldName)
+				fieldSeen[querypreset.FieldName] = struct{}{}
+			}
+		case "researchID":
+			if _, ok := fieldSeen[querypreset.FieldResearchID]; !ok {
+				selectedFields = append(selectedFields, querypreset.FieldResearchID)
+				fieldSeen[querypreset.FieldResearchID] = struct{}{}
+			}
+		case "where":
+			if _, ok := fieldSeen[querypreset.FieldWhere]; !ok {
+				selectedFields = append(selectedFields, querypreset.FieldWhere)
+				fieldSeen[querypreset.FieldWhere] = struct{}{}
 			}
 		case "mapping":
-			if _, ok := fieldSeen[metric.FieldMapping]; !ok {
-				selectedFields = append(selectedFields, metric.FieldMapping)
-				fieldSeen[metric.FieldMapping] = struct{}{}
+			if _, ok := fieldSeen[querypreset.FieldMapping]; !ok {
+				selectedFields = append(selectedFields, querypreset.FieldMapping)
+				fieldSeen[querypreset.FieldMapping] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -194,19 +213,19 @@ func (m *MetricQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 		}
 	}
 	if !unknownSeen {
-		m.Select(selectedFields...)
+		qp.Select(selectedFields...)
 	}
 	return nil
 }
 
-type metricPaginateArgs struct {
+type querypresetPaginateArgs struct {
 	first, last   *int
 	after, before *Cursor
-	opts          []MetricPaginateOption
+	opts          []QueryPresetPaginateOption
 }
 
-func newMetricPaginateArgs(rv map[string]any) *metricPaginateArgs {
-	args := &metricPaginateArgs{}
+func newQueryPresetPaginateArgs(rv map[string]any) *querypresetPaginateArgs {
+	args := &querypresetPaginateArgs{}
 	if rv == nil {
 		return args
 	}
@@ -227,7 +246,7 @@ func newMetricPaginateArgs(rv map[string]any) *metricPaginateArgs {
 		case map[string]any:
 			var (
 				err1, err2 error
-				order      = &MetricOrder{Field: &MetricOrderField{}, Direction: entgql.OrderDirectionAsc}
+				order      = &QueryPresetOrder{Field: &QueryPresetOrderField{}, Direction: entgql.OrderDirectionAsc}
 			)
 			if d, ok := v[directionField]; ok {
 				err1 = order.Direction.UnmarshalGQL(d)
@@ -236,16 +255,16 @@ func newMetricPaginateArgs(rv map[string]any) *metricPaginateArgs {
 				err2 = order.Field.UnmarshalGQL(f)
 			}
 			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithMetricOrder(order))
+				args.opts = append(args.opts, WithQueryPresetOrder(order))
 			}
-		case *MetricOrder:
+		case *QueryPresetOrder:
 			if v != nil {
-				args.opts = append(args.opts, WithMetricOrder(v))
+				args.opts = append(args.opts, WithQueryPresetOrder(v))
 			}
 		}
 	}
-	if v, ok := rv[whereField].(*MetricWhereInput); ok {
-		args.opts = append(args.opts, WithMetricFilter(v.Filter))
+	if v, ok := rv[whereField].(*QueryPresetWhereInput); ok {
+		args.opts = append(args.opts, WithQueryPresetFilter(v.Filter))
 	}
 	return args
 }

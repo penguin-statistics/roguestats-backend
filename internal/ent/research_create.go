@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 )
 
@@ -59,6 +60,21 @@ func (rc *ResearchCreate) AddEvents(e ...*Event) *ResearchCreate {
 		ids[i] = e[i].ID
 	}
 	return rc.AddEventIDs(ids...)
+}
+
+// AddQueryPresetIDs adds the "query_presets" edge to the QueryPreset entity by IDs.
+func (rc *ResearchCreate) AddQueryPresetIDs(ids ...string) *ResearchCreate {
+	rc.mutation.AddQueryPresetIDs(ids...)
+	return rc
+}
+
+// AddQueryPresets adds the "query_presets" edges to the QueryPreset entity.
+func (rc *ResearchCreate) AddQueryPresets(q ...*QueryPreset) *ResearchCreate {
+	ids := make([]string, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return rc.AddQueryPresetIDs(ids...)
 }
 
 // Mutation returns the ResearchMutation object of the builder.
@@ -167,6 +183,22 @@ func (rc *ResearchCreate) createSpec() (*Research, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.QueryPresetsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

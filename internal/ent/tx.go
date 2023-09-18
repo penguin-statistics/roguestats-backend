@@ -14,8 +14,8 @@ type Tx struct {
 	config
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
-	// Metric is the client for interacting with the Metric builders.
-	Metric *MetricClient
+	// QueryPreset is the client for interacting with the QueryPreset builders.
+	QueryPreset *QueryPresetClient
 	// Research is the client for interacting with the Research builders.
 	Research *ResearchClient
 	// User is the client for interacting with the User builders.
@@ -152,7 +152,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Event = NewEventClient(tx.config)
-	tx.Metric = NewMetricClient(tx.config)
+	tx.QueryPreset = NewQueryPresetClient(tx.config)
 	tx.Research = NewResearchClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

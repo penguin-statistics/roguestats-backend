@@ -44,6 +44,12 @@ func (Research) Edges() []ent.Edge {
 				entsql.OnDelete(entsql.NoAction),
 				entgql.Skip(entgql.SkipType),
 			),
+		edge.To("query_presets", QueryPreset.Type).
+			// Required().
+			Annotations(
+				entsql.OnDelete(entsql.NoAction),
+				entgql.Skip(entgql.SkipType),
+			),
 	}
 }
 

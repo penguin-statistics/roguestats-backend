@@ -14,7 +14,6 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_agent", Type: field.TypeString},
 		{Name: "content", Type: field.TypeJSON},
-		{Name: "metric_events", Type: field.TypeString, Nullable: true},
 		{Name: "research_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -25,20 +24,14 @@ var (
 		PrimaryKey: []*schema.Column{EventsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "events_metrics_events",
-				Columns:    []*schema.Column{EventsColumns[4]},
-				RefColumns: []*schema.Column{MetricsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
 				Symbol:     "events_researches_events",
-				Columns:    []*schema.Column{EventsColumns[5]},
+				Columns:    []*schema.Column{EventsColumns[4]},
 				RefColumns: []*schema.Column{ResearchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[6]},
+				Columns:    []*schema.Column{EventsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -57,27 +50,36 @@ var (
 			{
 				Name:    "event_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{EventsColumns[6]},
+				Columns: []*schema.Column{EventsColumns[5]},
 			},
 			{
 				Name:    "event_research_id",
 				Unique:  false,
-				Columns: []*schema.Column{EventsColumns[5]},
+				Columns: []*schema.Column{EventsColumns[4]},
 			},
 		},
 	}
-	// MetricsColumns holds the columns for the "metrics" table.
-	MetricsColumns = []*schema.Column{
-		{Name: "Metric_id", Type: field.TypeString, Unique: true},
+	// QueryPresetsColumns holds the columns for the "query_presets" table.
+	QueryPresetsColumns = []*schema.Column{
+		{Name: "query_preset_id", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString, Size: 64},
-		{Name: "filter", Type: field.TypeJSON},
+		{Name: "where", Type: field.TypeJSON},
 		{Name: "mapping", Type: field.TypeString},
+		{Name: "research_id", Type: field.TypeString},
 	}
-	// MetricsTable holds the schema information for the "metrics" table.
-	MetricsTable = &schema.Table{
-		Name:       "metrics",
-		Columns:    MetricsColumns,
-		PrimaryKey: []*schema.Column{MetricsColumns[0]},
+	// QueryPresetsTable holds the schema information for the "query_presets" table.
+	QueryPresetsTable = &schema.Table{
+		Name:       "query_presets",
+		Columns:    QueryPresetsColumns,
+		PrimaryKey: []*schema.Column{QueryPresetsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "query_presets_researches_query_presets",
+				Columns:    []*schema.Column{QueryPresetsColumns[4]},
+				RefColumns: []*schema.Column{ResearchesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// ResearchesColumns holds the columns for the "researches" table.
 	ResearchesColumns = []*schema.Column{
@@ -108,14 +110,14 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EventsTable,
-		MetricsTable,
+		QueryPresetsTable,
 		ResearchesTable,
 		UsersTable,
 	}
 )
 
 func init() {
-	EventsTable.ForeignKeys[0].RefTable = MetricsTable
-	EventsTable.ForeignKeys[1].RefTable = ResearchesTable
-	EventsTable.ForeignKeys[2].RefTable = UsersTable
+	EventsTable.ForeignKeys[0].RefTable = ResearchesTable
+	EventsTable.ForeignKeys[1].RefTable = UsersTable
+	QueryPresetsTable.ForeignKeys[0].RefTable = ResearchesTable
 }

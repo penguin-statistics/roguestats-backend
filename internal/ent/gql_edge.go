@@ -21,3 +21,11 @@ func (e *Event) Research(ctx context.Context) (*Research, error) {
 	}
 	return result, err
 }
+
+func (qp *QueryPreset) Research(ctx context.Context) (*Research, error) {
+	result, err := qp.Edges.ResearchOrErr()
+	if IsNotLoaded(err) {
+		result, err = qp.QueryResearch().Only(ctx)
+	}
+	return result, err
+}

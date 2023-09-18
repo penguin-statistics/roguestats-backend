@@ -18,8 +18,12 @@ const (
 	FieldSchema = "schema"
 	// EdgeEvents holds the string denoting the events edge name in mutations.
 	EdgeEvents = "events"
+	// EdgeQueryPresets holds the string denoting the query_presets edge name in mutations.
+	EdgeQueryPresets = "query_presets"
 	// EventFieldID holds the string denoting the ID field of the Event.
 	EventFieldID = "event_id"
+	// QueryPresetFieldID holds the string denoting the ID field of the QueryPreset.
+	QueryPresetFieldID = "query_preset_id"
 	// Table holds the table name of the research in the database.
 	Table = "researches"
 	// EventsTable is the table that holds the events relation/edge.
@@ -29,6 +33,13 @@ const (
 	EventsInverseTable = "events"
 	// EventsColumn is the table column denoting the events relation/edge.
 	EventsColumn = "research_id"
+	// QueryPresetsTable is the table that holds the query_presets relation/edge.
+	QueryPresetsTable = "query_presets"
+	// QueryPresetsInverseTable is the table name for the QueryPreset entity.
+	// It exists in this package in order to avoid circular dependency with the "querypreset" package.
+	QueryPresetsInverseTable = "query_presets"
+	// QueryPresetsColumn is the table column denoting the query_presets relation/edge.
+	QueryPresetsColumn = "research_id"
 )
 
 // Columns holds all SQL columns for research fields.
@@ -81,10 +92,31 @@ func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByQueryPresetsCount orders the results by query_presets count.
+func ByQueryPresetsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newQueryPresetsStep(), opts...)
+	}
+}
+
+// ByQueryPresets orders the results by query_presets terms.
+func ByQueryPresets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newQueryPresetsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newEventsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EventsInverseTable, EventFieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EventsTable, EventsColumn),
+	)
+}
+func newQueryPresetsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(QueryPresetsInverseTable, QueryPresetFieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, QueryPresetsTable, QueryPresetsColumn),
 	)
 }

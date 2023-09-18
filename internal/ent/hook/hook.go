@@ -21,16 +21,16 @@ func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
 }
 
-// The MetricFunc type is an adapter to allow the use of ordinary
-// function as Metric mutator.
-type MetricFunc func(context.Context, *ent.MetricMutation) (ent.Value, error)
+// The QueryPresetFunc type is an adapter to allow the use of ordinary
+// function as QueryPreset mutator.
+type QueryPresetFunc func(context.Context, *ent.QueryPresetMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f MetricFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.MetricMutation); ok {
+func (f QueryPresetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QueryPresetMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MetricMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QueryPresetMutation", m)
 }
 
 // The ResearchFunc type is an adapter to allow the use of ordinary

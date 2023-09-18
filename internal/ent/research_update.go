@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
 	"exusiai.dev/roguestats-backend/internal/ent/predicate"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 )
 
@@ -55,6 +56,21 @@ func (ru *ResearchUpdate) AddEvents(e ...*Event) *ResearchUpdate {
 	return ru.AddEventIDs(ids...)
 }
 
+// AddQueryPresetIDs adds the "query_presets" edge to the QueryPreset entity by IDs.
+func (ru *ResearchUpdate) AddQueryPresetIDs(ids ...string) *ResearchUpdate {
+	ru.mutation.AddQueryPresetIDs(ids...)
+	return ru
+}
+
+// AddQueryPresets adds the "query_presets" edges to the QueryPreset entity.
+func (ru *ResearchUpdate) AddQueryPresets(q ...*QueryPreset) *ResearchUpdate {
+	ids := make([]string, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return ru.AddQueryPresetIDs(ids...)
+}
+
 // Mutation returns the ResearchMutation object of the builder.
 func (ru *ResearchUpdate) Mutation() *ResearchMutation {
 	return ru.mutation
@@ -79,6 +95,27 @@ func (ru *ResearchUpdate) RemoveEvents(e ...*Event) *ResearchUpdate {
 		ids[i] = e[i].ID
 	}
 	return ru.RemoveEventIDs(ids...)
+}
+
+// ClearQueryPresets clears all "query_presets" edges to the QueryPreset entity.
+func (ru *ResearchUpdate) ClearQueryPresets() *ResearchUpdate {
+	ru.mutation.ClearQueryPresets()
+	return ru
+}
+
+// RemoveQueryPresetIDs removes the "query_presets" edge to QueryPreset entities by IDs.
+func (ru *ResearchUpdate) RemoveQueryPresetIDs(ids ...string) *ResearchUpdate {
+	ru.mutation.RemoveQueryPresetIDs(ids...)
+	return ru
+}
+
+// RemoveQueryPresets removes "query_presets" edges to QueryPreset entities.
+func (ru *ResearchUpdate) RemoveQueryPresets(q ...*QueryPreset) *ResearchUpdate {
+	ids := make([]string, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return ru.RemoveQueryPresetIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -181,6 +218,51 @@ func (ru *ResearchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.QueryPresetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedQueryPresetsIDs(); len(nodes) > 0 && !ru.mutation.QueryPresetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.QueryPresetsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{research.Label}
@@ -228,6 +310,21 @@ func (ruo *ResearchUpdateOne) AddEvents(e ...*Event) *ResearchUpdateOne {
 	return ruo.AddEventIDs(ids...)
 }
 
+// AddQueryPresetIDs adds the "query_presets" edge to the QueryPreset entity by IDs.
+func (ruo *ResearchUpdateOne) AddQueryPresetIDs(ids ...string) *ResearchUpdateOne {
+	ruo.mutation.AddQueryPresetIDs(ids...)
+	return ruo
+}
+
+// AddQueryPresets adds the "query_presets" edges to the QueryPreset entity.
+func (ruo *ResearchUpdateOne) AddQueryPresets(q ...*QueryPreset) *ResearchUpdateOne {
+	ids := make([]string, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return ruo.AddQueryPresetIDs(ids...)
+}
+
 // Mutation returns the ResearchMutation object of the builder.
 func (ruo *ResearchUpdateOne) Mutation() *ResearchMutation {
 	return ruo.mutation
@@ -252,6 +349,27 @@ func (ruo *ResearchUpdateOne) RemoveEvents(e ...*Event) *ResearchUpdateOne {
 		ids[i] = e[i].ID
 	}
 	return ruo.RemoveEventIDs(ids...)
+}
+
+// ClearQueryPresets clears all "query_presets" edges to the QueryPreset entity.
+func (ruo *ResearchUpdateOne) ClearQueryPresets() *ResearchUpdateOne {
+	ruo.mutation.ClearQueryPresets()
+	return ruo
+}
+
+// RemoveQueryPresetIDs removes the "query_presets" edge to QueryPreset entities by IDs.
+func (ruo *ResearchUpdateOne) RemoveQueryPresetIDs(ids ...string) *ResearchUpdateOne {
+	ruo.mutation.RemoveQueryPresetIDs(ids...)
+	return ruo
+}
+
+// RemoveQueryPresets removes "query_presets" edges to QueryPreset entities.
+func (ruo *ResearchUpdateOne) RemoveQueryPresets(q ...*QueryPreset) *ResearchUpdateOne {
+	ids := make([]string, len(q))
+	for i := range q {
+		ids[i] = q[i].ID
+	}
+	return ruo.RemoveQueryPresetIDs(ids...)
 }
 
 // Where appends a list predicates to the ResearchUpdate builder.
@@ -377,6 +495,51 @@ func (ruo *ResearchUpdateOne) sqlSave(ctx context.Context) (_node *Research, err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.QueryPresetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedQueryPresetsIDs(); len(nodes) > 0 && !ruo.mutation.QueryPresetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.QueryPresetsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   research.QueryPresetsTable,
+			Columns: []string{research.QueryPresetsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(querypreset.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

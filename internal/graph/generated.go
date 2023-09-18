@@ -85,24 +85,6 @@ type ComplexityRoot struct {
 		Total   func(childComplexity int) int
 	}
 
-	Metric struct {
-		Filter  func(childComplexity int) int
-		ID      func(childComplexity int) int
-		Mapping func(childComplexity int) int
-		Name    func(childComplexity int) int
-	}
-
-	MetricConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	MetricEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
-	}
-
 	Mutation struct {
 		CreateEvent          func(childComplexity int, input model.CreateEventInput) int
 		CreateUser           func(childComplexity int, input model.CreateUserInput) int
@@ -119,15 +101,35 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Event      func(childComplexity int, id string) int
-		Events     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.EventOrder, where *ent.EventWhereInput) int
-		GroupCount func(childComplexity int, input model.GroupCountInput) int
-		Me         func(childComplexity int) int
-		Metrics    func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.MetricOrder, where *ent.MetricWhereInput) int
-		Node       func(childComplexity int, id string) int
-		Nodes      func(childComplexity int, ids []string) int
-		Research   func(childComplexity int, id string) int
-		Researches func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.ResearchOrder, where *ent.ResearchWhereInput) int
+		Event        func(childComplexity int, id string) int
+		Events       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.EventOrder, where *ent.EventWhereInput) int
+		GroupCount   func(childComplexity int, input model.GroupCountInput) int
+		Me           func(childComplexity int) int
+		Node         func(childComplexity int, id string) int
+		Nodes        func(childComplexity int, ids []string) int
+		QueryPresets func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.QueryPresetOrder, where *ent.QueryPresetWhereInput) int
+		Research     func(childComplexity int, id string) int
+		Researches   func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.ResearchOrder, where *ent.ResearchWhereInput) int
+	}
+
+	QueryPreset struct {
+		ID         func(childComplexity int) int
+		Mapping    func(childComplexity int) int
+		Name       func(childComplexity int) int
+		Research   func(childComplexity int) int
+		ResearchID func(childComplexity int) int
+		Where      func(childComplexity int) int
+	}
+
+	QueryPresetConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	QueryPresetEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	Research struct {
@@ -166,7 +168,7 @@ type QueryResolver interface {
 	Node(ctx context.Context, id string) (ent.Noder, error)
 	Nodes(ctx context.Context, ids []string) ([]ent.Noder, error)
 	Events(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.EventOrder, where *ent.EventWhereInput) (*ent.EventConnection, error)
-	Metrics(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.MetricOrder, where *ent.MetricWhereInput) (*ent.MetricConnection, error)
+	QueryPresets(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.QueryPresetOrder, where *ent.QueryPresetWhereInput) (*ent.QueryPresetConnection, error)
 	Researches(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.ResearchOrder, where *ent.ResearchWhereInput) (*ent.ResearchConnection, error)
 	Me(ctx context.Context) (*ent.User, error)
 	GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error)
@@ -315,69 +317,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GroupCountResult.Total(childComplexity), true
 
-	case "Metric.filter":
-		if e.complexity.Metric.Filter == nil {
-			break
-		}
-
-		return e.complexity.Metric.Filter(childComplexity), true
-
-	case "Metric.id":
-		if e.complexity.Metric.ID == nil {
-			break
-		}
-
-		return e.complexity.Metric.ID(childComplexity), true
-
-	case "Metric.mapping":
-		if e.complexity.Metric.Mapping == nil {
-			break
-		}
-
-		return e.complexity.Metric.Mapping(childComplexity), true
-
-	case "Metric.name":
-		if e.complexity.Metric.Name == nil {
-			break
-		}
-
-		return e.complexity.Metric.Name(childComplexity), true
-
-	case "MetricConnection.edges":
-		if e.complexity.MetricConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.MetricConnection.Edges(childComplexity), true
-
-	case "MetricConnection.pageInfo":
-		if e.complexity.MetricConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.MetricConnection.PageInfo(childComplexity), true
-
-	case "MetricConnection.totalCount":
-		if e.complexity.MetricConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.MetricConnection.TotalCount(childComplexity), true
-
-	case "MetricEdge.cursor":
-		if e.complexity.MetricEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.MetricEdge.Cursor(childComplexity), true
-
-	case "MetricEdge.node":
-		if e.complexity.MetricEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.MetricEdge.Node(childComplexity), true
-
 	case "Mutation.createEvent":
 		if e.complexity.Mutation.CreateEvent == nil {
 			break
@@ -509,18 +448,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Me(childComplexity), true
 
-	case "Query.metrics":
-		if e.complexity.Query.Metrics == nil {
-			break
-		}
-
-		args, err := ec.field_Query_metrics_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Metrics(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*ent.MetricOrder), args["where"].(*ent.MetricWhereInput)), true
-
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
 			break
@@ -545,6 +472,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]string)), true
 
+	case "Query.queryPresets":
+		if e.complexity.Query.QueryPresets == nil {
+			break
+		}
+
+		args, err := ec.field_Query_queryPresets_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.QueryPresets(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*ent.QueryPresetOrder), args["where"].(*ent.QueryPresetWhereInput)), true
+
 	case "Query.research":
 		if e.complexity.Query.Research == nil {
 			break
@@ -568,6 +507,83 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Researches(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*ent.ResearchOrder), args["where"].(*ent.ResearchWhereInput)), true
+
+	case "QueryPreset.id":
+		if e.complexity.QueryPreset.ID == nil {
+			break
+		}
+
+		return e.complexity.QueryPreset.ID(childComplexity), true
+
+	case "QueryPreset.mapping":
+		if e.complexity.QueryPreset.Mapping == nil {
+			break
+		}
+
+		return e.complexity.QueryPreset.Mapping(childComplexity), true
+
+	case "QueryPreset.name":
+		if e.complexity.QueryPreset.Name == nil {
+			break
+		}
+
+		return e.complexity.QueryPreset.Name(childComplexity), true
+
+	case "QueryPreset.research":
+		if e.complexity.QueryPreset.Research == nil {
+			break
+		}
+
+		return e.complexity.QueryPreset.Research(childComplexity), true
+
+	case "QueryPreset.researchID":
+		if e.complexity.QueryPreset.ResearchID == nil {
+			break
+		}
+
+		return e.complexity.QueryPreset.ResearchID(childComplexity), true
+
+	case "QueryPreset.where":
+		if e.complexity.QueryPreset.Where == nil {
+			break
+		}
+
+		return e.complexity.QueryPreset.Where(childComplexity), true
+
+	case "QueryPresetConnection.edges":
+		if e.complexity.QueryPresetConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.QueryPresetConnection.Edges(childComplexity), true
+
+	case "QueryPresetConnection.pageInfo":
+		if e.complexity.QueryPresetConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.QueryPresetConnection.PageInfo(childComplexity), true
+
+	case "QueryPresetConnection.totalCount":
+		if e.complexity.QueryPresetConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.QueryPresetConnection.TotalCount(childComplexity), true
+
+	case "QueryPresetEdge.cursor":
+		if e.complexity.QueryPresetEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.QueryPresetEdge.Cursor(childComplexity), true
+
+	case "QueryPresetEdge.node":
+		if e.complexity.QueryPresetEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.QueryPresetEdge.Node(childComplexity), true
 
 	case "Research.id":
 		if e.complexity.Research.ID == nil {
@@ -667,8 +683,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputEventWhereInput,
 		ec.unmarshalInputGroupCountInput,
 		ec.unmarshalInputLoginInput,
-		ec.unmarshalInputMetricOrder,
-		ec.unmarshalInputMetricWhereInput,
+		ec.unmarshalInputQueryPresetOrder,
+		ec.unmarshalInputQueryPresetWhereInput,
 		ec.unmarshalInputRequestPasswordResetInput,
 		ec.unmarshalInputResearchOrder,
 		ec.unmarshalInputResearchWhereInput,
@@ -986,7 +1002,37 @@ func (ec *executionContext) field_Query_groupCount_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_metrics_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []string
+	if tmp, ok := rawArgs["ids"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ids"))
+		arg0, err = ec.unmarshalNID2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["ids"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_queryPresets_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[string]
@@ -1025,54 +1071,24 @@ func (ec *executionContext) field_Query_metrics_args(ctx context.Context, rawArg
 		}
 	}
 	args["last"] = arg3
-	var arg4 *ent.MetricOrder
+	var arg4 *ent.QueryPresetOrder
 	if tmp, ok := rawArgs["orderBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg4, err = ec.unmarshalOMetricOrder2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricOrder(ctx, tmp)
+		arg4, err = ec.unmarshalOQueryPresetOrder2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["orderBy"] = arg4
-	var arg5 *ent.MetricWhereInput
+	var arg5 *ent.QueryPresetWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg5, err = ec.unmarshalOMetricWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInput(ctx, tmp)
+		arg5, err = ec.unmarshalOQueryPresetWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["where"] = arg5
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []string
-	if tmp, ok := rawArgs["ids"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ids"))
-		arg0, err = ec.unmarshalNID2ᚕstringᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["ids"] = arg0
 	return args, nil
 }
 
@@ -1989,422 +2005,6 @@ func (ec *executionContext) fieldContext_GroupCountResult_total(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Metric_id(ctx context.Context, field graphql.CollectedField, obj *ent.Metric) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Metric_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Metric_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Metric",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Metric_name(ctx context.Context, field graphql.CollectedField, obj *ent.Metric) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Metric_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Metric_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Metric",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Metric_filter(ctx context.Context, field graphql.CollectedField, obj *ent.Metric) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Metric_filter(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Filter, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(map[string]interface{})
-	fc.Result = res
-	return ec.marshalNMap2map(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Metric_filter(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Metric",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Metric_mapping(ctx context.Context, field graphql.CollectedField, obj *ent.Metric) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Metric_mapping(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Mapping, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Metric_mapping(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Metric",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _MetricConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.MetricConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MetricConnection_edges(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.MetricEdge)
-	fc.Result = res
-	return ec.marshalOMetricEdge2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricEdge(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MetricConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MetricConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "node":
-				return ec.fieldContext_MetricEdge_node(ctx, field)
-			case "cursor":
-				return ec.fieldContext_MetricEdge_cursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type MetricEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _MetricConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.MetricConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MetricConnection_pageInfo(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(entgql.PageInfo[string])
-	fc.Result = res
-	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MetricConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MetricConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _MetricConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.MetricConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MetricConnection_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MetricConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MetricConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _MetricEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.MetricEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MetricEdge_node(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Metric)
-	fc.Result = res
-	return ec.marshalOMetric2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetric(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MetricEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MetricEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Metric_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Metric_name(ctx, field)
-			case "filter":
-				return ec.fieldContext_Metric_filter(ctx, field)
-			case "mapping":
-				return ec.fieldContext_Metric_mapping(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Metric", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _MetricEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.MetricEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MetricEdge_cursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(entgql.Cursor[string])
-	fc.Result = res
-	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MetricEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MetricEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Cursor does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_login(ctx, field)
 	if err != nil {
@@ -3098,8 +2698,8 @@ func (ec *executionContext) fieldContext_Query_events(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_metrics(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_metrics(ctx, field)
+func (ec *executionContext) _Query_queryPresets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_queryPresets(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3112,7 +2712,7 @@ func (ec *executionContext) _Query_metrics(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Metrics(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*ent.MetricOrder), fc.Args["where"].(*ent.MetricWhereInput))
+		return ec.resolvers.Query().QueryPresets(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*ent.QueryPresetOrder), fc.Args["where"].(*ent.QueryPresetWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3124,12 +2724,12 @@ func (ec *executionContext) _Query_metrics(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.MetricConnection)
+	res := resTmp.(*ent.QueryPresetConnection)
 	fc.Result = res
-	return ec.marshalNMetricConnection2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricConnection(ctx, field.Selections, res)
+	return ec.marshalNQueryPresetConnection2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_metrics(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_queryPresets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -3138,13 +2738,13 @@ func (ec *executionContext) fieldContext_Query_metrics(ctx context.Context, fiel
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "edges":
-				return ec.fieldContext_MetricConnection_edges(ctx, field)
+				return ec.fieldContext_QueryPresetConnection_edges(ctx, field)
 			case "pageInfo":
-				return ec.fieldContext_MetricConnection_pageInfo(ctx, field)
+				return ec.fieldContext_QueryPresetConnection_pageInfo(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_MetricConnection_totalCount(ctx, field)
+				return ec.fieldContext_QueryPresetConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type MetricConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type QueryPresetConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -3154,7 +2754,7 @@ func (ec *executionContext) fieldContext_Query_metrics(ctx context.Context, fiel
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_metrics_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_queryPresets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3590,6 +3190,522 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPreset_id(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPreset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPreset_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPreset_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPreset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPreset_name(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPreset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPreset_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPreset_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPreset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPreset_researchID(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPreset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPreset_researchID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResearchID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPreset_researchID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPreset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPreset_where(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPreset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPreset_where(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Where, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalNMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPreset_where(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPreset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPreset_mapping(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPreset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPreset_mapping(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mapping, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPreset_mapping(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPreset",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPreset_research(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPreset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPreset_research(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Research(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Research)
+	fc.Result = res
+	return ec.marshalNResearch2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐResearch(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPreset_research(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPreset",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Research_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Research_name(ctx, field)
+			case "schema":
+				return ec.fieldContext_Research_schema(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Research", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPresetConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPresetConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPresetConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.QueryPresetEdge)
+	fc.Result = res
+	return ec.marshalOQueryPresetEdge2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPresetConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPresetConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_QueryPresetEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_QueryPresetEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type QueryPresetEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPresetConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPresetConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPresetConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPresetConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPresetConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPresetConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPresetConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPresetConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPresetConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPresetConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPresetEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPresetEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPresetEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.QueryPreset)
+	fc.Result = res
+	return ec.marshalOQueryPreset2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPreset(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPresetEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPresetEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_QueryPreset_id(ctx, field)
+			case "name":
+				return ec.fieldContext_QueryPreset_name(ctx, field)
+			case "researchID":
+				return ec.fieldContext_QueryPreset_researchID(ctx, field)
+			case "where":
+				return ec.fieldContext_QueryPreset_where(ctx, field)
+			case "mapping":
+				return ec.fieldContext_QueryPreset_mapping(ctx, field)
+			case "research":
+				return ec.fieldContext_QueryPreset_research(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type QueryPreset", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QueryPresetEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.QueryPresetEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QueryPresetEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QueryPresetEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QueryPresetEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6454,8 +6570,8 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputMetricOrder(ctx context.Context, obj interface{}) (ent.MetricOrder, error) {
-	var it ent.MetricOrder
+func (ec *executionContext) unmarshalInputQueryPresetOrder(ctx context.Context, obj interface{}) (ent.QueryPresetOrder, error) {
+	var it ent.QueryPresetOrder
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -6485,7 +6601,7 @@ func (ec *executionContext) unmarshalInputMetricOrder(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			data, err := ec.unmarshalNMetricOrderField2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricOrderField(ctx, v)
+			data, err := ec.unmarshalNQueryPresetOrderField2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6496,14 +6612,14 @@ func (ec *executionContext) unmarshalInputMetricOrder(ctx context.Context, obj i
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputMetricWhereInput(ctx context.Context, obj interface{}) (ent.MetricWhereInput, error) {
-	var it ent.MetricWhereInput
+func (ec *executionContext) unmarshalInputQueryPresetWhereInput(ctx context.Context, obj interface{}) (ent.QueryPresetWhereInput, error) {
+	var it ent.QueryPresetWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "mapping", "mappingNEQ", "mappingIn", "mappingNotIn", "mappingGT", "mappingGTE", "mappingLT", "mappingLTE", "mappingContains", "mappingHasPrefix", "mappingHasSuffix", "mappingEqualFold", "mappingContainsFold", "hasEvents", "hasEventsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "mapping", "mappingNEQ", "mappingIn", "mappingNotIn", "mappingGT", "mappingGTE", "mappingLT", "mappingLTE", "mappingContains", "mappingHasPrefix", "mappingHasSuffix", "mappingEqualFold", "mappingContainsFold", "hasResearch", "hasResearchWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6514,7 +6630,7 @@ func (ec *executionContext) unmarshalInputMetricWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOMetricWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInput(ctx, v)
+			data, err := ec.unmarshalOQueryPresetWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6523,7 +6639,7 @@ func (ec *executionContext) unmarshalInputMetricWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOMetricWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOQueryPresetWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6532,7 +6648,7 @@ func (ec *executionContext) unmarshalInputMetricWhereInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOMetricWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOQueryPresetWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6861,24 +6977,24 @@ func (ec *executionContext) unmarshalInputMetricWhereInput(ctx context.Context, 
 				return it, err
 			}
 			it.MappingContainsFold = data
-		case "hasEvents":
+		case "hasResearch":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasEvents"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasResearch"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasEvents = data
-		case "hasEventsWith":
+			it.HasResearch = data
+		case "hasResearchWith":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasEventsWith"))
-			data, err := ec.unmarshalOEventWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐEventWhereInputᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasResearchWith"))
+			data, err := ec.unmarshalOResearchWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐResearchWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasEventsWith = data
+			it.HasResearchWith = data
 		}
 	}
 
@@ -6972,7 +7088,7 @@ func (ec *executionContext) unmarshalInputResearchWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasEvents", "hasEventsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasEvents", "hasEventsWith", "hasQueryPresets", "hasQueryPresetsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7231,6 +7347,24 @@ func (ec *executionContext) unmarshalInputResearchWhereInput(ctx context.Context
 				return it, err
 			}
 			it.HasEventsWith = data
+		case "hasQueryPresets":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasQueryPresets"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasQueryPresets = data
+		case "hasQueryPresetsWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasQueryPresetsWith"))
+			data, err := ec.unmarshalOQueryPresetWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasQueryPresetsWith = data
 		}
 	}
 
@@ -7443,11 +7577,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Event(ctx, sel, obj)
-	case *ent.Metric:
+	case *ent.QueryPreset:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Metric(ctx, sel, obj)
+		return ec._QueryPreset(ctx, sel, obj)
 	case *ent.Research:
 		if obj == nil {
 			return graphql.Null
@@ -7778,147 +7912,6 @@ func (ec *executionContext) _GroupCountResult(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var metricImplementors = []string{"Metric", "Node"}
-
-func (ec *executionContext) _Metric(ctx context.Context, sel ast.SelectionSet, obj *ent.Metric) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, metricImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Metric")
-		case "id":
-			out.Values[i] = ec._Metric_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Metric_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "filter":
-			out.Values[i] = ec._Metric_filter(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "mapping":
-			out.Values[i] = ec._Metric_mapping(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var metricConnectionImplementors = []string{"MetricConnection"}
-
-func (ec *executionContext) _MetricConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.MetricConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, metricConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("MetricConnection")
-		case "edges":
-			out.Values[i] = ec._MetricConnection_edges(ctx, field, obj)
-		case "pageInfo":
-			out.Values[i] = ec._MetricConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "totalCount":
-			out.Values[i] = ec._MetricConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var metricEdgeImplementors = []string{"MetricEdge"}
-
-func (ec *executionContext) _MetricEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.MetricEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, metricEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("MetricEdge")
-		case "node":
-			out.Values[i] = ec._MetricEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._MetricEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -8126,7 +8119,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "metrics":
+		case "queryPresets":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -8135,7 +8128,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_metrics(ctx, field)
+				res = ec._Query_queryPresets(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -8257,6 +8250,188 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var queryPresetImplementors = []string{"QueryPreset", "Node"}
+
+func (ec *executionContext) _QueryPreset(ctx context.Context, sel ast.SelectionSet, obj *ent.QueryPreset) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, queryPresetImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QueryPreset")
+		case "id":
+			out.Values[i] = ec._QueryPreset_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._QueryPreset_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "researchID":
+			out.Values[i] = ec._QueryPreset_researchID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "where":
+			out.Values[i] = ec._QueryPreset_where(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "mapping":
+			out.Values[i] = ec._QueryPreset_mapping(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "research":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._QueryPreset_research(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var queryPresetConnectionImplementors = []string{"QueryPresetConnection"}
+
+func (ec *executionContext) _QueryPresetConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.QueryPresetConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, queryPresetConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QueryPresetConnection")
+		case "edges":
+			out.Values[i] = ec._QueryPresetConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._QueryPresetConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._QueryPresetConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var queryPresetEdgeImplementors = []string{"QueryPresetEdge"}
+
+func (ec *executionContext) _QueryPresetEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.QueryPresetEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, queryPresetEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QueryPresetEdge")
+		case "node":
+			out.Values[i] = ec._QueryPresetEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._QueryPresetEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9090,41 +9265,6 @@ func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNMetricConnection2exusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricConnection(ctx context.Context, sel ast.SelectionSet, v ent.MetricConnection) graphql.Marshaler {
-	return ec._MetricConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMetricConnection2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricConnection(ctx context.Context, sel ast.SelectionSet, v *ent.MetricConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._MetricConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNMetricOrderField2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricOrderField(ctx context.Context, v interface{}) (*ent.MetricOrderField, error) {
-	var res = new(ent.MetricOrderField)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNMetricOrderField2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.MetricOrderField) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return v
-}
-
-func (ec *executionContext) unmarshalNMetricWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInput(ctx context.Context, v interface{}) (*ent.MetricWhereInput, error) {
-	res, err := ec.unmarshalInputMetricWhereInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNNode2ᚕexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v []ent.Noder) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -9175,6 +9315,41 @@ func (ec *executionContext) marshalNOrderDirection2entgoᚗioᚋcontribᚋentgql
 
 func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v entgql.PageInfo[string]) graphql.Marshaler {
 	return ec._PageInfo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNQueryPresetConnection2exusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetConnection(ctx context.Context, sel ast.SelectionSet, v ent.QueryPresetConnection) graphql.Marshaler {
+	return ec._QueryPresetConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNQueryPresetConnection2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetConnection(ctx context.Context, sel ast.SelectionSet, v *ent.QueryPresetConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._QueryPresetConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNQueryPresetOrderField2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetOrderField(ctx context.Context, v interface{}) (*ent.QueryPresetOrderField, error) {
+	var res = new(ent.QueryPresetOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNQueryPresetOrderField2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.QueryPresetOrderField) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalNQueryPresetWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInput(ctx context.Context, v interface{}) (*ent.QueryPresetWhereInput, error) {
+	res, err := ec.unmarshalInputQueryPresetWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNRequestPasswordResetInput2exusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋmodelᚐRequestPasswordResetInput(ctx context.Context, v interface{}) (model.RequestPasswordResetInput, error) {
@@ -9753,14 +9928,21 @@ func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalOMetric2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetric(ctx context.Context, sel ast.SelectionSet, v *ent.Metric) graphql.Marshaler {
+func (ec *executionContext) marshalONode2exusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v ent.Noder) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Metric(ctx, sel, v)
+	return ec._Node(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOMetricEdge2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.MetricEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOQueryPreset2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPreset(ctx context.Context, sel ast.SelectionSet, v *ent.QueryPreset) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._QueryPreset(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOQueryPresetEdge2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.QueryPresetEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -9787,7 +9969,7 @@ func (ec *executionContext) marshalOMetricEdge2ᚕᚖexusiaiᚗdevᚋroguestats�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOMetricEdge2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOQueryPresetEdge2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -9801,22 +9983,22 @@ func (ec *executionContext) marshalOMetricEdge2ᚕᚖexusiaiᚗdevᚋroguestats�
 	return ret
 }
 
-func (ec *executionContext) marshalOMetricEdge2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricEdge(ctx context.Context, sel ast.SelectionSet, v *ent.MetricEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOQueryPresetEdge2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetEdge(ctx context.Context, sel ast.SelectionSet, v *ent.QueryPresetEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._MetricEdge(ctx, sel, v)
+	return ec._QueryPresetEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOMetricOrder2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricOrder(ctx context.Context, v interface{}) (*ent.MetricOrder, error) {
+func (ec *executionContext) unmarshalOQueryPresetOrder2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetOrder(ctx context.Context, v interface{}) (*ent.QueryPresetOrder, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputMetricOrder(ctx, v)
+	res, err := ec.unmarshalInputQueryPresetOrder(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOMetricWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInputᚄ(ctx context.Context, v interface{}) ([]*ent.MetricWhereInput, error) {
+func (ec *executionContext) unmarshalOQueryPresetWhereInput2ᚕᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInputᚄ(ctx context.Context, v interface{}) ([]*ent.QueryPresetWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -9825,10 +10007,10 @@ func (ec *executionContext) unmarshalOMetricWhereInput2ᚕᚖexusiaiᚗdevᚋrog
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*ent.MetricWhereInput, len(vSlice))
+	res := make([]*ent.QueryPresetWhereInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNMetricWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNQueryPresetWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -9836,19 +10018,12 @@ func (ec *executionContext) unmarshalOMetricWhereInput2ᚕᚖexusiaiᚗdevᚋrog
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOMetricWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐMetricWhereInput(ctx context.Context, v interface{}) (*ent.MetricWhereInput, error) {
+func (ec *executionContext) unmarshalOQueryPresetWhereInput2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐQueryPresetWhereInput(ctx context.Context, v interface{}) (*ent.QueryPresetWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputMetricWhereInput(ctx, v)
+	res, err := ec.unmarshalInputQueryPresetWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalONode2exusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v ent.Noder) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Node(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOResearch2ᚖexusiaiᚗdevᚋroguestatsᚑbackendᚋinternalᚋentᚐResearch(ctx context.Context, sel ast.SelectionSet, v *ent.Research) graphql.Marshaler {

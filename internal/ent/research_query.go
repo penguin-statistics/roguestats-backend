@@ -13,20 +13,23 @@ import (
 	"entgo.io/ent/schema/field"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
 	"exusiai.dev/roguestats-backend/internal/ent/predicate"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 )
 
 // ResearchQuery is the builder for querying Research entities.
 type ResearchQuery struct {
 	config
-	ctx             *QueryContext
-	order           []research.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Research
-	withEvents      *EventQuery
-	modifiers       []func(*sql.Selector)
-	loadTotal       []func(context.Context, []*Research) error
-	withNamedEvents map[string]*EventQuery
+	ctx                   *QueryContext
+	order                 []research.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.Research
+	withEvents            *EventQuery
+	withQueryPresets      *QueryPresetQuery
+	modifiers             []func(*sql.Selector)
+	loadTotal             []func(context.Context, []*Research) error
+	withNamedEvents       map[string]*EventQuery
+	withNamedQueryPresets map[string]*QueryPresetQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,6 +81,28 @@ func (rq *ResearchQuery) QueryEvents() *EventQuery {
 			sqlgraph.From(research.Table, research.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, research.EventsTable, research.EventsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryQueryPresets chains the current query on the "query_presets" edge.
+func (rq *ResearchQuery) QueryQueryPresets() *QueryPresetQuery {
+	query := (&QueryPresetClient{config: rq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(research.Table, research.FieldID, selector),
+			sqlgraph.To(querypreset.Table, querypreset.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, research.QueryPresetsTable, research.QueryPresetsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -272,12 +297,13 @@ func (rq *ResearchQuery) Clone() *ResearchQuery {
 		return nil
 	}
 	return &ResearchQuery{
-		config:     rq.config,
-		ctx:        rq.ctx.Clone(),
-		order:      append([]research.OrderOption{}, rq.order...),
-		inters:     append([]Interceptor{}, rq.inters...),
-		predicates: append([]predicate.Research{}, rq.predicates...),
-		withEvents: rq.withEvents.Clone(),
+		config:           rq.config,
+		ctx:              rq.ctx.Clone(),
+		order:            append([]research.OrderOption{}, rq.order...),
+		inters:           append([]Interceptor{}, rq.inters...),
+		predicates:       append([]predicate.Research{}, rq.predicates...),
+		withEvents:       rq.withEvents.Clone(),
+		withQueryPresets: rq.withQueryPresets.Clone(),
 		// clone intermediate query.
 		sql:  rq.sql.Clone(),
 		path: rq.path,
@@ -292,6 +318,17 @@ func (rq *ResearchQuery) WithEvents(opts ...func(*EventQuery)) *ResearchQuery {
 		opt(query)
 	}
 	rq.withEvents = query
+	return rq
+}
+
+// WithQueryPresets tells the query-builder to eager-load the nodes that are connected to
+// the "query_presets" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *ResearchQuery) WithQueryPresets(opts ...func(*QueryPresetQuery)) *ResearchQuery {
+	query := (&QueryPresetClient{config: rq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withQueryPresets = query
 	return rq
 }
 
@@ -373,8 +410,9 @@ func (rq *ResearchQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Res
 	var (
 		nodes       = []*Research{}
 		_spec       = rq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			rq.withEvents != nil,
+			rq.withQueryPresets != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -405,10 +443,24 @@ func (rq *ResearchQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Res
 			return nil, err
 		}
 	}
+	if query := rq.withQueryPresets; query != nil {
+		if err := rq.loadQueryPresets(ctx, query, nodes,
+			func(n *Research) { n.Edges.QueryPresets = []*QueryPreset{} },
+			func(n *Research, e *QueryPreset) { n.Edges.QueryPresets = append(n.Edges.QueryPresets, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range rq.withNamedEvents {
 		if err := rq.loadEvents(ctx, query, nodes,
 			func(n *Research) { n.appendNamedEvents(name) },
 			func(n *Research, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range rq.withNamedQueryPresets {
+		if err := rq.loadQueryPresets(ctx, query, nodes,
+			func(n *Research) { n.appendNamedQueryPresets(name) },
+			func(n *Research, e *QueryPreset) { n.appendNamedQueryPresets(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -430,12 +482,41 @@ func (rq *ResearchQuery) loadEvents(ctx context.Context, query *EventQuery, node
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(event.FieldResearchID)
 	}
 	query.Where(predicate.Event(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(research.EventsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ResearchID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "research_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (rq *ResearchQuery) loadQueryPresets(ctx context.Context, query *QueryPresetQuery, nodes []*Research, init func(*Research), assign func(*Research, *QueryPreset)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Research)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(querypreset.FieldResearchID)
+	}
+	query.Where(predicate.QueryPreset(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(research.QueryPresetsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -547,6 +628,20 @@ func (rq *ResearchQuery) WithNamedEvents(name string, opts ...func(*EventQuery))
 		rq.withNamedEvents = make(map[string]*EventQuery)
 	}
 	rq.withNamedEvents[name] = query
+	return rq
+}
+
+// WithNamedQueryPresets tells the query-builder to eager-load the nodes that are connected to the "query_presets"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (rq *ResearchQuery) WithNamedQueryPresets(name string, opts ...func(*QueryPresetQuery)) *ResearchQuery {
+	query := (&QueryPresetClient{config: rq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if rq.withNamedQueryPresets == nil {
+		rq.withNamedQueryPresets = make(map[string]*QueryPresetQuery)
+	}
+	rq.withNamedQueryPresets[name] = query
 	return rq
 }
 

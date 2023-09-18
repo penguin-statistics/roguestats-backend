@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
-	"exusiai.dev/roguestats-backend/internal/ent/metric"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"github.com/99designs/gqlgen/graphql"
@@ -25,10 +25,10 @@ var eventImplementors = []string{"Event", "Node"}
 // IsNode implements the Node interface check for GQLGen.
 func (*Event) IsNode() {}
 
-var metricImplementors = []string{"Metric", "Node"}
+var querypresetImplementors = []string{"QueryPreset", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (*Metric) IsNode() {}
+func (*QueryPreset) IsNode() {}
 
 var researchImplementors = []string{"Research", "Node"}
 
@@ -110,10 +110,10 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
-	case metric.Table:
-		query := c.Metric.Query().
-			Where(metric.ID(id))
-		query, err := query.CollectFields(ctx, metricImplementors...)
+	case querypreset.Table:
+		query := c.QueryPreset.Query().
+			Where(querypreset.ID(id))
+		query, err := query.CollectFields(ctx, querypresetImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -235,10 +235,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case metric.Table:
-		query := c.Metric.Query().
-			Where(metric.IDIn(ids...))
-		query, err := query.CollectFields(ctx, metricImplementors...)
+	case querypreset.Table:
+		query := c.QueryPreset.Query().
+			Where(querypreset.IDIn(ids...))
+		query, err := query.CollectFields(ctx, querypresetImplementors...)
 		if err != nil {
 			return nil, err
 		}

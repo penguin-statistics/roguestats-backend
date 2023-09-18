@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"exusiai.dev/roguestats-backend/internal/ent/event"
-	"exusiai.dev/roguestats-backend/internal/ent/metric"
 	"exusiai.dev/roguestats-backend/internal/ent/predicate"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 )
@@ -224,12 +224,12 @@ func (i *EventWhereInput) P() (predicate.Event, error) {
 	}
 }
 
-// MetricWhereInput represents a where input for filtering Metric queries.
-type MetricWhereInput struct {
-	Predicates []predicate.Metric  `json:"-"`
-	Not        *MetricWhereInput   `json:"not,omitempty"`
-	Or         []*MetricWhereInput `json:"or,omitempty"`
-	And        []*MetricWhereInput `json:"and,omitempty"`
+// QueryPresetWhereInput represents a where input for filtering QueryPreset queries.
+type QueryPresetWhereInput struct {
+	Predicates []predicate.QueryPreset  `json:"-"`
+	Not        *QueryPresetWhereInput   `json:"not,omitempty"`
+	Or         []*QueryPresetWhereInput `json:"or,omitempty"`
+	And        []*QueryPresetWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID             *string  `json:"id,omitempty"`
@@ -273,24 +273,24 @@ type MetricWhereInput struct {
 	MappingEqualFold    *string  `json:"mappingEqualFold,omitempty"`
 	MappingContainsFold *string  `json:"mappingContainsFold,omitempty"`
 
-	// "events" edge predicates.
-	HasEvents     *bool              `json:"hasEvents,omitempty"`
-	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
+	// "research" edge predicates.
+	HasResearch     *bool                 `json:"hasResearch,omitempty"`
+	HasResearchWith []*ResearchWhereInput `json:"hasResearchWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *MetricWhereInput) AddPredicates(predicates ...predicate.Metric) {
+func (i *QueryPresetWhereInput) AddPredicates(predicates ...predicate.QueryPreset) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the MetricWhereInput filter on the MetricQuery builder.
-func (i *MetricWhereInput) Filter(q *MetricQuery) (*MetricQuery, error) {
+// Filter applies the QueryPresetWhereInput filter on the QueryPresetQuery builder.
+func (i *QueryPresetWhereInput) Filter(q *QueryPresetQuery) (*QueryPresetQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyMetricWhereInput {
+		if err == ErrEmptyQueryPresetWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -298,19 +298,19 @@ func (i *MetricWhereInput) Filter(q *MetricQuery) (*MetricQuery, error) {
 	return q.Where(p), nil
 }
 
-// ErrEmptyMetricWhereInput is returned in case the MetricWhereInput is empty.
-var ErrEmptyMetricWhereInput = errors.New("ent: empty predicate MetricWhereInput")
+// ErrEmptyQueryPresetWhereInput is returned in case the QueryPresetWhereInput is empty.
+var ErrEmptyQueryPresetWhereInput = errors.New("ent: empty predicate QueryPresetWhereInput")
 
-// P returns a predicate for filtering metrics.
+// P returns a predicate for filtering querypresets.
 // An error is returned if the input is empty or invalid.
-func (i *MetricWhereInput) P() (predicate.Metric, error) {
-	var predicates []predicate.Metric
+func (i *QueryPresetWhereInput) P() (predicate.QueryPreset, error) {
+	var predicates []predicate.QueryPreset
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, metric.Not(p))
+		predicates = append(predicates, querypreset.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -320,7 +320,7 @@ func (i *MetricWhereInput) P() (predicate.Metric, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.Metric, 0, n)
+		or := make([]predicate.QueryPreset, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -328,7 +328,7 @@ func (i *MetricWhereInput) P() (predicate.Metric, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, metric.Or(or...))
+		predicates = append(predicates, querypreset.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -338,7 +338,7 @@ func (i *MetricWhereInput) P() (predicate.Metric, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.Metric, 0, n)
+		and := make([]predicate.QueryPreset, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -346,143 +346,143 @@ func (i *MetricWhereInput) P() (predicate.Metric, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, metric.And(and...))
+		predicates = append(predicates, querypreset.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, metric.IDEQ(*i.ID))
+		predicates = append(predicates, querypreset.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, metric.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, querypreset.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, metric.IDIn(i.IDIn...))
+		predicates = append(predicates, querypreset.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, metric.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, querypreset.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, metric.IDGT(*i.IDGT))
+		predicates = append(predicates, querypreset.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, metric.IDGTE(*i.IDGTE))
+		predicates = append(predicates, querypreset.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, metric.IDLT(*i.IDLT))
+		predicates = append(predicates, querypreset.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, metric.IDLTE(*i.IDLTE))
+		predicates = append(predicates, querypreset.IDLTE(*i.IDLTE))
 	}
 	if i.IDEqualFold != nil {
-		predicates = append(predicates, metric.IDEqualFold(*i.IDEqualFold))
+		predicates = append(predicates, querypreset.IDEqualFold(*i.IDEqualFold))
 	}
 	if i.IDContainsFold != nil {
-		predicates = append(predicates, metric.IDContainsFold(*i.IDContainsFold))
+		predicates = append(predicates, querypreset.IDContainsFold(*i.IDContainsFold))
 	}
 	if i.Name != nil {
-		predicates = append(predicates, metric.NameEQ(*i.Name))
+		predicates = append(predicates, querypreset.NameEQ(*i.Name))
 	}
 	if i.NameNEQ != nil {
-		predicates = append(predicates, metric.NameNEQ(*i.NameNEQ))
+		predicates = append(predicates, querypreset.NameNEQ(*i.NameNEQ))
 	}
 	if len(i.NameIn) > 0 {
-		predicates = append(predicates, metric.NameIn(i.NameIn...))
+		predicates = append(predicates, querypreset.NameIn(i.NameIn...))
 	}
 	if len(i.NameNotIn) > 0 {
-		predicates = append(predicates, metric.NameNotIn(i.NameNotIn...))
+		predicates = append(predicates, querypreset.NameNotIn(i.NameNotIn...))
 	}
 	if i.NameGT != nil {
-		predicates = append(predicates, metric.NameGT(*i.NameGT))
+		predicates = append(predicates, querypreset.NameGT(*i.NameGT))
 	}
 	if i.NameGTE != nil {
-		predicates = append(predicates, metric.NameGTE(*i.NameGTE))
+		predicates = append(predicates, querypreset.NameGTE(*i.NameGTE))
 	}
 	if i.NameLT != nil {
-		predicates = append(predicates, metric.NameLT(*i.NameLT))
+		predicates = append(predicates, querypreset.NameLT(*i.NameLT))
 	}
 	if i.NameLTE != nil {
-		predicates = append(predicates, metric.NameLTE(*i.NameLTE))
+		predicates = append(predicates, querypreset.NameLTE(*i.NameLTE))
 	}
 	if i.NameContains != nil {
-		predicates = append(predicates, metric.NameContains(*i.NameContains))
+		predicates = append(predicates, querypreset.NameContains(*i.NameContains))
 	}
 	if i.NameHasPrefix != nil {
-		predicates = append(predicates, metric.NameHasPrefix(*i.NameHasPrefix))
+		predicates = append(predicates, querypreset.NameHasPrefix(*i.NameHasPrefix))
 	}
 	if i.NameHasSuffix != nil {
-		predicates = append(predicates, metric.NameHasSuffix(*i.NameHasSuffix))
+		predicates = append(predicates, querypreset.NameHasSuffix(*i.NameHasSuffix))
 	}
 	if i.NameEqualFold != nil {
-		predicates = append(predicates, metric.NameEqualFold(*i.NameEqualFold))
+		predicates = append(predicates, querypreset.NameEqualFold(*i.NameEqualFold))
 	}
 	if i.NameContainsFold != nil {
-		predicates = append(predicates, metric.NameContainsFold(*i.NameContainsFold))
+		predicates = append(predicates, querypreset.NameContainsFold(*i.NameContainsFold))
 	}
 	if i.Mapping != nil {
-		predicates = append(predicates, metric.MappingEQ(*i.Mapping))
+		predicates = append(predicates, querypreset.MappingEQ(*i.Mapping))
 	}
 	if i.MappingNEQ != nil {
-		predicates = append(predicates, metric.MappingNEQ(*i.MappingNEQ))
+		predicates = append(predicates, querypreset.MappingNEQ(*i.MappingNEQ))
 	}
 	if len(i.MappingIn) > 0 {
-		predicates = append(predicates, metric.MappingIn(i.MappingIn...))
+		predicates = append(predicates, querypreset.MappingIn(i.MappingIn...))
 	}
 	if len(i.MappingNotIn) > 0 {
-		predicates = append(predicates, metric.MappingNotIn(i.MappingNotIn...))
+		predicates = append(predicates, querypreset.MappingNotIn(i.MappingNotIn...))
 	}
 	if i.MappingGT != nil {
-		predicates = append(predicates, metric.MappingGT(*i.MappingGT))
+		predicates = append(predicates, querypreset.MappingGT(*i.MappingGT))
 	}
 	if i.MappingGTE != nil {
-		predicates = append(predicates, metric.MappingGTE(*i.MappingGTE))
+		predicates = append(predicates, querypreset.MappingGTE(*i.MappingGTE))
 	}
 	if i.MappingLT != nil {
-		predicates = append(predicates, metric.MappingLT(*i.MappingLT))
+		predicates = append(predicates, querypreset.MappingLT(*i.MappingLT))
 	}
 	if i.MappingLTE != nil {
-		predicates = append(predicates, metric.MappingLTE(*i.MappingLTE))
+		predicates = append(predicates, querypreset.MappingLTE(*i.MappingLTE))
 	}
 	if i.MappingContains != nil {
-		predicates = append(predicates, metric.MappingContains(*i.MappingContains))
+		predicates = append(predicates, querypreset.MappingContains(*i.MappingContains))
 	}
 	if i.MappingHasPrefix != nil {
-		predicates = append(predicates, metric.MappingHasPrefix(*i.MappingHasPrefix))
+		predicates = append(predicates, querypreset.MappingHasPrefix(*i.MappingHasPrefix))
 	}
 	if i.MappingHasSuffix != nil {
-		predicates = append(predicates, metric.MappingHasSuffix(*i.MappingHasSuffix))
+		predicates = append(predicates, querypreset.MappingHasSuffix(*i.MappingHasSuffix))
 	}
 	if i.MappingEqualFold != nil {
-		predicates = append(predicates, metric.MappingEqualFold(*i.MappingEqualFold))
+		predicates = append(predicates, querypreset.MappingEqualFold(*i.MappingEqualFold))
 	}
 	if i.MappingContainsFold != nil {
-		predicates = append(predicates, metric.MappingContainsFold(*i.MappingContainsFold))
+		predicates = append(predicates, querypreset.MappingContainsFold(*i.MappingContainsFold))
 	}
 
-	if i.HasEvents != nil {
-		p := metric.HasEvents()
-		if !*i.HasEvents {
-			p = metric.Not(p)
+	if i.HasResearch != nil {
+		p := querypreset.HasResearch()
+		if !*i.HasResearch {
+			p = querypreset.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasEventsWith) > 0 {
-		with := make([]predicate.Event, 0, len(i.HasEventsWith))
-		for _, w := range i.HasEventsWith {
+	if len(i.HasResearchWith) > 0 {
+		with := make([]predicate.Research, 0, len(i.HasResearchWith))
+		for _, w := range i.HasResearchWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasEventsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasResearchWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, metric.HasEventsWith(with...))
+		predicates = append(predicates, querypreset.HasResearchWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyMetricWhereInput
+		return nil, ErrEmptyQueryPresetWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return metric.And(predicates...), nil
+		return querypreset.And(predicates...), nil
 	}
 }
 
@@ -523,6 +523,10 @@ type ResearchWhereInput struct {
 	// "events" edge predicates.
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
+
+	// "query_presets" edge predicates.
+	HasQueryPresets     *bool                    `json:"hasQueryPresets,omitempty"`
+	HasQueryPresetsWith []*QueryPresetWhereInput `json:"hasQueryPresetsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -683,6 +687,24 @@ func (i *ResearchWhereInput) P() (predicate.Research, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, research.HasEventsWith(with...))
+	}
+	if i.HasQueryPresets != nil {
+		p := research.HasQueryPresets()
+		if !*i.HasQueryPresets {
+			p = research.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasQueryPresetsWith) > 0 {
+		with := make([]predicate.QueryPreset, 0, len(i.HasQueryPresetsWith))
+		for _, w := range i.HasQueryPresetsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasQueryPresetsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, research.HasQueryPresetsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
