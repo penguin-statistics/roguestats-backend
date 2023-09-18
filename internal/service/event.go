@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
@@ -21,8 +22,9 @@ import (
 type Event struct {
 	fx.In
 
-	Ent         *ent.Client
-	AuthService Auth
+	Ent                *ent.Client
+	AuthService        Auth
+	QueryPresetService QueryPreset
 }
 
 func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
@@ -102,6 +104,27 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, eventWhere
 		Results: results,
 		Total:   totalCount,
 	}, nil
+}
+
+func (s Event) CalculateStatsWithQueryPreset(ctx context.Context, queryPreset ent.QueryPreset) (*model.GroupCountResult, error) {
+	jsonBytes, err := json.Marshal(queryPreset.Where)
+	if err != nil {
+		return nil, err
+	}
+	var eventWhereInput ent.EventWhereInput
+	err = json.Unmarshal(jsonBytes, &eventWhereInput)
+	if err != nil {
+		return nil, err
+	}
+	return s.CalculateStats(ctx, queryPreset.ResearchID, &eventWhereInput, queryPreset.Mapping)
+}
+
+func (s Event) CalculateStatsWithQueryPresetID(ctx context.Context, queryPresetID string) (*model.GroupCountResult, error) {
+	queryPreset, err := s.QueryPresetService.GetQueryPreset(ctx, queryPresetID)
+	if err != nil {
+		return nil, err
+	}
+	return s.CalculateStatsWithQueryPreset(ctx, *queryPreset)
 }
 
 func (s Event) getEventsWithFilter(ctx context.Context, researchID string, eventWhere *ent.EventWhereInput) ([]*ent.Event, error) {
