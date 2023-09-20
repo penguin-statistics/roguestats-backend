@@ -55,10 +55,12 @@ func primitiveSql(primitive Primitive) (string, error) {
 	// values
 	case string:
 		v = fmt.Sprintf("%q", primitive.(string))
-	case int:
-		v = strconv.Itoa(primitive.(int))
-	case float64:
-		v = strconv.FormatFloat(primitive.(float64), 'f', -1, 64)
+	case json.Number:
+		n, err := convertToNumber(primitive.(json.Number))
+		if err != nil {
+			return "", err
+		}
+		v = fmt.Sprintf("%v", n)
 	case bool:
 		v = strconv.FormatBool(primitive.(bool))
 	case nil:
@@ -194,4 +196,14 @@ func (p Predicate) sql(column string, field string) (string, error) {
 	}
 
 	return sb.String(), nil
+}
+
+func convertToNumber(input json.Number) (interface{}, error) {
+	if i, err := input.Int64(); err == nil {
+		return i, nil
+	}
+	if f, err := input.Float64(); err == nil {
+		return f, nil
+	}
+	return nil, strconv.ErrSyntax
 }
