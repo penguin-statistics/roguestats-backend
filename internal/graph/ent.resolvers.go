@@ -7,9 +7,9 @@ package graph
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"entgo.io/contrib/entgql"
+
 	"exusiai.dev/roguestats-backend/internal/ent"
 )
 
@@ -34,7 +34,11 @@ func (r *queryResolver) Events(ctx context.Context, after *entgql.Cursor[string]
 
 // QueryPresets is the resolver for the queryPresets field.
 func (r *queryResolver) QueryPresets(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.QueryPresetOrder, where *ent.QueryPresetWhereInput) (*ent.QueryPresetConnection, error) {
-	panic(fmt.Errorf("not implemented: QueryPresets - queryPresets"))
+	return r.Ent.QueryPreset.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithQueryPresetOrder(orderBy),
+			ent.WithQueryPresetFilter(where.Filter),
+		)
 }
 
 // Researches is the resolver for the researches field.
