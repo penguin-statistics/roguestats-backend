@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 
 	"entgo.io/contrib/entgql"
-
 	"exusiai.dev/roguestats-backend/internal/ent"
 )
 

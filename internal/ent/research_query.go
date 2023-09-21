@@ -20,16 +20,12 @@ import (
 // ResearchQuery is the builder for querying Research entities.
 type ResearchQuery struct {
 	config
-	ctx                   *QueryContext
-	order                 []research.OrderOption
-	inters                []Interceptor
-	predicates            []predicate.Research
-	withEvents            *EventQuery
-	withQueryPresets      *QueryPresetQuery
-	modifiers             []func(*sql.Selector)
-	loadTotal             []func(context.Context, []*Research) error
-	withNamedEvents       map[string]*EventQuery
-	withNamedQueryPresets map[string]*QueryPresetQuery
+	ctx              *QueryContext
+	order            []research.OrderOption
+	inters           []Interceptor
+	predicates       []predicate.Research
+	withEvents       *EventQuery
+	withQueryPresets *QueryPresetQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -424,9 +420,6 @@ func (rq *ResearchQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Res
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
-	if len(rq.modifiers) > 0 {
-		_spec.Modifiers = rq.modifiers
-	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -447,25 +440,6 @@ func (rq *ResearchQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Res
 		if err := rq.loadQueryPresets(ctx, query, nodes,
 			func(n *Research) { n.Edges.QueryPresets = []*QueryPreset{} },
 			func(n *Research, e *QueryPreset) { n.Edges.QueryPresets = append(n.Edges.QueryPresets, e) }); err != nil {
-			return nil, err
-		}
-	}
-	for name, query := range rq.withNamedEvents {
-		if err := rq.loadEvents(ctx, query, nodes,
-			func(n *Research) { n.appendNamedEvents(name) },
-			func(n *Research, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
-			return nil, err
-		}
-	}
-	for name, query := range rq.withNamedQueryPresets {
-		if err := rq.loadQueryPresets(ctx, query, nodes,
-			func(n *Research) { n.appendNamedQueryPresets(name) },
-			func(n *Research, e *QueryPreset) { n.appendNamedQueryPresets(name, e) }); err != nil {
-			return nil, err
-		}
-	}
-	for i := range rq.loadTotal {
-		if err := rq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -535,9 +509,6 @@ func (rq *ResearchQuery) loadQueryPresets(ctx context.Context, query *QueryPrese
 
 func (rq *ResearchQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := rq.querySpec()
-	if len(rq.modifiers) > 0 {
-		_spec.Modifiers = rq.modifiers
-	}
 	_spec.Node.Columns = rq.ctx.Fields
 	if len(rq.ctx.Fields) > 0 {
 		_spec.Unique = rq.ctx.Unique != nil && *rq.ctx.Unique
@@ -615,34 +586,6 @@ func (rq *ResearchQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
-}
-
-// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
-// edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (rq *ResearchQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *ResearchQuery {
-	query := (&EventClient{config: rq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	if rq.withNamedEvents == nil {
-		rq.withNamedEvents = make(map[string]*EventQuery)
-	}
-	rq.withNamedEvents[name] = query
-	return rq
-}
-
-// WithNamedQueryPresets tells the query-builder to eager-load the nodes that are connected to the "query_presets"
-// edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (rq *ResearchQuery) WithNamedQueryPresets(name string, opts ...func(*QueryPresetQuery)) *ResearchQuery {
-	query := (&QueryPresetClient{config: rq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	if rq.withNamedQueryPresets == nil {
-		rq.withNamedQueryPresets = make(map[string]*QueryPresetQuery)
-	}
-	rq.withNamedQueryPresets[name] = query
-	return rq
 }
 
 // ResearchGroupBy is the group-by builder for Research entities.

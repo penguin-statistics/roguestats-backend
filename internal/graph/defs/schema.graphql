@@ -29,6 +29,8 @@ extend type Query {
   event(id: ID!): Event
 
   research(id: ID!): Research
+
+  queryPreset(id: ID!): QueryPreset
 }
 
 input CreateEventInput {

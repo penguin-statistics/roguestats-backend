@@ -57,6 +57,11 @@ func (r *queryResolver) Research(ctx context.Context, id string) (*ent.Research,
 	return r.Ent.Research.Get(ctx, id)
 }
 
+// QueryPreset is the resolver for the queryPreset field.
+func (r *queryResolver) QueryPreset(ctx context.Context, id string) (*ent.QueryPreset, error) {
+	return r.Ent.QueryPreset.Get(ctx, id)
+}
+
 // ContentJSONPredicate is the resolver for the contentJsonPredicate field.
 func (r *eventWhereInputResolver) ContentJSONPredicate(ctx context.Context, obj *ent.EventWhereInput, data map[string]interface{}) error {
 	if obj == nil || data == nil {

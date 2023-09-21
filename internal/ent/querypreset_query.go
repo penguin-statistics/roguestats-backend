@@ -23,8 +23,6 @@ type QueryPresetQuery struct {
 	inters       []Interceptor
 	predicates   []predicate.QueryPreset
 	withResearch *ResearchQuery
-	modifiers    []func(*sql.Selector)
-	loadTotal    []func(context.Context, []*QueryPreset) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -384,9 +382,6 @@ func (qpq *QueryPresetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
-	if len(qpq.modifiers) > 0 {
-		_spec.Modifiers = qpq.modifiers
-	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -399,11 +394,6 @@ func (qpq *QueryPresetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	if query := qpq.withResearch; query != nil {
 		if err := qpq.loadResearch(ctx, query, nodes, nil,
 			func(n *QueryPreset, e *Research) { n.Edges.Research = e }); err != nil {
-			return nil, err
-		}
-	}
-	for i := range qpq.loadTotal {
-		if err := qpq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -442,9 +432,6 @@ func (qpq *QueryPresetQuery) loadResearch(ctx context.Context, query *ResearchQu
 
 func (qpq *QueryPresetQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := qpq.querySpec()
-	if len(qpq.modifiers) > 0 {
-		_spec.Modifiers = qpq.modifiers
-	}
 	_spec.Node.Columns = qpq.ctx.Fields
 	if len(qpq.ctx.Fields) > 0 {
 		_spec.Unique = qpq.ctx.Unique != nil && *qpq.ctx.Unique
