@@ -3,12 +3,11 @@ package db
 import (
 	"context"
 
+	_ "github.com/lib/pq"
 	"github.com/rs/zerolog/log"
 
 	"exusiai.dev/roguestats-backend/internal/app/appconfig"
 	"exusiai.dev/roguestats-backend/internal/ent"
-
-	_ "github.com/lib/pq"
 )
 
 func New(conf *appconfig.Config) *ent.Client {
@@ -20,5 +19,5 @@ func New(conf *appconfig.Config) *ent.Client {
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatal().Err(err).Msg("failed creating schema resources")
 	}
-	return client
+	return client.Debug()
 }

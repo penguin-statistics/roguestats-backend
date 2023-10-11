@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
 	"exusiai.dev/roguestats-backend/internal/ent/predicate"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 )
@@ -26,9 +27,10 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeEvent    = "Event"
-	TypeResearch = "Research"
-	TypeUser     = "User"
+	TypeEvent       = "Event"
+	TypeQueryPreset = "QueryPreset"
+	TypeResearch    = "Research"
+	TypeUser        = "User"
 )
 
 // EventMutation represents an operation that mutates the Event nodes in the graph.
@@ -677,21 +679,571 @@ func (m *EventMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Event edge %s", name)
 }
 
+// QueryPresetMutation represents an operation that mutates the QueryPreset nodes in the graph.
+type QueryPresetMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *string
+	name            *string
+	where           *map[string]interface{}
+	mapping         *string
+	clearedFields   map[string]struct{}
+	research        *string
+	clearedresearch bool
+	done            bool
+	oldValue        func(context.Context) (*QueryPreset, error)
+	predicates      []predicate.QueryPreset
+}
+
+var _ ent.Mutation = (*QueryPresetMutation)(nil)
+
+// querypresetOption allows management of the mutation configuration using functional options.
+type querypresetOption func(*QueryPresetMutation)
+
+// newQueryPresetMutation creates new mutation for the QueryPreset entity.
+func newQueryPresetMutation(c config, op Op, opts ...querypresetOption) *QueryPresetMutation {
+	m := &QueryPresetMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeQueryPreset,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withQueryPresetID sets the ID field of the mutation.
+func withQueryPresetID(id string) querypresetOption {
+	return func(m *QueryPresetMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *QueryPreset
+		)
+		m.oldValue = func(ctx context.Context) (*QueryPreset, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().QueryPreset.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withQueryPreset sets the old QueryPreset of the mutation.
+func withQueryPreset(node *QueryPreset) querypresetOption {
+	return func(m *QueryPresetMutation) {
+		m.oldValue = func(context.Context) (*QueryPreset, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m QueryPresetMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m QueryPresetMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of QueryPreset entities.
+func (m *QueryPresetMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *QueryPresetMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *QueryPresetMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().QueryPreset.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *QueryPresetMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *QueryPresetMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the QueryPreset entity.
+// If the QueryPreset object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QueryPresetMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *QueryPresetMutation) ResetName() {
+	m.name = nil
+}
+
+// SetResearchID sets the "research_id" field.
+func (m *QueryPresetMutation) SetResearchID(s string) {
+	m.research = &s
+}
+
+// ResearchID returns the value of the "research_id" field in the mutation.
+func (m *QueryPresetMutation) ResearchID() (r string, exists bool) {
+	v := m.research
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResearchID returns the old "research_id" field's value of the QueryPreset entity.
+// If the QueryPreset object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QueryPresetMutation) OldResearchID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldResearchID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldResearchID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResearchID: %w", err)
+	}
+	return oldValue.ResearchID, nil
+}
+
+// ResetResearchID resets all changes to the "research_id" field.
+func (m *QueryPresetMutation) ResetResearchID() {
+	m.research = nil
+}
+
+// SetWhere sets the "where" field.
+func (m *QueryPresetMutation) SetWhere(value map[string]interface{}) {
+	m.where = &value
+}
+
+// GetWhere returns the value of the "where" field in the mutation.
+func (m *QueryPresetMutation) GetWhere() (r map[string]interface{}, exists bool) {
+	v := m.where
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWhere returns the old "where" field's value of the QueryPreset entity.
+// If the QueryPreset object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QueryPresetMutation) OldWhere(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWhere is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWhere requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWhere: %w", err)
+	}
+	return oldValue.Where, nil
+}
+
+// ResetWhere resets all changes to the "where" field.
+func (m *QueryPresetMutation) ResetWhere() {
+	m.where = nil
+}
+
+// SetMapping sets the "mapping" field.
+func (m *QueryPresetMutation) SetMapping(s string) {
+	m.mapping = &s
+}
+
+// Mapping returns the value of the "mapping" field in the mutation.
+func (m *QueryPresetMutation) Mapping() (r string, exists bool) {
+	v := m.mapping
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMapping returns the old "mapping" field's value of the QueryPreset entity.
+// If the QueryPreset object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QueryPresetMutation) OldMapping(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMapping is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMapping requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMapping: %w", err)
+	}
+	return oldValue.Mapping, nil
+}
+
+// ResetMapping resets all changes to the "mapping" field.
+func (m *QueryPresetMutation) ResetMapping() {
+	m.mapping = nil
+}
+
+// ClearResearch clears the "research" edge to the Research entity.
+func (m *QueryPresetMutation) ClearResearch() {
+	m.clearedresearch = true
+}
+
+// ResearchCleared reports if the "research" edge to the Research entity was cleared.
+func (m *QueryPresetMutation) ResearchCleared() bool {
+	return m.clearedresearch
+}
+
+// ResearchIDs returns the "research" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ResearchID instead. It exists only for internal usage by the builders.
+func (m *QueryPresetMutation) ResearchIDs() (ids []string) {
+	if id := m.research; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetResearch resets all changes to the "research" edge.
+func (m *QueryPresetMutation) ResetResearch() {
+	m.research = nil
+	m.clearedresearch = false
+}
+
+// Where appends a list predicates to the QueryPresetMutation builder.
+func (m *QueryPresetMutation) Where(ps ...predicate.QueryPreset) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the QueryPresetMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *QueryPresetMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.QueryPreset, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *QueryPresetMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *QueryPresetMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (QueryPreset).
+func (m *QueryPresetMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *QueryPresetMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.name != nil {
+		fields = append(fields, querypreset.FieldName)
+	}
+	if m.research != nil {
+		fields = append(fields, querypreset.FieldResearchID)
+	}
+	if m.where != nil {
+		fields = append(fields, querypreset.FieldWhere)
+	}
+	if m.mapping != nil {
+		fields = append(fields, querypreset.FieldMapping)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *QueryPresetMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case querypreset.FieldName:
+		return m.Name()
+	case querypreset.FieldResearchID:
+		return m.ResearchID()
+	case querypreset.FieldWhere:
+		return m.GetWhere()
+	case querypreset.FieldMapping:
+		return m.Mapping()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *QueryPresetMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case querypreset.FieldName:
+		return m.OldName(ctx)
+	case querypreset.FieldResearchID:
+		return m.OldResearchID(ctx)
+	case querypreset.FieldWhere:
+		return m.OldWhere(ctx)
+	case querypreset.FieldMapping:
+		return m.OldMapping(ctx)
+	}
+	return nil, fmt.Errorf("unknown QueryPreset field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *QueryPresetMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case querypreset.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case querypreset.FieldResearchID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResearchID(v)
+		return nil
+	case querypreset.FieldWhere:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWhere(v)
+		return nil
+	case querypreset.FieldMapping:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMapping(v)
+		return nil
+	}
+	return fmt.Errorf("unknown QueryPreset field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *QueryPresetMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *QueryPresetMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *QueryPresetMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown QueryPreset numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *QueryPresetMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *QueryPresetMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *QueryPresetMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown QueryPreset nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *QueryPresetMutation) ResetField(name string) error {
+	switch name {
+	case querypreset.FieldName:
+		m.ResetName()
+		return nil
+	case querypreset.FieldResearchID:
+		m.ResetResearchID()
+		return nil
+	case querypreset.FieldWhere:
+		m.ResetWhere()
+		return nil
+	case querypreset.FieldMapping:
+		m.ResetMapping()
+		return nil
+	}
+	return fmt.Errorf("unknown QueryPreset field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *QueryPresetMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.research != nil {
+		edges = append(edges, querypreset.EdgeResearch)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *QueryPresetMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case querypreset.EdgeResearch:
+		if id := m.research; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *QueryPresetMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *QueryPresetMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *QueryPresetMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedresearch {
+		edges = append(edges, querypreset.EdgeResearch)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *QueryPresetMutation) EdgeCleared(name string) bool {
+	switch name {
+	case querypreset.EdgeResearch:
+		return m.clearedresearch
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *QueryPresetMutation) ClearEdge(name string) error {
+	switch name {
+	case querypreset.EdgeResearch:
+		m.ClearResearch()
+		return nil
+	}
+	return fmt.Errorf("unknown QueryPreset unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *QueryPresetMutation) ResetEdge(name string) error {
+	switch name {
+	case querypreset.EdgeResearch:
+		m.ResetResearch()
+		return nil
+	}
+	return fmt.Errorf("unknown QueryPreset edge %s", name)
+}
+
 // ResearchMutation represents an operation that mutates the Research nodes in the graph.
 type ResearchMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	name          *string
-	schema        *[]byte
-	clearedFields map[string]struct{}
-	events        map[string]struct{}
-	removedevents map[string]struct{}
-	clearedevents bool
-	done          bool
-	oldValue      func(context.Context) (*Research, error)
-	predicates    []predicate.Research
+	op                   Op
+	typ                  string
+	id                   *string
+	name                 *string
+	schema               *[]byte
+	clearedFields        map[string]struct{}
+	events               map[string]struct{}
+	removedevents        map[string]struct{}
+	clearedevents        bool
+	query_presets        map[string]struct{}
+	removedquery_presets map[string]struct{}
+	clearedquery_presets bool
+	done                 bool
+	oldValue             func(context.Context) (*Research, error)
+	predicates           []predicate.Research
 }
 
 var _ ent.Mutation = (*ResearchMutation)(nil)
@@ -924,6 +1476,60 @@ func (m *ResearchMutation) ResetEvents() {
 	m.removedevents = nil
 }
 
+// AddQueryPresetIDs adds the "query_presets" edge to the QueryPreset entity by ids.
+func (m *ResearchMutation) AddQueryPresetIDs(ids ...string) {
+	if m.query_presets == nil {
+		m.query_presets = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.query_presets[ids[i]] = struct{}{}
+	}
+}
+
+// ClearQueryPresets clears the "query_presets" edge to the QueryPreset entity.
+func (m *ResearchMutation) ClearQueryPresets() {
+	m.clearedquery_presets = true
+}
+
+// QueryPresetsCleared reports if the "query_presets" edge to the QueryPreset entity was cleared.
+func (m *ResearchMutation) QueryPresetsCleared() bool {
+	return m.clearedquery_presets
+}
+
+// RemoveQueryPresetIDs removes the "query_presets" edge to the QueryPreset entity by IDs.
+func (m *ResearchMutation) RemoveQueryPresetIDs(ids ...string) {
+	if m.removedquery_presets == nil {
+		m.removedquery_presets = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.query_presets, ids[i])
+		m.removedquery_presets[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedQueryPresets returns the removed IDs of the "query_presets" edge to the QueryPreset entity.
+func (m *ResearchMutation) RemovedQueryPresetsIDs() (ids []string) {
+	for id := range m.removedquery_presets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// QueryPresetsIDs returns the "query_presets" edge IDs in the mutation.
+func (m *ResearchMutation) QueryPresetsIDs() (ids []string) {
+	for id := range m.query_presets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetQueryPresets resets all changes to the "query_presets" edge.
+func (m *ResearchMutation) ResetQueryPresets() {
+	m.query_presets = nil
+	m.clearedquery_presets = false
+	m.removedquery_presets = nil
+}
+
 // Where appends a list predicates to the ResearchMutation builder.
 func (m *ResearchMutation) Where(ps ...predicate.Research) {
 	m.predicates = append(m.predicates, ps...)
@@ -1074,9 +1680,12 @@ func (m *ResearchMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ResearchMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.events != nil {
 		edges = append(edges, research.EdgeEvents)
+	}
+	if m.query_presets != nil {
+		edges = append(edges, research.EdgeQueryPresets)
 	}
 	return edges
 }
@@ -1091,15 +1700,24 @@ func (m *ResearchMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case research.EdgeQueryPresets:
+		ids := make([]ent.Value, 0, len(m.query_presets))
+		for id := range m.query_presets {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ResearchMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedevents != nil {
 		edges = append(edges, research.EdgeEvents)
+	}
+	if m.removedquery_presets != nil {
+		edges = append(edges, research.EdgeQueryPresets)
 	}
 	return edges
 }
@@ -1114,15 +1732,24 @@ func (m *ResearchMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case research.EdgeQueryPresets:
+		ids := make([]ent.Value, 0, len(m.removedquery_presets))
+		for id := range m.removedquery_presets {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ResearchMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedevents {
 		edges = append(edges, research.EdgeEvents)
+	}
+	if m.clearedquery_presets {
+		edges = append(edges, research.EdgeQueryPresets)
 	}
 	return edges
 }
@@ -1133,6 +1760,8 @@ func (m *ResearchMutation) EdgeCleared(name string) bool {
 	switch name {
 	case research.EdgeEvents:
 		return m.clearedevents
+	case research.EdgeQueryPresets:
+		return m.clearedquery_presets
 	}
 	return false
 }
@@ -1151,6 +1780,9 @@ func (m *ResearchMutation) ResetEdge(name string) error {
 	switch name {
 	case research.EdgeEvents:
 		m.ResetEvents()
+		return nil
+	case research.EdgeQueryPresets:
+		m.ResetQueryPresets()
 		return nil
 	}
 	return fmt.Errorf("unknown Research edge %s", name)

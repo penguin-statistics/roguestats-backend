@@ -1,8 +1,9 @@
 package syncschema
 
 import (
-	appcli "exusiai.dev/roguestats-backend/cmd/app/cli"
 	"github.com/urfave/cli/v2"
+
+	appcli "exusiai.dev/roguestats-backend/cmd/app/cli"
 )
 
 func Command() *cli.Command {
@@ -14,7 +15,7 @@ func Command() *cli.Command {
 				Name:    "dir",
 				Aliases: []string{"d"},
 				Usage:   "Directory containing the JSON Schemas.",
-				Value:   "./schema",
+				Value:   "./schema/researches",
 			},
 		},
 		Action: func(c *cli.Context) error {

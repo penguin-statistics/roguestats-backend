@@ -59,6 +59,28 @@ var (
 			},
 		},
 	}
+	// QueryPresetsColumns holds the columns for the "query_presets" table.
+	QueryPresetsColumns = []*schema.Column{
+		{Name: "query_preset_id", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString, Size: 64},
+		{Name: "where", Type: field.TypeJSON},
+		{Name: "mapping", Type: field.TypeString},
+		{Name: "research_id", Type: field.TypeString},
+	}
+	// QueryPresetsTable holds the schema information for the "query_presets" table.
+	QueryPresetsTable = &schema.Table{
+		Name:       "query_presets",
+		Columns:    QueryPresetsColumns,
+		PrimaryKey: []*schema.Column{QueryPresetsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "query_presets_researches_query_presets",
+				Columns:    []*schema.Column{QueryPresetsColumns[4]},
+				RefColumns: []*schema.Column{ResearchesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// ResearchesColumns holds the columns for the "researches" table.
 	ResearchesColumns = []*schema.Column{
 		{Name: "research_id", Type: field.TypeString, Unique: true},
@@ -88,6 +110,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EventsTable,
+		QueryPresetsTable,
 		ResearchesTable,
 		UsersTable,
 	}
@@ -96,4 +119,5 @@ var (
 func init() {
 	EventsTable.ForeignKeys[0].RefTable = ResearchesTable
 	EventsTable.ForeignKeys[1].RefTable = UsersTable
+	QueryPresetsTable.ForeignKeys[0].RefTable = ResearchesTable
 }

@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// QueryPreset is the client for interacting with the QueryPreset builders.
+	QueryPreset *QueryPresetClient
 	// Research is the client for interacting with the Research builders.
 	Research *ResearchClient
 	// User is the client for interacting with the User builders.
@@ -150,6 +152,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Event = NewEventClient(tx.config)
+	tx.QueryPreset = NewQueryPresetClient(tx.config)
 	tx.Research = NewResearchClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

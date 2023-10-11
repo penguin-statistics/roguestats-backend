@@ -42,7 +42,7 @@
         {
           "const": "ro3_res4",
           "title": "定期维护",
-          "alias": "dingqijiweihu dqjwh"
+          "alias": "dingqiweihu dingjiweihu dqwh djwh"
         },
         {
           "const": "ro3_res5",
@@ -62,47 +62,47 @@
         {
           "const": "ro3_res5a",
           "title": "不冻河",
-          "alias": "bufoudonghe bfdh"
+          "alias": "budonghe foudonghe bdh fdh"
         },
         {
           "const": "ro3_rec1",
           "title": "野外生存专家",
-          "alias": "yewaishengcunzhuanjiajie ywsczj"
+          "alias": "yewaishengcunzhuanjia yewaishengcunzhuanjie ywsczj"
         },
         {
           "const": "ro3_rec2",
           "title": "在地公共信号放大站756号",
-          "alias": "zaididegonggongxinshenhaofangdadaitaizhan756hao zdggxshfdtz756h"
+          "alias": "zaidigonggongxinhaofangdazhan756hao zaidigonggongxinhaofangdaizhan756hao zaidigonggongxinhaofangtaizhan756hao zaidigonggongshenhaofangdazhan756hao zaidigonggongshenhaofangdaizhan756hao zaidigonggongshenhaofangtaizhan756hao zaidegonggongxinhaofangdazhan756hao zaidegonggongxinhaofangdaizhan756hao zaidegonggongxinhaofangtaizhan756hao zaidegonggongshenhaofangdazhan756hao zaidegonggongshenhaofangdaizhan756hao zaidegonggongshenhaofangtaizhan756hao zdggxhfdz756h zdggxhftz756h zdggshfdz756h zdggshftz756h"
         },
         {
           "const": "ro3_relic1",
           "title": "特里蒙旅行社特派团",
-          "alias": "telimenglvhangxingshetepaituan tlmlhxstpt"
+          "alias": "telimenglvhangshetepaituan telimenglvxingshetepaituan tlmlhstpt tlmlxstpt"
         },
         {
           "const": "ro3_relic2",
           "title": "在地公共移动站N6号",
-          "alias": "zaididegonggongyidongzhanN6hao zdggydzN6h"
+          "alias": "zaidigonggongyidongzhanN6hao zaidegonggongyidongzhanN6hao zdggydzN6h"
         },
         {
           "const": "ro3_spring",
           "title": "度假胜地",
-          "alias": "duduojiashengdide djsd"
+          "alias": "dujiashengdi dujiashengde duojiashengdi duojiashengde djsd"
         },
         {
           "const": "ro3_height",
           "title": "负伤的主树",
-          "alias": "fushangdedizhushu fsdzs"
+          "alias": "fushangdezhushu fushangdizhushu fsdzs"
         },
         {
           "const": "ro3_pick1",
           "title": "不见群山",
-          "alias": "bufoujianxianqunshan bfjxqs"
+          "alias": "bujianqunshan buxianqunshan foujianqunshan fouxianqunshan bjqs bxqs fjqs fxqs"
         },
         {
           "const": "ro3_pick2",
           "title": "远见所向",
-          "alias": "yuanjianxiansuoxiang yjxsx"
+          "alias": "yuanjiansuoxiang yuanxiansuoxiang yjsx yxsx"
         },
         {
           "const": "ro3_normal1",
@@ -122,7 +122,7 @@
         {
           "const": "ro3_bat1",
           "title": "沼泽里的抽泣声",
-          "alias": "zhaozeshilidedichouqisheng zzsldcqs"
+          "alias": "zhaozelidechouqisheng zhaozelidichouqisheng zhaoshilidechouqisheng zhaoshilidichouqisheng zzldcqs zsldcqs"
         },
         {
           "const": "ro3_bat2",
@@ -132,12 +132,12 @@
         {
           "const": "ro3_bat3",
           "title": "随行人员",
-          "alias": "suihangxingrenyuanyun shxry"
+          "alias": "suihangrenyuan suihangrenyun suixingrenyuan suixingrenyun shry sxry"
         },
         {
           "const": "ro3_bat4",
           "title": "邪恶计划鸭",
-          "alias": "xieyayeyuxuewujihuaya xyewjhy"
+          "alias": "xieejihuaya xiewujihuaya yaejihuaya yawujihuaya yeejihuaya yewujihuaya yuejihuaya yuwujihuaya xuejihuaya xuwujihuaya xejhy xwjhy yejhy ywjhy"
         },
         {
           "const": "ro3_bat5",
@@ -147,12 +147,12 @@
         {
           "const": "ro3_bat6",
           "title": "请君入戏",
-          "alias": "qingjunruxihu qjrxh"
+          "alias": "qingjunruxi qingjunruhu qjrx qjrh"
         },
         {
           "const": "ro3_bat7",
           "title": "北风女巫",
-          "alias": "beifengnvruwu bfnrw"
+          "alias": "beifengnvwu beifengruwu bfnw bfrw"
         },
         {
           "const": "ro3_bat8",
@@ -162,7 +162,7 @@
         {
           "const": "ro3_bat9",
           "title": "猜疑链",
-          "alias": "caiyinilian cynl"
+          "alias": "caiyilian cainilian cyl cnl"
         }
       ]
     }

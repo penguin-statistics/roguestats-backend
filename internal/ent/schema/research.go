@@ -28,7 +28,10 @@ func (Research) Fields() []ent.Field {
 				entgql.OrderField("ID"),
 			),
 		field.String("name").MaxLen(64),
-		field.Bytes("schema"),
+		field.Bytes("schema").
+			Annotations(
+				entgql.Type("Any"),
+			),
 	}
 }
 
@@ -37,7 +40,16 @@ func (Research) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("events", Event.Type).
 			// Required().
-			Annotations(entsql.OnDelete(entsql.NoAction)),
+			Annotations(
+				entsql.OnDelete(entsql.NoAction),
+				entgql.Skip(entgql.SkipType),
+			),
+		edge.To("query_presets", QueryPreset.Type).
+			// Required().
+			Annotations(
+				entsql.OnDelete(entsql.NoAction),
+				entgql.Skip(entgql.SkipType),
+			),
 	}
 }
 

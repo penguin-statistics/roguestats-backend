@@ -21,6 +21,18 @@ func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
 }
 
+// The QueryPresetFunc type is an adapter to allow the use of ordinary
+// function as QueryPreset mutator.
+type QueryPresetFunc func(context.Context, *ent.QueryPresetMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QueryPresetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QueryPresetMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QueryPresetMutation", m)
+}
+
 // The ResearchFunc type is an adapter to allow the use of ordinary
 // function as Research mutator.
 type ResearchFunc func(context.Context, *ent.ResearchMutation) (ent.Value, error)

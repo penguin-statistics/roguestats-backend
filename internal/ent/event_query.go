@@ -25,8 +25,6 @@ type EventQuery struct {
 	predicates   []predicate.Event
 	withUser     *UserQuery
 	withResearch *ResearchQuery
-	modifiers    []func(*sql.Selector)
-	loadTotal    []func(context.Context, []*Event) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -421,9 +419,6 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
-	if len(eq.modifiers) > 0 {
-		_spec.Modifiers = eq.modifiers
-	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -442,11 +437,6 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 	if query := eq.withResearch; query != nil {
 		if err := eq.loadResearch(ctx, query, nodes, nil,
 			func(n *Event, e *Research) { n.Edges.Research = e }); err != nil {
-			return nil, err
-		}
-	}
-	for i := range eq.loadTotal {
-		if err := eq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -514,9 +504,6 @@ func (eq *EventQuery) loadResearch(ctx context.Context, query *ResearchQuery, no
 
 func (eq *EventQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := eq.querySpec()
-	if len(eq.modifiers) > 0 {
-		_spec.Modifiers = eq.modifiers
-	}
 	_spec.Node.Columns = eq.ctx.Fields
 	if len(eq.ctx.Fields) > 0 {
 		_spec.Unique = eq.ctx.Unique != nil && *eq.ctx.Unique

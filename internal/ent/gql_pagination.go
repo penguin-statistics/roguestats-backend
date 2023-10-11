@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 	"github.com/99designs/gqlgen/graphql"
@@ -410,6 +411,301 @@ func (e *Event) ToEdge(order *EventOrder) *EventEdge {
 	return &EventEdge{
 		Node:   e,
 		Cursor: order.Field.toCursor(e),
+	}
+}
+
+// QueryPresetEdge is the edge representation of QueryPreset.
+type QueryPresetEdge struct {
+	Node   *QueryPreset `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// QueryPresetConnection is the connection containing edges to QueryPreset.
+type QueryPresetConnection struct {
+	Edges      []*QueryPresetEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+func (c *QueryPresetConnection) build(nodes []*QueryPreset, pager *querypresetPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *QueryPreset
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *QueryPreset {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *QueryPreset {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*QueryPresetEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &QueryPresetEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// QueryPresetPaginateOption enables pagination customization.
+type QueryPresetPaginateOption func(*querypresetPager) error
+
+// WithQueryPresetOrder configures pagination ordering.
+func WithQueryPresetOrder(order *QueryPresetOrder) QueryPresetPaginateOption {
+	if order == nil {
+		order = DefaultQueryPresetOrder
+	}
+	o := *order
+	return func(pager *querypresetPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultQueryPresetOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithQueryPresetFilter configures pagination filter.
+func WithQueryPresetFilter(filter func(*QueryPresetQuery) (*QueryPresetQuery, error)) QueryPresetPaginateOption {
+	return func(pager *querypresetPager) error {
+		if filter == nil {
+			return errors.New("QueryPresetQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type querypresetPager struct {
+	reverse bool
+	order   *QueryPresetOrder
+	filter  func(*QueryPresetQuery) (*QueryPresetQuery, error)
+}
+
+func newQueryPresetPager(opts []QueryPresetPaginateOption, reverse bool) (*querypresetPager, error) {
+	pager := &querypresetPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultQueryPresetOrder
+	}
+	return pager, nil
+}
+
+func (p *querypresetPager) applyFilter(query *QueryPresetQuery) (*QueryPresetQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *querypresetPager) toCursor(qp *QueryPreset) Cursor {
+	return p.order.Field.toCursor(qp)
+}
+
+func (p *querypresetPager) applyCursors(query *QueryPresetQuery, after, before *Cursor) (*QueryPresetQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultQueryPresetOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *querypresetPager) applyOrder(query *QueryPresetQuery) *QueryPresetQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultQueryPresetOrder.Field {
+		query = query.Order(DefaultQueryPresetOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *querypresetPager) orderExpr(query *QueryPresetQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultQueryPresetOrder.Field {
+			b.Comma().Ident(DefaultQueryPresetOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to QueryPreset.
+func (qp *QueryPresetQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...QueryPresetPaginateOption,
+) (*QueryPresetConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newQueryPresetPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if qp, err = pager.applyFilter(qp); err != nil {
+		return nil, err
+	}
+	conn := &QueryPresetConnection{Edges: []*QueryPresetEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := qp.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if qp, err = pager.applyCursors(qp, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		qp.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := qp.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	qp = pager.applyOrder(qp)
+	nodes, err := qp.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// QueryPresetOrderFieldID orders QueryPreset by id.
+	QueryPresetOrderFieldID = &QueryPresetOrderField{
+		Value: func(qp *QueryPreset) (ent.Value, error) {
+			return qp.ID, nil
+		},
+		column: querypreset.FieldID,
+		toTerm: querypreset.ByID,
+		toCursor: func(qp *QueryPreset) Cursor {
+			return Cursor{
+				ID:    qp.ID,
+				Value: qp.ID,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f QueryPresetOrderField) String() string {
+	var str string
+	switch f.column {
+	case QueryPresetOrderFieldID.column:
+		str = "ID"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f QueryPresetOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *QueryPresetOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("QueryPresetOrderField %T must be a string", v)
+	}
+	switch str {
+	case "ID":
+		*f = *QueryPresetOrderFieldID
+	default:
+		return fmt.Errorf("%s is not a valid QueryPresetOrderField", str)
+	}
+	return nil
+}
+
+// QueryPresetOrderField defines the ordering field of QueryPreset.
+type QueryPresetOrderField struct {
+	// Value extracts the ordering value from the given QueryPreset.
+	Value    func(*QueryPreset) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) querypreset.OrderOption
+	toCursor func(*QueryPreset) Cursor
+}
+
+// QueryPresetOrder defines the ordering of QueryPreset.
+type QueryPresetOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *QueryPresetOrderField `json:"field"`
+}
+
+// DefaultQueryPresetOrder is the default ordering of QueryPreset.
+var DefaultQueryPresetOrder = &QueryPresetOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &QueryPresetOrderField{
+		Value: func(qp *QueryPreset) (ent.Value, error) {
+			return qp.ID, nil
+		},
+		column: querypreset.FieldID,
+		toTerm: querypreset.ByID,
+		toCursor: func(qp *QueryPreset) Cursor {
+			return Cursor{ID: qp.ID}
+		},
+	},
+}
+
+// ToEdge converts QueryPreset into QueryPresetEdge.
+func (qp *QueryPreset) ToEdge(order *QueryPresetOrder) *QueryPresetEdge {
+	if order == nil {
+		order = DefaultQueryPresetOrder
+	}
+	return &QueryPresetEdge{
+		Node:   qp,
+		Cursor: order.Field.toCursor(qp),
 	}
 }
 

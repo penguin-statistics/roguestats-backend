@@ -30,13 +30,11 @@ type Research struct {
 type ResearchEdges struct {
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
+	// QueryPresets holds the value of the query_presets edge.
+	QueryPresets []*QueryPreset `json:"query_presets,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
-
-	namedEvents map[string][]*Event
+	loadedTypes [2]bool
 }
 
 // EventsOrErr returns the Events value or an error if the edge
@@ -46,6 +44,15 @@ func (e ResearchEdges) EventsOrErr() ([]*Event, error) {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
+}
+
+// QueryPresetsOrErr returns the QueryPresets value or an error if the edge
+// was not loaded in eager-loading.
+func (e ResearchEdges) QueryPresetsOrErr() ([]*QueryPreset, error) {
+	if e.loadedTypes[1] {
+		return e.QueryPresets, nil
+	}
+	return nil, &NotLoadedError{edge: "query_presets"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -108,6 +115,11 @@ func (r *Research) QueryEvents() *EventQuery {
 	return NewResearchClient(r.config).QueryEvents(r)
 }
 
+// QueryQueryPresets queries the "query_presets" edge of the Research entity.
+func (r *Research) QueryQueryPresets() *QueryPresetQuery {
+	return NewResearchClient(r.config).QueryQueryPresets(r)
+}
+
 // Update returns a builder for updating this Research.
 // Note that you need to call Research.Unwrap() before calling this method if this Research
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -138,30 +150,6 @@ func (r *Research) String() string {
 	builder.WriteString(fmt.Sprintf("%v", r.Schema))
 	builder.WriteByte(')')
 	return builder.String()
-}
-
-// NamedEvents returns the Events named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (r *Research) NamedEvents(name string) ([]*Event, error) {
-	if r.Edges.namedEvents == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := r.Edges.namedEvents[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (r *Research) appendNamedEvents(name string, edges ...*Event) {
-	if r.Edges.namedEvents == nil {
-		r.Edges.namedEvents = make(map[string][]*Event)
-	}
-	if len(edges) == 0 {
-		r.Edges.namedEvents[name] = []*Event{}
-	} else {
-		r.Edges.namedEvents[name] = append(r.Edges.namedEvents[name], edges...)
-	}
 }
 
 // Researches is a parsable slice of Research.

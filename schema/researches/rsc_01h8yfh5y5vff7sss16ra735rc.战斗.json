@@ -31,22 +31,22 @@
         {
           "const": "rogue_3_band_5",
           "title": "突击战术分队（近锋）",
-          "alias": "tujizhanshuzhufenduijinfeng tjzszfdjf"
+          "alias": "tujizhanshufenduijinfeng tujizhanzhufenduijinfeng tjzsfdjf tjzzfdjf"
         },
         {
           "const": "rogue_3_band_6",
           "title": "堡垒战术分队（重辅）",
-          "alias": "baobupuleizhanshuzhufenduizhongchongfu bplzszfdzcf"
+          "alias": "baoleizhanshufenduizhongfu baoleizhanshufenduichongfu baoleizhanzhufenduizhongfu baoleizhanzhufenduichongfu buleizhanshufenduizhongfu buleizhanshufenduichongfu buleizhanzhufenduizhongfu buleizhanzhufenduichongfu puleizhanshufenduizhongfu puleizhanshufenduichongfu puleizhanzhufenduizhongfu puleizhanzhufenduichongfu blzsfdzf blzsfdcf blzzfdzf blzzfdcf plzsfdzf plzsfdcf plzzfdzf plzzfdcf"
         },
         {
           "const": "rogue_3_band_7",
           "title": "远程战术分队（狙医）",
-          "alias": "yuanchengzhanshuzhufenduijuyi yczszfdjy"
+          "alias": "yuanchengzhanshufenduijuyi yuanchengzhanzhufenduijuyi yczsfdjy yczzfdjy"
         },
         {
           "const": "rogue_3_band_8",
           "title": "破坏战术分队（术特）",
-          "alias": "pohuaizhanshuzhufenduishuzhute phzszfdszt"
+          "alias": "pohuaizhanshufenduishute pohuaizhanshufenduizhute pohuaizhanzhufenduishute pohuaizhanzhufenduizhute phzsfdst phzsfdzt phzzfdst phzzfdzt"
         },
         {
           "const": "rogue_3_band_9",
@@ -108,32 +108,32 @@
         {
           "const": "BATTLE_BOSS",
           "title": "险路恶敌",
-          "alias": "xianluewudi xlewd"
+          "alias": "xianluedi xianluwudi xled xlwd"
         },
         {
           "const": "INCIDENT",
           "title": "不期而遇",
-          "alias": "bufouqijieryu bfqjey"
+          "alias": "buqieryu bujieryu fouqieryu foujieryu bqey bjey fqey fjey"
         },
         {
           "const": "INCIDENT_RES3A",
           "title": "不期而遇-黑色足迹",
-          "alias": "bufouqijieryuheisezuji bfqjeyhszj"
+          "alias": "buqieryuheisezuji bujieryuheisezuji fouqieryuheisezuji foujieryuheisezuji bqeyhszj bjeyhszj fqeyhszj fjeyhszj"
         },
         {
           "const": "INCIDENT_MIMIC_ENEMY",
           "title": "不期而遇-鸭狗熊",
-          "alias": "bufouqijieryuyagouxiong bfqjeyygx"
+          "alias": "buqieryuyagouxiong bujieryuyagouxiong fouqieryuyagouxiong foujieryuyagouxiong bqeyygx bjeyygx fqeyygx fjeyygx"
         },
         {
           "const": "SACRIFICE",
           "title": "失与得",
-          "alias": "shiyudedei syd"
+          "alias": "shiyude shiyudei syd"
         },
         {
           "const": "BATTLE_SHOP",
           "title": "诡异行商",
-          "alias": "guiyihangxingshang gyhxs"
+          "alias": "guiyihangshang guiyixingshang gyhs gyxs"
         }
       ]
     },
@@ -214,7 +214,7 @@
             {
               "const": "rogue_3_recruit_ticket_tank",
               "title": "重装",
-              "alias": "zhongchongzhuang zcz"
+              "alias": "zhongzhuang chongzhuang zz cz"
             },
             {
               "const": "rogue_3_recruit_ticket_sniper",
@@ -224,12 +224,12 @@
             {
               "const": "rogue_3_recruit_ticket_caster",
               "title": "术师",
-              "alias": "shuzhushi szs"
+              "alias": "shushi zhushi ss zs"
             },
             {
               "const": "rogue_3_recruit_ticket_support",
               "title": "辅助",
-              "alias": "fuzhuchu fzc"
+              "alias": "fuzhu fuchu fz fc"
             },
             {
               "const": "rogue_3_recruit_ticket_medic",
@@ -239,7 +239,7 @@
             {
               "const": "rogue_3_recruit_ticket_special",
               "title": "特种",
-              "alias": "tezhongchong tzc"
+              "alias": "tezhong techong tz tc"
             },
             {
               "const": "rogue_3_recruit_ticket_double_1",
@@ -249,7 +249,7 @@
             {
               "const": "rogue_3_recruit_ticket_double_2",
               "title": "堡垒协议（重辅）",
-              "alias": "baobupuleixieyizhongchongfu bplxyzcf"
+              "alias": "baoleixieyizhongfu baoleixieyichongfu buleixieyizhongfu buleixieyichongfu puleixieyizhongfu puleixieyichongfu blxyzf blxycf plxyzf plxycf"
             },
             {
               "const": "rogue_3_recruit_ticket_double_3",
@@ -259,32 +259,32 @@
             {
               "const": "rogue_3_recruit_ticket_double_4",
               "title": "破坏协议（术特）",
-              "alias": "pohuaixieyishuzhute phxyszt"
+              "alias": "pohuaixieyishute pohuaixieyizhute phxyst phxyzt"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_melee",
               "title": "前线统合",
-              "alias": "qianxiantonghege qxthg"
+              "alias": "qianxiantonghe qianxiantongge qxth qxtg"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_ranged",
               "title": "后方协调",
-              "alias": "houfangxietiaodiaozhou hfxtdz"
+              "alias": "houfangxietiao houfangxiediao houfangxiezhou hfxt hfxd hfxz"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_melee_discount",
               "title": "前线统合资深",
-              "alias": "qianxiantonghegezishen qxthgzs"
+              "alias": "qianxiantonghezishen qianxiantonggezishen qxthzs qxtgzs"
             },
             {
               "const": "rogue_3_recruit_ticket_quad_ranged_discount",
               "title": "后方协调资深",
-              "alias": "houfangxietiaodiaozhouzishen hfxtdzzs"
+              "alias": "houfangxietiaozishen houfangxiediaozishen houfangxiezhouzishen hfxtzs hfxdzs hfxzzs"
             },
             {
               "const": "rogue_3_recruit_ticket_all",
               "title": "高级人事调度函",
-              "alias": "gaojirenshitiaodiaozhoududuohan gjrstdzdh"
+              "alias": "gaojirenshitiaoduhan gaojirenshitiaoduohan gaojirenshidiaoduhan gaojirenshidiaoduohan gaojirenshizhouduhan gaojirenshizhouduohan gjrstdh gjrsddh gjrszdh"
             },
             {
               "const": "rogue_3_recruit_ticket_all_discount",
@@ -357,12 +357,12 @@
           {
             "const": "rogue_3_totem_R_E5",
             "title": "慰藉",
-            "alias": "weijieji wj"
+            "alias": "weijie weiji wj"
           },
           {
             "const": "rogue_3_totem_R_E6",
             "title": "告解",
-            "alias": "gaojiexie gjx"
+            "alias": "gaojie gaoxie gj gx"
           },
           {
             "const": "rogue_3_totem_G_L1",
@@ -392,7 +392,7 @@
           {
             "const": "rogue_3_totem_G_L6",
             "title": "大地",
-            "alias": "dadaitaidide dtd"
+            "alias": "dadi dade daidi daide taidi taide dd td"
           },
           {
             "const": "rogue_3_totem_G_E1",
@@ -412,7 +412,7 @@
           {
             "const": "rogue_3_totem_G_E4",
             "title": "疑惑",
-            "alias": "yinihuo ynh"
+            "alias": "yihuo nihuo yh nh"
           },
           {
             "const": "rogue_3_totem_G_E5",
@@ -427,7 +427,7 @@
           {
             "const": "rogue_3_totem_B_L1",
             "title": "源石",
-            "alias": "yuanshidan ysd"
+            "alias": "yuanshi yuandan ys yd"
           },
           {
             "const": "rogue_3_totem_B_L2",
@@ -437,7 +437,7 @@
           {
             "const": "rogue_3_totem_B_L3",
             "title": "砂石",
-            "alias": "shashidan ssd"
+            "alias": "shashi shadan ss sd"
           },
           {
             "const": "rogue_3_totem_B_L4",
@@ -477,7 +477,7 @@
           {
             "const": "rogue_3_totem_B_E5",
             "title": "繁衍",
-            "alias": "fanpoyan fpy"
+            "alias": "fanyan poyan fy py"
           },
           {
             "const": "rogue_3_totem_B_E6",

@@ -27,14 +27,15 @@ func (e ExprFunction) FlattenDropTickets(dropRecruitTickets any) (any, error) {
 	return elements, nil
 }
 
-func (e ExprFunction) MapTotemArrayToValues(totemArray any) (any, error) {
-	if totemArray == nil {
+func (e ExprFunction) MapTotemArrayToValues(totemsAny any) (any, error) {
+	if totemsAny == nil {
 		return nil, nil
 	}
+	totems := totemsAny.([]any)
 
-	results := make([]any, 0)
-	for _, totemInterface := range totemArray.([]any) {
-		totem := totemInterface.(string)
+	results := make([]any, 0, len(totems))
+	for _, totemAny := range totems {
+		totem := totemAny.(string)
 		lastChar := totem[len(totem)-1:]
 		var value int
 		if lastChar == "1" || lastChar == "2" || lastChar == "3" {
@@ -49,13 +50,14 @@ func (e ExprFunction) MapTotemArrayToValues(totemArray any) (any, error) {
 	return results, nil
 }
 
-func (e ExprFunction) MapTotemArrayToColors(totemArray any) (any, error) {
-	if totemArray == nil {
+func (e ExprFunction) MapTotemArrayToColors(totemsAny any) (any, error) {
+	if totemsAny == nil {
 		return nil, nil
 	}
+	totems := totemsAny.([]any)
 
-	results := make([]any, 0)
-	for _, totemInterface := range totemArray.([]any) {
+	results := make([]any, 0, len(totems))
+	for _, totemInterface := range totems {
 		totem := totemInterface.(string)
 		results = append(results, totem[len(totem)-4:len(totem)-3])
 	}
@@ -94,13 +96,16 @@ func (e ExprFunction) MapIncidentTypeToName(incidentType any) (any, error) {
 	return mapping[incidentType.(string)], nil
 }
 
-func (e ExprFunction) MapRestChoicesToNames(restChoices any) (any, error) {
-	if restChoices == nil {
+func (e ExprFunction) MapRestChoicesToNames(restChoicesAny any) (any, error) {
+	if restChoicesAny == nil {
 		return nil, nil
 	}
+
+	restChoices := restChoicesAny.([]any)
 	mapping := GetExprCommonData().GetRestChoicesNameMap()
-	results := make([]any, 0)
-	for _, choice := range restChoices.([]any) {
+
+	results := make([]any, 0, len(restChoices))
+	for _, choice := range restChoices {
 		results = append(results, mapping[choice.(string)])
 	}
 	return results, nil

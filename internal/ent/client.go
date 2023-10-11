@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
 )
@@ -26,6 +27,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// QueryPreset is the client for interacting with the QueryPreset builders.
+	QueryPreset *QueryPresetClient
 	// Research is the client for interacting with the Research builders.
 	Research *ResearchClient
 	// User is the client for interacting with the User builders.
@@ -44,6 +47,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Event = NewEventClient(c.config)
+	c.QueryPreset = NewQueryPresetClient(c.config)
 	c.Research = NewResearchClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -126,11 +130,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Event:    NewEventClient(cfg),
-		Research: NewResearchClient(cfg),
-		User:     NewUserClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Event:       NewEventClient(cfg),
+		QueryPreset: NewQueryPresetClient(cfg),
+		Research:    NewResearchClient(cfg),
+		User:        NewUserClient(cfg),
 	}, nil
 }
 
@@ -148,11 +153,12 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Event:    NewEventClient(cfg),
-		Research: NewResearchClient(cfg),
-		User:     NewUserClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Event:       NewEventClient(cfg),
+		QueryPreset: NewQueryPresetClient(cfg),
+		Research:    NewResearchClient(cfg),
+		User:        NewUserClient(cfg),
 	}, nil
 }
 
@@ -182,6 +188,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Event.Use(hooks...)
+	c.QueryPreset.Use(hooks...)
 	c.Research.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -190,6 +197,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Event.Intercept(interceptors...)
+	c.QueryPreset.Intercept(interceptors...)
 	c.Research.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -199,6 +207,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *EventMutation:
 		return c.Event.mutate(ctx, m)
+	case *QueryPresetMutation:
+		return c.QueryPreset.mutate(ctx, m)
 	case *ResearchMutation:
 		return c.Research.mutate(ctx, m)
 	case *UserMutation:
@@ -358,6 +368,140 @@ func (c *EventClient) mutate(ctx context.Context, m *EventMutation) (Value, erro
 	}
 }
 
+// QueryPresetClient is a client for the QueryPreset schema.
+type QueryPresetClient struct {
+	config
+}
+
+// NewQueryPresetClient returns a client for the QueryPreset from the given config.
+func NewQueryPresetClient(c config) *QueryPresetClient {
+	return &QueryPresetClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `querypreset.Hooks(f(g(h())))`.
+func (c *QueryPresetClient) Use(hooks ...Hook) {
+	c.hooks.QueryPreset = append(c.hooks.QueryPreset, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `querypreset.Intercept(f(g(h())))`.
+func (c *QueryPresetClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QueryPreset = append(c.inters.QueryPreset, interceptors...)
+}
+
+// Create returns a builder for creating a QueryPreset entity.
+func (c *QueryPresetClient) Create() *QueryPresetCreate {
+	mutation := newQueryPresetMutation(c.config, OpCreate)
+	return &QueryPresetCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QueryPreset entities.
+func (c *QueryPresetClient) CreateBulk(builders ...*QueryPresetCreate) *QueryPresetCreateBulk {
+	return &QueryPresetCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QueryPreset.
+func (c *QueryPresetClient) Update() *QueryPresetUpdate {
+	mutation := newQueryPresetMutation(c.config, OpUpdate)
+	return &QueryPresetUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QueryPresetClient) UpdateOne(qp *QueryPreset) *QueryPresetUpdateOne {
+	mutation := newQueryPresetMutation(c.config, OpUpdateOne, withQueryPreset(qp))
+	return &QueryPresetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QueryPresetClient) UpdateOneID(id string) *QueryPresetUpdateOne {
+	mutation := newQueryPresetMutation(c.config, OpUpdateOne, withQueryPresetID(id))
+	return &QueryPresetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QueryPreset.
+func (c *QueryPresetClient) Delete() *QueryPresetDelete {
+	mutation := newQueryPresetMutation(c.config, OpDelete)
+	return &QueryPresetDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QueryPresetClient) DeleteOne(qp *QueryPreset) *QueryPresetDeleteOne {
+	return c.DeleteOneID(qp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QueryPresetClient) DeleteOneID(id string) *QueryPresetDeleteOne {
+	builder := c.Delete().Where(querypreset.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QueryPresetDeleteOne{builder}
+}
+
+// Query returns a query builder for QueryPreset.
+func (c *QueryPresetClient) Query() *QueryPresetQuery {
+	return &QueryPresetQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQueryPreset},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QueryPreset entity by its id.
+func (c *QueryPresetClient) Get(ctx context.Context, id string) (*QueryPreset, error) {
+	return c.Query().Where(querypreset.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QueryPresetClient) GetX(ctx context.Context, id string) *QueryPreset {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryResearch queries the research edge of a QueryPreset.
+func (c *QueryPresetClient) QueryResearch(qp *QueryPreset) *ResearchQuery {
+	query := (&ResearchClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := qp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(querypreset.Table, querypreset.FieldID, id),
+			sqlgraph.To(research.Table, research.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, querypreset.ResearchTable, querypreset.ResearchColumn),
+		)
+		fromV = sqlgraph.Neighbors(qp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QueryPresetClient) Hooks() []Hook {
+	return c.hooks.QueryPreset
+}
+
+// Interceptors returns the client interceptors.
+func (c *QueryPresetClient) Interceptors() []Interceptor {
+	return c.inters.QueryPreset
+}
+
+func (c *QueryPresetClient) mutate(ctx context.Context, m *QueryPresetMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QueryPresetCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QueryPresetUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QueryPresetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QueryPresetDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QueryPreset mutation op: %q", m.Op())
+	}
+}
+
 // ResearchClient is a client for the Research schema.
 type ResearchClient struct {
 	config
@@ -460,6 +604,22 @@ func (c *ResearchClient) QueryEvents(r *Research) *EventQuery {
 			sqlgraph.From(research.Table, research.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, research.EventsTable, research.EventsColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryQueryPresets queries the query_presets edge of a Research.
+func (c *ResearchClient) QueryQueryPresets(r *Research) *QueryPresetQuery {
+	query := (&QueryPresetClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(research.Table, research.FieldID, id),
+			sqlgraph.To(querypreset.Table, querypreset.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, research.QueryPresetsTable, research.QueryPresetsColumn),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -629,9 +789,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Event, Research, User []ent.Hook
+		Event, QueryPreset, Research, User []ent.Hook
 	}
 	inters struct {
-		Event, Research, User []ent.Interceptor
+		Event, QueryPreset, Research, User []ent.Interceptor
 	}
 )

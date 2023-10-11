@@ -6,11 +6,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"exusiai.dev/roguestats-backend/internal/ent"
-	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/fx"
+
+	"exusiai.dev/roguestats-backend/internal/ent"
+	"exusiai.dev/roguestats-backend/internal/ent/research"
 )
 
 type SyncSchemaCommandDeps struct {
@@ -41,6 +42,11 @@ func Run(c *cli.Context, d SyncSchemaCommandDeps) error {
 		name := segments[1]
 		log.Info().Str("path", path).Str("id", id).Msg("processing research")
 
+		jsonBytes, err := minifiedJsonFile(path)
+		if err != nil {
+			return err
+		}
+
 		// Check if the research exists.
 		research, err := tx.Research.Query().Where(research.ID(id)).Only(c.Context)
 		if err != nil {
@@ -50,6 +56,7 @@ func Run(c *cli.Context, d SyncSchemaCommandDeps) error {
 				research, err = tx.Research.Create().
 					SetID(id).
 					SetName(name).
+					SetSchema(jsonBytes).
 					Save(c.Context)
 				if err != nil {
 					return err
@@ -59,14 +66,10 @@ func Run(c *cli.Context, d SyncSchemaCommandDeps) error {
 			}
 		}
 
-		jsonBytes, err := minifiedJsonFile(path)
-		if err != nil {
-			return err
-		}
-
 		// Update the research schema.
 		log.Info().Str("id", id).Msg("updating research schema")
 		_, err = research.Update().
+			SetName(name).
 			SetSchema(jsonBytes).
 			Save(c.Context)
 		if err != nil {

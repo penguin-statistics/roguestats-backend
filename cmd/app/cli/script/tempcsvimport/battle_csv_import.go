@@ -1,4 +1,4 @@
-package script
+package tempcsvimport
 
 import (
 	"log"
@@ -21,9 +21,10 @@ func (c *BattleCSVImport) Run() error {
 	for _, row := range records {
 		log.Default().Printf("importing row '%s'\n", row)
 		content := c.convertRowToContent(row)
+		userID := c.getUserID(row)
 		log.Println(content)
-		if len(content) > 0 {
-			PostEvent(content, "battle")
+		if len(content) > 0 && userID != "" {
+			PostEvent(content, "rsc_01h8yfh5y5vff7sss16ra735rc", userID)
 		}
 	}
 	return nil
@@ -94,4 +95,8 @@ func (c *BattleCSVImport) convertRowToContent(row []string) map[string]any {
 	}
 
 	return content
+}
+
+func (c *BattleCSVImport) getUserID(row []string) string {
+	return GetColumnHandler().HandleUser(strings.TrimSpace(row[14]))
 }

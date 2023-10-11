@@ -59,27 +59,27 @@
         {
           "const": "mixed_2-2-1",
           "title": "混合：2-2-1",
-          "alias": "hunhege221 hhg221"
+          "alias": "hunhe221 hunge221 hh221 hg221"
         },
         {
           "const": "mixed_2-3-1",
           "title": "混合：2-3-1",
-          "alias": "hunhege231 hhg231"
+          "alias": "hunhe231 hunge231 hh231 hg231"
         },
         {
           "const": "mixed_2-3-2",
           "title": "混合：2-3-2",
-          "alias": "hunhege232 hhg232"
+          "alias": "hunhe232 hunge232 hh232 hg232"
         },
         {
           "const": "mixed_2-2-2",
           "title": "混合：2-2-2",
-          "alias": "hunhege222 hhg222"
+          "alias": "hunhe222 hunge222 hh222 hg222"
         },
         {
           "const": "mixed_3-1",
           "title": "混合：3-1",
-          "alias": "hunhege31 hhg31"
+          "alias": "hunhe31 hunge31 hh31 hg31"
         }
       ]
     },
@@ -90,42 +90,42 @@
         {
           "const": "variation_1",
           "title": "己方生命攻击提升，出现国度",
-          "alias": "jifangshengminggongjitidishengchuxianguoduduo jfsmgjtdscxgd"
+          "alias": "jifangshengminggongjitishengchuxianguodu jifangshengminggongjitishengchuxianguoduo jifangshengminggongjidishengchuxianguodu jifangshengminggongjidishengchuxianguoduo jfsmgjtscxgd jfsmgjdscxgd"
         },
         {
           "const": "variation_2",
           "title": "攻击下降，距离2伤害提升",
-          "alias": "gongjixiajiangxiangjuli2shanghaitidisheng gjxjxjl2shtds"
+          "alias": "gongjixiajiangjuli2shanghaitisheng gongjixiajiangjuli2shanghaidisheng gongjixiaxiangjuli2shanghaitisheng gongjixiaxiangjuli2shanghaidisheng gjxjjl2shts gjxjjl2shds gjxxjl2shts gjxxjl2shds"
         },
         {
           "const": "variation_3",
           "title": "同时部署人数、再部署减少",
-          "alias": "tongshibushurenshushuozaibushujianshao tsbsrszbsjs"
+          "alias": "tongshibushurenshuzaibushujianshao tongshibushurenshuozaibushujianshao tsbsrszbsjs"
         },
         {
           "const": "variation_4",
           "title": "技力消耗降低，专注失调",
-          "alias": "jilixiaohaojiangxiangdizhuanzhushitiaodiaozhou jlxhjxdzzstdz"
+          "alias": "jilixiaohaojiangdizhuanzhushitiao jilixiaohaojiangdizhuanzhushidiao jilixiaohaojiangdizhuanzhushizhou jilixiaohaoxiangdizhuanzhushitiao jilixiaohaoxiangdizhuanzhushidiao jilixiaohaoxiangdizhuanzhushizhou jlxhjdzzst jlxhjdzzsd jlxhjdzzsz jlxhxdzzst jlxhxdzzsd jlxhxdzzsz"
         },
         {
           "const": "variation_5",
           "title": "敌方移速下降，重量防御法抗提升",
-          "alias": "difangyisuxiajiangxiangzhongchongliangfangyufakangtidisheng dfysxjxzclfyfktds"
+          "alias": "difangyisuxiajiangzhongliangfangyufakangtisheng difangyisuxiajiangzhongliangfangyufakangdisheng difangyisuxiajiangchongliangfangyufakangtisheng difangyisuxiajiangchongliangfangyufakangdisheng difangyisuxiaxiangzhongliangfangyufakangtisheng difangyisuxiaxiangzhongliangfangyufakangdisheng difangyisuxiaxiangchongliangfangyufakangtisheng difangyisuxiaxiangchongliangfangyufakangdisheng dfysxjzlfyfkts dfysxjzlfyfkds dfysxjclfyfkts dfysxjclfyfkds dfysxxzlfyfkts dfysxxzlfyfkds dfysxxclfyfkts dfysxxclfyfkds"
         },
         {
           "const": "variation_6",
           "title": "生命上限提升，会掉更多血",
-          "alias": "shengmingshangxiantidishenghuikuaidiaogengduoxiexue smsxtdshkdgdx"
+          "alias": "shengmingshangxiantishenghuidiaogengduoxie shengmingshangxiantishenghuidiaogengduoxue shengmingshangxiantishengkuaidiaogengduoxie shengmingshangxiantishengkuaidiaogengduoxue shengmingshangxiandishenghuidiaogengduoxie shengmingshangxiandishenghuidiaogengduoxue shengmingshangxiandishengkuaidiaogengduoxie shengmingshangxiandishengkuaidiaogengduoxue smsxtshdgdx smsxtskdgdx smsxdshdgdx smsxdskdgdx"
         },
         {
           "const": "variation_shop",
           "title": "立即获得一笔资金，暗藏低价商品",
-          "alias": "lijihuodedeiyibizijinancangzangdijiajieshangpin ljhdybzjaczdjsp"
+          "alias": "lijihuodeyibizijinancangdijiashangpin lijihuodeyibizijinancangdijieshangpin lijihuodeyibizijinanzangdijiashangpin lijihuodeyibizijinanzangdijieshangpin lijihuodeiyibizijinancangdijiashangpin lijihuodeiyibizijinancangdijieshangpin lijihuodeiyibizijinanzangdijiashangpin lijihuodeiyibizijinanzangdijieshangpin ljhdybzjacdjsp ljhdybzjazdjsp"
         },
         {
           "const": "variation_shelter",
           "title": "每前进一步都能获得希望",
-          "alias": "meiqianjinyibududounengnaihuodedeixiwang mqjybdnhdxw"
+          "alias": "meiqianjinyibudunenghuodexiwang meiqianjinyibudunenghuodeixiwang meiqianjinyibudunaihuodexiwang meiqianjinyibudunaihuodeixiwang meiqianjinyibudounenghuodexiwang meiqianjinyibudounenghuodeixiwang meiqianjinyibudounaihuodexiwang meiqianjinyibudounaihuodeixiwang mqjybdnhdxw"
         }
       ]
     }

@@ -1,0 +1,5 @@
+{{ define "model/fields/additional" }}
+    {{- if eq $.Name "QueryPreset" }}
+        GroupCountResult *model.GroupCountResult `json:"static,omitempty"`
+    {{- end }}
+{{ end }}

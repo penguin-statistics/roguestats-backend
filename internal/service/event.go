@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
@@ -21,17 +22,13 @@ import (
 type Event struct {
 	fx.In
 
-	Ent         *ent.Client
-	AuthService Auth
+	Ent                *ent.Client
+	AuthService        Auth
+	QueryPresetService QueryPreset
 }
 
 func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
 	client := ent.FromContext(ctx)
-
-	user, err := s.AuthService.CurrentUser(ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	// get schema from research
 	research, err := client.Research.Get(ctx, input.ResearchID)
@@ -55,18 +52,19 @@ func (s Event) CreateEventFromInput(ctx context.Context, input model.CreateEvent
 		SetContent(input.Content).
 		SetUserAgent(input.UserAgent).
 		SetResearchID(input.ResearchID).
-		SetUserID(user.ID).
+		SetUserID(input.UserID).
 		Save(ctx)
 }
 
 /**
- * CalculateStats filters events by filterInput and maps every event to a result using resultMappingInput, then group by result and count
- * @param {string} filterInput can be jsonLogic or expr expression, depends on the filter implementation
+ * CalculateStats filters events by contentJsonPredicate and maps every event to a result using resultMappingInput, then group by result and count
+ * @param {string} researchID is the id of the research to calculate stats for
+ * @param {*ent.EventWhereInput} eventWhere is the filter to apply to events
  * @param {string} resultMappingInput must be an expr expression
  */
-func (s Event) CalculateStats(ctx context.Context, researchID string, filterInput string, resultMappingInput string) (*model.GroupCountResult, error) {
+func (s Event) CalculateStats(ctx context.Context, researchID string, eventWhere *ent.EventWhereInput, resultMappingInput string) (*model.GroupCountResult, error) {
 	// filter events
-	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, filterInput)
+	filteredEvents, err := s.getEventsWithFilter(ctx, researchID, eventWhere)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +89,7 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
 	}
 
 	// convert map into array
-	results := make([]*model.CategoryCount, 0)
+	results := make([]*model.CategoryCount, 0, len(categoryCountMap))
 	for category, count := range categoryCountMap {
 		results = append(results, &model.CategoryCount{
 			Category: category,
@@ -102,43 +100,41 @@ func (s Event) CalculateStats(ctx context.Context, researchID string, filterInpu
 		return results[i].Count > results[j].Count
 	})
 
-	groupCountResult := &model.GroupCountResult{
+	return &model.GroupCountResult{
 		Results: results,
 		Total:   totalCount,
-	}
-	return groupCountResult, nil
+	}, nil
 }
 
-/**
- * GetEventsWithFilter filters events by filterInput. For current implementation, we query the database for all events and filter them in memory.
- * In the future, we should implement a filter that can be translated into a SQL query.
- * @param {string} filterInput For current implementation, we use expr
- */
-func (s Event) getEventsWithFilter(ctx context.Context, researchID string, filterInput string) ([]*ent.Event, error) {
-	events, err := s.Ent.Event.Query().
-		Where(event.HasResearchWith(research.ID(researchID))).
-		All(ctx)
+func (s Event) CalculateStatsWithQueryPreset(ctx context.Context, queryPreset ent.QueryPreset) (*model.GroupCountResult, error) {
+	jsonBytes, err := json.Marshal(queryPreset.Where)
 	if err != nil {
 		return nil, err
 	}
-	if filterInput == "" {
-		return events, nil
+	var eventWhereInput ent.EventWhereInput
+	err = json.Unmarshal(jsonBytes, &eventWhereInput)
+	if err != nil {
+		return nil, err
 	}
-	exprRunner := exprutils.GetExprRunner()
-	filteredEvents := make([]*ent.Event, 0)
-	for _, event := range events {
-		output, err := exprRunner.RunCode(filterInput, exprRunner.PrepareEnv(event))
-		if err != nil {
-			return nil, err
-		}
-		if output == nil {
-			continue
-		}
-		if output.(bool) {
-			filteredEvents = append(filteredEvents, event)
-		}
+	return s.CalculateStats(ctx, queryPreset.ResearchID, &eventWhereInput, queryPreset.Mapping)
+}
+
+func (s Event) CalculateStatsWithQueryPresetID(ctx context.Context, queryPresetID string) (*model.GroupCountResult, error) {
+	queryPreset, err := s.QueryPresetService.GetQueryPreset(ctx, queryPresetID)
+	if err != nil {
+		return nil, err
 	}
-	return filteredEvents, nil
+	return s.CalculateStatsWithQueryPreset(ctx, *queryPreset)
+}
+
+func (s Event) getEventsWithFilter(ctx context.Context, researchID string, eventWhere *ent.EventWhereInput) ([]*ent.Event, error) {
+	query := s.Ent.Event.Query().
+		Where(event.HasResearchWith(research.ID(researchID)))
+	wrappedQuery, err := eventWhere.Filter(query)
+	if err != nil {
+		return nil, err
+	}
+	return wrappedQuery.All(ctx)
 }
 
 func (s Event) mapEventToResult(event *ent.Event, resultMappingInput string) ([]any, error) {

@@ -1,0 +1,81 @@
+scalar Any
+scalar Void
+
+type CategoryCount {
+  category: Any!
+  count: Int!
+}
+
+type GroupCountResult {
+  results: [CategoryCount!]!
+  total: Int!
+}
+
+input GroupCountInput {
+  researchId: ID!
+  where: EventWhereInput
+  resultMappingInput: String!
+}
+
+extend type Query {
+  """
+  Returns the current authenticated user.
+  If the user is not authenticated, this returns null.
+  """
+  me: User
+
+  groupCount(input: GroupCountInput!): GroupCountResult!
+
+  event(id: ID!): Event
+
+  research(id: ID!): Research
+
+  queryPreset(id: ID!): QueryPreset
+}
+
+input CreateEventInput {
+  userAgent: String!
+  content: Map!
+  researchID: ID!
+  userID: ID!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  attributes: Map
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+  turnstileResponse: String!
+}
+
+input RequestPasswordResetInput {
+  email: String!
+  turnstileResponse: String!
+}
+
+input ResetPasswordInput {
+  token: String!
+  password: String!
+}
+
+extend input EventWhereInput {
+  contentJsonPredicate: Map
+}
+
+type Mutation {
+  login(input: LoginInput!): User!
+  requestPasswordReset(input: RequestPasswordResetInput!): Boolean!
+  resetPassword(input: ResetPasswordInput!): Boolean!
+
+  createEvent(input: CreateEventInput!): Event! @authenticated
+
+  createUser(input: CreateUserInput!): User! @admin
+}
+
+directive @admin on FIELD_DEFINITION
+directive @authenticated on FIELD_DEFINITION
+directive @private(userIdFieldName: String = "id") on FIELD_DEFINITION

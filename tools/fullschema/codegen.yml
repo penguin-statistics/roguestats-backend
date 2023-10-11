@@ -1,0 +1,8 @@
+schema: "../../internal/graph/defs/*.graphql"
+generates:
+  ../../schema.generated.graphql:
+    plugins:
+      - "schema-ast"
+    config:
+      includeDirectives: true
+      commentDescriptions: true

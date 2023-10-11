@@ -201,6 +201,29 @@ func HasEventsWith(preds ...predicate.Event) predicate.Research {
 	})
 }
 
+// HasQueryPresets applies the HasEdge predicate on the "query_presets" edge.
+func HasQueryPresets() predicate.Research {
+	return predicate.Research(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, QueryPresetsTable, QueryPresetsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasQueryPresetsWith applies the HasEdge predicate on the "query_presets" edge with a given conditions (other predicates).
+func HasQueryPresetsWith(preds ...predicate.QueryPreset) predicate.Research {
+	return predicate.Research(func(s *sql.Selector) {
+		step := newQueryPresetsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Research) predicate.Research {
 	return predicate.Research(func(s *sql.Selector) {

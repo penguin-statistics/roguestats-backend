@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"exusiai.dev/roguestats-backend/internal/ent/event"
+	"exusiai.dev/roguestats-backend/internal/ent/querypreset"
 	"exusiai.dev/roguestats-backend/internal/ent/research"
 	"exusiai.dev/roguestats-backend/internal/ent/schema"
 	"exusiai.dev/roguestats-backend/internal/ent/user"
@@ -25,6 +26,16 @@ func init() {
 	eventDescID := eventFields[0].Descriptor()
 	// event.DefaultID holds the default value on creation for the id field.
 	event.DefaultID = eventDescID.Default.(func() string)
+	querypresetFields := schema.QueryPreset{}.Fields()
+	_ = querypresetFields
+	// querypresetDescName is the schema descriptor for name field.
+	querypresetDescName := querypresetFields[1].Descriptor()
+	// querypreset.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	querypreset.NameValidator = querypresetDescName.Validators[0].(func(string) error)
+	// querypresetDescID is the schema descriptor for id field.
+	querypresetDescID := querypresetFields[0].Descriptor()
+	// querypreset.DefaultID holds the default value on creation for the id field.
+	querypreset.DefaultID = querypresetDescID.Default.(func() string)
 	researchFields := schema.Research{}.Fields()
 	_ = researchFields
 	// researchDescName is the schema descriptor for name field.

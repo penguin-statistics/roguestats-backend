@@ -6,21 +6,15 @@ package graph
 
 import (
 	"context"
-	"encoding/json"
 
-	"entgo.io/contrib/entgql"
 	"exusiai.dev/roguestats-backend/internal/ent"
 	"exusiai.dev/roguestats-backend/internal/model"
+	"exusiai.dev/roguestats-backend/internal/x/jsonpd"
 )
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*ent.User, error) {
 	return r.AuthService.AuthByLoginInput(ctx, input)
-}
-
-// CreateEvent is the resolver for the createEvent field.
-func (r *mutationResolver) CreateEvent(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
-	return r.EventService.CreateEventFromInput(ctx, input)
 }
 
 // RequestPasswordReset is the resolver for the requestPasswordReset field.
@@ -33,6 +27,11 @@ func (r *mutationResolver) ResetPassword(ctx context.Context, input model.ResetP
 	return r.AuthService.ResetPassword(ctx, input)
 }
 
+// CreateEvent is the resolver for the createEvent field.
+func (r *mutationResolver) CreateEvent(ctx context.Context, input model.CreateEventInput) (*ent.Event, error) {
+	return r.EventService.CreateEventFromInput(ctx, input)
+}
+
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*ent.User, error) {
 	return r.AuthService.CreateUser(ctx, input)
@@ -43,19 +42,9 @@ func (r *queryResolver) Me(ctx context.Context) (*ent.User, error) {
 	return r.AuthService.CurrentUser(ctx)
 }
 
-// Node is the resolver for the node field.
-func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) {
-	return r.Ent.Noder(ctx, id)
-}
-
-// Nodes is the resolver for the nodes field.
-func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, error) {
-	return r.Ent.Noders(ctx, ids)
-}
-
 // GroupCount is the resolver for the groupCount field.
 func (r *queryResolver) GroupCount(ctx context.Context, input model.GroupCountInput) (*model.GroupCountResult, error) {
-	return r.EventService.CalculateStats(ctx, input.ResearchID, input.FilterInput, input.ResultMappingInput)
+	return r.EventService.CalculateStats(ctx, input.ResearchID, input.Where, input.ResultMappingInput)
 }
 
 // Event is the resolver for the event field.
@@ -63,41 +52,30 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*ent.Event, error
 	return r.Ent.Event.Get(ctx, id)
 }
 
-// Events is the resolver for the events field.
-func (r *queryResolver) Events(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.EventOrder) (*ent.EventConnection, error) {
-	return r.Ent.Event.Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithEventOrder(orderBy),
-		)
-}
-
 // Research is the resolver for the research field.
 func (r *queryResolver) Research(ctx context.Context, id string) (*ent.Research, error) {
 	return r.Ent.Research.Get(ctx, id)
 }
 
-// Researches is the resolver for the researches field.
-func (r *queryResolver) Researches(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.ResearchOrder) (*ent.ResearchConnection, error) {
-	return r.Ent.Research.Query().
-		Paginate(ctx, after, first, before, last,
-			ent.WithResearchOrder(orderBy),
-		)
+// QueryPreset is the resolver for the queryPreset field.
+func (r *queryResolver) QueryPreset(ctx context.Context, id string) (*ent.QueryPreset, error) {
+	return r.Ent.QueryPreset.Get(ctx, id)
 }
 
-// Schema is the resolver for the schema field.
-func (r *researchResolver) Schema(ctx context.Context, obj *ent.Research) (interface{}, error) {
-	return json.RawMessage(obj.Schema), nil
+// ContentJSONPredicate is the resolver for the contentJsonPredicate field.
+func (r *eventWhereInputResolver) ContentJSONPredicate(ctx context.Context, obj *ent.EventWhereInput, data map[string]interface{}) error {
+	if obj == nil || data == nil {
+		return nil
+	}
+	pred, err := jsonpd.Predicate(data).EntEventPredicate("content")
+	if err != nil {
+		return err
+	}
+	obj.AddPredicates(pred)
+	return nil
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
-// Research returns ResearchResolver implementation.
-func (r *Resolver) Research() ResearchResolver { return &researchResolver{r} }
-
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type researchResolver struct{ *Resolver }
