@@ -1,6 +1,6 @@
 schema: "../../internal/graph/defs/*.graphql"
 generates:
-  ../../schema.graphql:
+  ../../schema.generated.graphql:
     plugins:
       - "schema-ast"
     config:
