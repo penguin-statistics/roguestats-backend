@@ -1,9 +1,13 @@
 ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf h1:Tq2DRB39ZHScIwWACjPKLv5oEErv7zv6PBb5RTz5CKA=
 ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf/go.mod h1:+TR129FJZ5Lvzms6dvCeGWh1yR6hMvmXBhug4hrNIGk=
+ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935 h1:JnYs/y8RJ3+MiIUp+3RgyyeO48VHLAZimqiaZYnMKk8=
+ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935/go.mod h1:isZrlzJ5cpoCoKFoY9knZug7Lq4pP1cm8g3XciLZ0Pw=
 entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa h1:0wlS+DGEFEnnxfEVVxNpwnms12U+V5N1uTOhxITnqkY=
 entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa/go.mod h1:CUOp0ujdvm4vp2ItkoOujjLqXVulRvic3kyhmyY2kas=
 entgo.io/ent v0.12.3 h1:N5lO2EOrHpCH5HYfiMOCHYbo+oh5M8GjT0/cx5x6xkk=
 entgo.io/ent v0.12.3/go.mod h1:AigGGx+tbrBBYHAzGOg8ND661E5cxx1Uiu5o/otJ6Yg=
+entgo.io/ent v0.12.5 h1:KREM5E4CSoej4zeGa88Ou/gfturAnpUv0mzAjch1sj4=
+entgo.io/ent v0.12.5/go.mod h1:Y3JVAjtlIk8xVZYSn3t3mf8xlZIn5SAOXZQxD6kKI+Q=
 github.com/99designs/gqlgen v0.17.36 h1:u/o/rv2SZ9s5280dyUOOrkpIIkr/7kITMXYD3rkJ9go=
 github.com/99designs/gqlgen v0.17.36/go.mod h1:6RdyY8puhCoWAQVr2qzF2OMVfudQzc8ACxzpzluoQm4=
 github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=
