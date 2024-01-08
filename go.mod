@@ -5,8 +5,8 @@ go 1.21
 toolchain go1.21.0
 
 require (
-	entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa
-	entgo.io/ent v0.12.3
+	entgo.io/contrib v0.4.6-0.20231111095018-6ed0397cd307
+	entgo.io/ent v0.12.5-0.20231110085726-c2ff3ff3bca9
 	github.com/99designs/gqlgen v0.17.36
 	github.com/antonmedv/expr v1.15.1
 	github.com/dchest/uniuri v1.2.0
@@ -34,7 +34,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf // indirect
+	ariga.io/atlas v0.15.1-0.20231110144547-3e8e2e192e6b // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
