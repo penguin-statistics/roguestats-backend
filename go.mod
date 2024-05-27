@@ -8,7 +8,7 @@ require (
 	entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa
 	entgo.io/ent v0.12.3
 	github.com/99designs/gqlgen v0.17.36
-	github.com/antonmedv/expr v1.15.1
+	github.com/antonmedv/expr v1.16.9
 	github.com/dchest/uniuri v1.2.0
 	github.com/gofiber/adaptor/v2 v2.2.1
 	github.com/gofiber/fiber/v2 v2.49.1
