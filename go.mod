@@ -24,9 +24,9 @@ require (
 	github.com/resendlabs/resend-go v1.7.0
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/lo v1.38.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.25.7
-	github.com/vektah/gqlparser/v2 v2.5.8
+	github.com/vektah/gqlparser/v2 v2.5.14
 	github.com/wagslane/go-password-validator v0.3.0
 	go.uber.org/fx v1.20.0
 	golang.org/x/crypto v0.13.0
