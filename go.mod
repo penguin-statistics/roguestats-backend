@@ -20,7 +20,7 @@ require (
 	github.com/machinebox/graphql v0.2.2
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pkg/errors v0.9.1
-	github.com/redis/go-redis/v9 v9.1.0
+	github.com/redis/go-redis/v9 v9.7.0
 	github.com/resendlabs/resend-go v1.7.0
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/lo v1.38.1
