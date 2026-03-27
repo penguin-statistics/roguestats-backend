@@ -1,8 +1,6 @@
 module exusiai.dev/roguestats-backend
 
-go 1.21
-
-toolchain go1.21.0
+go 1.22
 
 require (
 	entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa
@@ -24,9 +22,9 @@ require (
 	github.com/resendlabs/resend-go v1.7.0
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/lo v1.38.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.25.7
-	github.com/vektah/gqlparser/v2 v2.5.8
+	github.com/vektah/gqlparser/v2 v2.5.32
 	github.com/wagslane/go-password-validator v0.3.0
 	go.uber.org/fx v1.20.0
 	golang.org/x/crypto v0.13.0
@@ -54,7 +52,7 @@ require (
 )
 
 require (
-	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/google/uuid v1.3.1 // indirect
