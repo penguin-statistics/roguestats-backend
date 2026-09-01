@@ -2,7 +2,7 @@ module exusiai.dev/roguestats-backend
 
 go 1.21
 
-toolchain go1.21.0
+toolchain go1.27.1
 
 require (
 	entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa
