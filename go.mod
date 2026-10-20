@@ -1,8 +1,6 @@
 module exusiai.dev/roguestats-backend
 
-go 1.21
-
-toolchain go1.21.0
+go 1.24
 
 require (
 	entgo.io/contrib v0.4.6-0.20230725054517-9e1dadfef7fa
@@ -60,7 +58,7 @@ require (
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.3 // indirect
-	github.com/klauspost/compress v1.16.7 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
